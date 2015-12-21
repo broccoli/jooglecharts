@@ -1,0 +1,100 @@
+
+
+
+<script type="text/javascript">
+
+    // Check if google jsapi is already loaded.  If not, load it.
+    if (typeof window.google == 'undefined') {
+        jQuery.getScript('https://www.google.com/jsapi', function( data, textStatus, jqxhr) {
+            google_loader();
+        });
+    } else {
+        google_loader();
+    }
+
+    // load visualization library
+    
+    /*
+    
+    */
+    function google_loader() {
+    {% if chart.filters %}
+		google.load('visualization', '1.0', {'packages':['controls'], 'callback': doStuff});
+	{% else %}    
+        google.load('visualization', '1.0', {'callback': doStuff});
+    {% endif %}
+    }
+    
+    function doStuff() {
+    
+        // ***** Insert dataTable method -- DataTable constructor or arrayToDatable()
+        {% if chart.json %}
+        var {{ chart.data_name }} = new google.visualization.DataTable({{ chart.json }});
+        {% else %}
+        var {{ chart.data_name }} = new google.visualization.arrayToDataTable({{ chart.data }})
+        {% endif %}
+
+        // ***** Insert formatters, if any
+        {% for formatter in chart.formatters %}
+        	{% if formatter.type is equalto "PatternFormat" %}
+        var {{ formatter.name }} = new google.visualization.{{ formatter.type }}("{{ formatter.pattern }}");
+        {{ formatter.name }}.format({{ chart.data_name }}, {{ formatter.source_cols }}, {{ formatter.dest_col }});
+        	{% else %}
+        var {{ formatter.name }} = new google.visualization.{{ formatter.type }}({{ formatter.options|to_json }});
+				{% for col in formatter.cols %}
+        {{ formatter.name }}.format({{ chart.data_name }}, {{ col }});
+	        	{% endfor %}
+	        {% endif %}
+        {% endfor %}
+        
+        var {{ chart.name }} = new google.visualization.ChartWrapper({      
+            "containerId": "{{ chart.chart_div_id }}",
+            "dataTable": {{ chart.data_name }},
+            "chartType": "{{ chart.display_chart_type }}",
+            "options": {{ chart.chart_options|to_json }}
+        });
+        
+        {% if chart.filters %}
+        
+        // Create a dashboard.
+        var {{ chart.dashboard_name }} = new google.visualization.Dashboard(
+            document.getElementById('{{ chart.dashboard_div_id }}'));
+
+        // Create controls
+			{% for filter in chart.filters %}
+        var {{ filter.name }} = new google.visualization.ControlWrapper({
+          'controlType': '{{ filter.type }}',
+          'containerId': '{{ filter.div_id }}',
+          'options': {{ filter.options|default("{}")|to_json }}
+        });
+			{% endfor %}
+
+        // Establish dependencies.
+			{% for filter in chart.filters %}
+        		{% if filter.bind_target %}
+		{{ chart.dashboard_name }}.bind({{ filter.name }}, {{ filter.bind_target.name }});
+			    {% else %}
+		{{ chart.dashboard_name }}.bind({{ filter.name }}, {{ chart.name }});
+				{% endif %}
+			{% endfor %}
+
+        // Draw the dashboard.
+        {{ chart.dashboard_name }}.draw({{ chart.data_name }});
+        
+        {% else %}
+        {{ chart.name }}.draw();
+        {% endif %}
+    }
+    
+</script>
+{% if chart.filters %}
+<div id="{{ chart.dashboard_div_id }}">
+	{% for filter in chart.filters %}
+	<div id="{{ filter.div_id }}"></div>
+	{% endfor %}
+	<div id="{{ chart.chart_div_id }}" {{ chart.div_styles|format_styles_list }}></div>
+</div>
+{% else %}
+<div id="{{ chart.chart_div_id }}" {{ chart.div_styles|format_styles_list }}></div>
+{% endif %}
+
