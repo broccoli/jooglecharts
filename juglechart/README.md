@@ -42,3 +42,28 @@ pip install git+https://github.com/google/google-visualization-python
 * bootstrap (already part of the jupyter environment)
 
 
+# Quick Start
+
+'''''''
+# There is one required import.
+from juglechart_api import JugleChart
+
+# Optional import, if you're using pandas to format your data.
+import pandas as pd
+
+# Optional import, if you're going to call the display methods yourself, rather than using .show()
+from IPython.display import display, HTML 
+
+# create a chart object from a data frame.
+data = pd.DataFrame({'cities': ['Chicago', 'Atlanta'], 'widgets': [35, 23]})
+chart = JugleChart(data)
+
+# call .show()
+chart.add_chart_options(title="asdfadf", is3d=True)
+chart.show()
+
+# current default is ColumnChart.
+
+'''''''
+
+
