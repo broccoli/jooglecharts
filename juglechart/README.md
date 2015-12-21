@@ -28,7 +28,7 @@ The following following packages must be installed.  Specific versions not teste
 * ipython
 * jupyter
 * juglechart
-* jinja2
+* jinja2 (already part of jupyter environment)
 
 You can install gviz_api from git at https://github.com/google/google-visualization-python
 `````
