@@ -3,7 +3,7 @@
 # What is JugleChart?
 JugleChart is Python/jupyter api for creating a Google Chart using generated javascript and html that calls the Google Charts library.  JugleChart generates the javascript and html for you.  You don't have to worry about loading the chart library, creating valid javascript or html, or creating unique id's for your chart containers.
 
-*** Note: JugleChart is a thin wrapper for Google Charts.  You must consult Google Charts documenation for all types and options to pass to JugleChart.  It does not replace the Google Charts documentation.***
+** Note: JugleChart is a thin wrapper for Google Charts.  You must consult Google Charts documenation for all types and options to pass to JugleChart.  It does not replace the Google Charts documentation.**
 
 JugleChart is designed to be simple, so it has some limitations over coding your own Google Chart.
 * JugleChart accepts only one set of data.
@@ -44,7 +44,7 @@ pip install git+https://github.com/google/google-visualization-python
 
 # Quick Start
 
-'''''''
+`````
 # There is one required import.
 from juglechart_api import JugleChart
 
@@ -64,6 +64,6 @@ chart.show()
 
 # current default is ColumnChart.
 
-'''''''
+`````
 
 
