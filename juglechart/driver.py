@@ -67,9 +67,10 @@ list1.append(['3', 'c', 45])
 
 
 
-gchart = JugleChart(list1)
+# gchart = JugleChart(list1)
 
-# gchart = JugleChart(df3)
+gchart = JugleChart(df3)
+# gchart = JugleChart(df3['dates'], df3['floats'])
 
 # gchart.chart_type = "TableChart"
 
@@ -85,17 +86,17 @@ gchart.add_div_styles(height="400px", width="600px")
 # filter1 = Filter(type="NumberRangeFilter")
 # filter1.add_options(filterColumnLabel="nums")
 
-filter1 = Filter(type="CategoryFilter")
-filter1.add_options(filterColumnIndex=0, ui_allowMultiple=True, ui_allowNone=True)
-gchart.add_filter(filter1)
-
-
-filter2 = Filter(type="CategoryFilter")
-filter2.add_options(filterColumnIndex=1, ui_allowMultiple=True, ui_allowNone=True)
-gchart.add_filter(filter2)
-
-# print filter2.filter_name
-filter1.bind_filter(filter2)
+# filter1 = Filter(type="CategoryFilter")
+# filter1.add_options(filterColumnIndex=0, ui_allowMultiple=True, ui_allowNone=True)
+# gchart.add_filter(filter1)
+# 
+# 
+# filter2 = Filter(type="CategoryFilter")
+# filter2.add_options(filterColumnIndex=1, ui_allowMultiple=True, ui_allowNone=True)
+# gchart.add_filter(filter2)
+# 
+# # print filter2.filter_name
+# filter1.bind_filter(filter2)
 
 
 # filter1.add_options(a_b_c=3)
@@ -116,5 +117,6 @@ filter1.bind_filter(filter2)
 # print f1.render()
 # print f2.render()
 
+gchart.hide_cols = [0]
 print gchart.render('Table')
 
