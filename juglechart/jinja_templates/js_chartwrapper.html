@@ -1,7 +1,14 @@
         // Create ChartWrapper
+        
+{# If columns have been specified to be hidden, add a view that #}
+{# only shows the other columns. #}
+        
         var {{ chart.name }} = new google.visualization.ChartWrapper({      
             "containerId": "{{ chart.chart_div_id }}",
             "dataTable": {{ chart.data_name }},
+            {% if chart.display_cols %}
+            "view": {columns: {{ chart.display_cols }}},  
+            {% endif %}
             "chartType": "{{ chart.display_chart_type }}",
             "options": {{ chart.chart_options|to_json }}
         });

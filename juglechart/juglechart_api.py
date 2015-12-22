@@ -377,6 +377,9 @@ class JugleChart():
         self.div_styles = {}
         self.filters = []
         self.datetime_cols = kwargs.pop('datetime_cols', None)
+        self.hide_cols = None
+        self.display_cols = None
+        self.json = None
 
         self.chart_div_id = None
         self.dashboard_div_id = None
@@ -390,6 +393,7 @@ class JugleChart():
             if isinstance(data, pd.DataFrame):
                 table = dataframe_to_gviz(data, datetime_cols=self.datetime_cols)
                 self.json = table.ToJSon()
+                self.data_frame = table
             elif (isinstance(data, list) and isinstance(data, list)):
                 self.data = data
         else:
@@ -403,6 +407,7 @@ class JugleChart():
             except:
                 message = "Data must be passed as 2d array, a DataFrame, or 2 or more Series"
                 raise PythonGoogleChartsException(message)
+            self.data_frame = df
             table = dataframe_to_gviz(df)
             self.json = table.ToJSon()
         
@@ -469,6 +474,7 @@ class JugleChart():
         self.num = get_div_id_counter()
         self.name = "google_chart_" + str(self.num)
         self.data_name = self.name + "_data"
+        self.view_name = self.name + "_view"
         self.chart_div_id = self.name + "_div_id"
         self.dashboard_name = self.name + "_dashboard"
         self.dashboard_div_id = self.dashboard_name + "_div_id"
@@ -476,6 +482,17 @@ class JugleChart():
         # set chart options to empty dict if it's been nulled out
         if self.chart_options == None:
             self.chart_options = {}
+        
+        # set the visible columns if hide_cols is set
+        # get the number of columns
+        if self.hide_cols:
+            if self.json:
+                # data is in a dataframe
+                num_cols = len(self.data_frame.columns)
+            else:
+                # data is in a 2d array
+                num_cols = len(self.data[0])
+            self.display_cols = [ix for ix in range(num_cols) if ix not in self.hide_cols]
         
         if chart_type == None:
             self.display_chart_type = self.chart_type
