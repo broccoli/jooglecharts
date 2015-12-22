@@ -1,0 +1,12 @@
+        // Add formatters, if any
+        {% for formatter in chart.formatters %}
+        	{% if formatter.type is equalto "PatternFormat" %}
+        var {{ formatter.name }} = new google.visualization.{{ formatter.type }}("{{ formatter.pattern }}");
+        {{ formatter.name }}.format({{ chart.data_name }}, {{ formatter.source_cols }}, {{ formatter.dest_col }});
+        	{% else %}
+        var {{ formatter.name }} = new google.visualization.{{ formatter.type }}({{ formatter.options|to_json }});
+				{% for col in formatter.cols %}
+        {{ formatter.name }}.format({{ chart.data_name }}, {{ col }});
+	        	{% endfor %}
+	        {% endif %}
+        {% endfor %}

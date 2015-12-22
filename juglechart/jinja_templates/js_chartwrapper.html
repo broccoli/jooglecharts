@@ -1,0 +1,7 @@
+        // Create ChartWrapper
+        var {{ chart.name }} = new google.visualization.ChartWrapper({      
+            "containerId": "{{ chart.chart_div_id }}",
+            "dataTable": {{ chart.data_name }},
+            "chartType": "{{ chart.display_chart_type }}",
+            "options": {{ chart.chart_options|to_json }}
+        });

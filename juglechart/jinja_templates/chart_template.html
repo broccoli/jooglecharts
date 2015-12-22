@@ -7,62 +7,20 @@
 
     function doStuff() {
     
-        // Create DataTable object from DataTable constructor or arrayToDatable()
-        {% if chart.json %}
-        var {{ chart.data_name }} = new google.visualization.DataTable({{ chart.json }});
-        {% else %}
-        var {{ chart.data_name }} = new google.visualization.arrayToDataTable({{ chart.data }})
-        {% endif %}
 
-        // Add formatters, if any
-        {% for formatter in chart.formatters %}
-        	{% if formatter.type is equalto "PatternFormat" %}
-        var {{ formatter.name }} = new google.visualization.{{ formatter.type }}("{{ formatter.pattern }}");
-        {{ formatter.name }}.format({{ chart.data_name }}, {{ formatter.source_cols }}, {{ formatter.dest_col }});
-        	{% else %}
-        var {{ formatter.name }} = new google.visualization.{{ formatter.type }}({{ formatter.options|to_json }});
-				{% for col in formatter.cols %}
-        {{ formatter.name }}.format({{ chart.data_name }}, {{ col }});
-	        	{% endfor %}
-	        {% endif %}
-        {% endfor %}
+		{% include 'js_data.html' %}
         
-        // Create ChartWrapper
-        var {{ chart.name }} = new google.visualization.ChartWrapper({      
-            "containerId": "{{ chart.chart_div_id }}",
-            "dataTable": {{ chart.data_name }},
-            "chartType": "{{ chart.display_chart_type }}",
-            "options": {{ chart.chart_options|to_json }}
-        });
-        
+		{% include 'js_formatters.html' %}
+
+		{% include 'js_chartwrapper.html' %}
+
         {% if chart.filters %}
-        // Create a dashboard.
-        var {{ chart.dashboard_name }} = new google.visualization.Dashboard(
-            document.getElementById('{{ chart.dashboard_div_id }}'));
-
-        // Create controls
-			{% for filter in chart.filters %}
-        var {{ filter.name }} = new google.visualization.ControlWrapper({
-          'controlType': '{{ filter.type }}',
-          'containerId': '{{ filter.div_id }}',
-          'options': {{ filter.options|default("{}")|to_json }}
-        });
-			{% endfor %}
-
-        // Establish dependencies.
-			{% for filter in chart.filters %}
-        		{% if filter.bind_target %}
-		{{ chart.dashboard_name }}.bind({{ filter.name }}, {{ filter.bind_target.name }});
-			    {% else %}
-		{{ chart.dashboard_name }}.bind({{ filter.name }}, {{ chart.name }});
-				{% endif %}
-			{% endfor %}
-
-        // Draw the dashboard.
-        {{ chart.dashboard_name }}.draw({{ chart.data_name }});
+			{% include 'js_dashboard.html' %}
         
         {% else %}
+        
         {{ chart.name }}.draw();
+        
         {% endif %}
     }
     

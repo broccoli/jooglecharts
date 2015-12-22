@@ -1,0 +1,24 @@
+        // Create a dashboard.
+        var {{ chart.dashboard_name }} = new google.visualization.Dashboard(
+            document.getElementById('{{ chart.dashboard_div_id }}'));
+
+        // Create controls
+			{% for filter in chart.filters %}
+        var {{ filter.name }} = new google.visualization.ControlWrapper({
+          'controlType': '{{ filter.type }}',
+          'containerId': '{{ filter.div_id }}',
+          'options': {{ filter.options|default("{}")|to_json }}
+        });
+			{% endfor %}
+
+        // Establish dependencies.
+			{% for filter in chart.filters %}
+        		{% if filter.bind_target %}
+		{{ chart.dashboard_name }}.bind({{ filter.name }}, {{ filter.bind_target.name }});
+			    {% else %}
+		{{ chart.dashboard_name }}.bind({{ filter.name }}, {{ chart.name }});
+				{% endif %}
+			{% endfor %}
+
+        // Draw the dashboard.
+        {{ chart.dashboard_name }}.draw({{ chart.data_name }});
