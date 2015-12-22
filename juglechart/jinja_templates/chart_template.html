@@ -3,38 +3,18 @@
 
 <script type="text/javascript">
 
-    // Check if google jsapi is already loaded.  If not, load it.
-    if (typeof window.google == 'undefined') {
-        jQuery.getScript('https://www.google.com/jsapi', function( data, textStatus, jqxhr) {
-            google_loader();
-        });
-    } else {
-        google_loader();
-    }
+	{% include 'js_library_loading.html' %}
 
-    // load visualization library
-    
-    /*
-    
-    */
-    function google_loader() {
-    {% if chart.filters %}
-		google.load('visualization', '1.0', {'packages':['controls'], 'callback': doStuff});
-	{% else %}    
-        google.load('visualization', '1.0', {'callback': doStuff});
-    {% endif %}
-    }
-    
     function doStuff() {
     
-        // ***** Insert dataTable method -- DataTable constructor or arrayToDatable()
+        // Create DataTable object from DataTable constructor or arrayToDatable()
         {% if chart.json %}
         var {{ chart.data_name }} = new google.visualization.DataTable({{ chart.json }});
         {% else %}
         var {{ chart.data_name }} = new google.visualization.arrayToDataTable({{ chart.data }})
         {% endif %}
 
-        // ***** Insert formatters, if any
+        // Add formatters, if any
         {% for formatter in chart.formatters %}
         	{% if formatter.type is equalto "PatternFormat" %}
         var {{ formatter.name }} = new google.visualization.{{ formatter.type }}("{{ formatter.pattern }}");
@@ -47,6 +27,7 @@
 	        {% endif %}
         {% endfor %}
         
+        // Create ChartWrapper
         var {{ chart.name }} = new google.visualization.ChartWrapper({      
             "containerId": "{{ chart.chart_div_id }}",
             "dataTable": {{ chart.data_name }},
@@ -55,7 +36,6 @@
         });
         
         {% if chart.filters %}
-        
         // Create a dashboard.
         var {{ chart.dashboard_name }} = new google.visualization.Dashboard(
             document.getElementById('{{ chart.dashboard_div_id }}'));

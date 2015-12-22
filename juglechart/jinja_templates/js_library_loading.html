@@ -1,0 +1,17 @@
+    // Check if google jsapi is already loaded.  If not, load it.
+    if (typeof window.google == 'undefined') {
+        jQuery.getScript('https://www.google.com/jsapi', function( data, textStatus, jqxhr) {
+            google_loader();
+        });
+    } else {
+        google_loader();
+    }
+
+    // load visualization library    
+    function google_loader() {
+    {% if chart.filters %}
+		google.load('visualization', '1.0', {'packages':['controls'], 'callback': doStuff});
+	{% else %}    
+        google.load('visualization', '1.0', {'callback': doStuff});
+    {% endif %}
+    }
