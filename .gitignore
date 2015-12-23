@@ -1,4 +1,6 @@
-juglechart/driver.py
+driver.py
+sandbox.py
+test_chart_string.ipynb
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
