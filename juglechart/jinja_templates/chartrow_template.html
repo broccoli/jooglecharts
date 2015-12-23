@@ -4,22 +4,37 @@
 
     function doStuff() {
     
-		{% for chart in chartrow %}
+		{% for chart in chartrow.charts %}
+	// ==================== CHARTROW CHART {{ loop.index }} ============================= //
 			{% include 'js_data.html' %}
-	        
+	        {% if chart.formatters %}
 			{% include 'js_formatters.html' %}
+			{% endif %}
 	
 			{% include 'js_chartwrapper.html' %}
 			
 	        {% if chart.filters %}
 				{% include 'js_dashboard.html' %}
-	        
 	        {% else %}
 	        
 	        {{ chart.name }}.draw();
+	// ==================================================================== //
 	        
 	        {% endif %}
 		{% endfor %}
     }
     
 </script>
+<div class="row">
+	{% for chart in chartrow.charts %}
+	<div class="col-sm-{{ chartrow.bootstrap_num }}">
+		{% if chart.filters %}
+			{% include 'html_dashboard.html' %}
+		{% else %}
+			{% include 'html_chart.html' %}
+		{% endif %}
+	</div>
+	{% endfor %}
+</div>
+
+

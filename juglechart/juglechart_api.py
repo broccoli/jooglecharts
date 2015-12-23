@@ -35,13 +35,15 @@ DEPENDENCIES:
 
 '''
 
+import copy
 import json
+import os
 import gviz_api
 import pandas as pd
 from IPython.display import display, HTML 
 
 from jinja2 import Environment, FileSystemLoader
-import os
+
 
 
 
@@ -376,6 +378,7 @@ class JugleChart():
         self.formatters = []
         self.div_styles = {}
         self.filters = []
+        self.load_controls = False
         self.datetime_cols = kwargs.pop('datetime_cols', None)
         self.hide_cols = None
         self.display_cols = None
@@ -466,8 +469,14 @@ class JugleChart():
     def add_filter(self, filter):
         
         self.filters.append(filter)
+        self.load_controls = True
     
-    def render(self, chart_type=None):
+    
+    def copy(self):
+        
+        return copy.deepcopy(self)
+    
+    def set_render_properties(self, chart_type=None):
         
         # set the chart div id on rendering, so the chart can be displayed
         # multiple times with unique ids.
@@ -498,8 +507,12 @@ class JugleChart():
             self.display_chart_type = self.chart_type
         else:
             self.display_chart_type = chart_type
+    
+    def render(self, chart_type=None):
         
-        return j2_env.get_template('chart_template.html').render(chart=self)
+        self.set_render_properties(chart_type)
+
+        return j2_env.get_template('chart_template.html').render(chart=self, load_controls=self.load_controls)
 
         
     def show(self, chart_type=None):
@@ -511,11 +524,28 @@ class ChartRow:
     
     def __init__(self, *charts):
         
-        self.charts
+        self.charts = charts
         self.num_charts = len(self.charts)
+        self.load_controls = False
         
-        if self.num_charts not in [1, 2, 3, 4]:
-            message = "A chart row must have 1-4 charts"
+        if self.num_charts not in [2, 3, 4]:
+            message = "A chart row must have 2-4 charts"
             raise PythonGoogleChartsException(message)
         
+        self.bootstrap_num = 12 / self.num_charts
+        for chart in self.charts:
+            if chart.filters:
+                self.load_controls = True
+                break
+                
+
+    def render(self):
         
+        for chart in self.charts:
+            chart.set_render_properties()
+            
+        return j2_env.get_template('chartrow_template.html').render(chartrow=self, load_controls=self.load_controls)
+        
+    def show(self):
+
+        return display(HTML(self.render()))

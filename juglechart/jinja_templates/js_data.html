@@ -4,9 +4,3 @@
         {% else %}
         var {{ chart.data_name }} = new google.visualization.arrayToDataTable({{ chart.data }})
         {% endif %}
-        
-{#        var {{ chart.view_name }} = new google.visualization.DataView({{ chart.data_name }});#}
-        
-{#        {% if chart.hide_cols %}#}
-{#        {{ chart.view_name }}.hideColumns({{ chart.hide_cols }})        #}
-{#        {% endif %}#}

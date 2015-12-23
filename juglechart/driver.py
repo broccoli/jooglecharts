@@ -4,7 +4,7 @@ Created on Dec 5, 2015
 @author: richd
 '''
 
-from juglechart_api import JugleChart, Formatter, Filter, create_nested_dict_from_dotted_key
+from juglechart_api import JugleChart, Formatter, Filter, create_nested_dict_from_dotted_key, ChartRow
 
 import gviz_api
 
@@ -69,7 +69,7 @@ list1.append(['3', 'c', 45])
 
 # gchart = JugleChart(list1)
 
-gchart = JugleChart(df3)
+gchart = JugleChart(df1)
 # gchart = JugleChart(df3['dates'], df3['floats'])
 
 # gchart.chart_type = "TableChart"
@@ -80,11 +80,25 @@ gchart = JugleChart(df3)
 
 gchart.add_chart_options(hAxis_title="QWERT", hAxis_textStyle_color="#FF0000")
 
-gchart.add_div_styles(height="400px", width="600px")
+# gchart.add_div_styles(height="400px", width="600px")
+
+c1 = gchart
+c2 = c1.copy()
+c2.chart_type = "PieChart"
+c2.add_chart_options(title="This is a PieChart")
+c1.add_chart_options(title="This is a ColumnChart")
 
 
-# filter1 = Filter(type="NumberRangeFilter")
-# filter1.add_options(filterColumnLabel="nums")
+filter1 = Filter(type="NumberRangeFilter")
+filter1.add_options(filterColumnLabel="nums")
+c2.add_filter(filter1)
+
+row = ChartRow(c1, c2)
+
+print row.render()
+
+
+
 
 # filter1 = Filter(type="CategoryFilter")
 # filter1.add_options(filterColumnIndex=0, ui_allowMultiple=True, ui_allowNone=True)
@@ -117,6 +131,6 @@ gchart.add_div_styles(height="400px", width="600px")
 # print f1.render()
 # print f2.render()
 
-gchart.hide_cols = [0]
-print gchart.render('Table')
+# gchart.hide_cols = [0]
+# print gchart.render('Table')
 

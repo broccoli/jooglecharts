@@ -9,7 +9,7 @@
 
     // load visualization library    
     function google_loader() {
-    {% if chart.filters %}
+    {% if load_controls %}
 		google.load('visualization', '1.0', {'packages':['controls'], 'callback': doStuff});
 	{% else %}    
         google.load('visualization', '1.0', {'callback': doStuff});
