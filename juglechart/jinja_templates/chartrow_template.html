@@ -1,0 +1,25 @@
+<script type="text/javascript">
+
+	{% include 'js_library_loading.html' %}
+
+    function doStuff() {
+    
+		{% for chart in chartrow %}
+			{% include 'js_data.html' %}
+	        
+			{% include 'js_formatters.html' %}
+	
+			{% include 'js_chartwrapper.html' %}
+			
+	        {% if chart.filters %}
+				{% include 'js_dashboard.html' %}
+	        
+	        {% else %}
+	        
+	        {{ chart.name }}.draw();
+	        
+	        {% endif %}
+		{% endfor %}
+    }
+    
+</script>
