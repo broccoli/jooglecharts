@@ -1,25 +1,8 @@
 '''
-Created on Dec 12, 2015
-
-@author: richd
-
-This module is just a container for the strings that can be used
-to generate the chart code.  Only one string me be used to render
-charts.  Other strings are included for reference or as possible
-options to use at some point.
-
-The naming of these strings is admittedly confusing.  Here is the naming
-scheme.  The name indicates three things.
-    1.  chart vs. dashboard
-    2.  method of drawing the chart. Currently there are three methods
-        to draw a chart:  chart.draw, ChartWrapper, and drawChart.
-    3.  sample vs. template.  A sample is fully formed string that is
-        here for development, to use as an example or to test displaying
-        in notebooks.  A template is a sample with pieces substituted
-        with  %()s for string interpolation.
+This module contains sample strings of working js/html that can be put
+displayed from an ipython notebook.  They are for reference only.
+Several ways to create chartes are represented.
 '''
-
-from jinja2 import Template
 
 
 # a well-functioning javascript string for use in a notebook
@@ -134,43 +117,10 @@ chart_chartwrapper_sample = """
 <div id="ishbook_google_chart_id_1" style="width: 900px; height: 500px;"></div>
 """
 
-chart_drawchart_template = """<script type="text/javascript">
 
-    // Check if google jsapi is already loaded.  If not, load it.
-    if (typeof window.google == 'undefined') {
-        jQuery.getScript('https://www.google.com/jsapi', function( data, textStatus, jqxhr) {
-            google_loader();
-        });
-    } else {
-        google_loader();
-    }
+dashboard_chartwrapper_sample = """
 
-    // load visualization library
-    function google_loader() {
-        // Insert list of packages with Python
-        google.load('visualization', '1.0', {'callback': doMyStuff});
-    }
-    
-    function doMyStuff() {
-        // ***** Insert dataTable method -- DataTable constructor or arrayToDatable()
-        var data = new google.visualization.%(data_method)s
-
-        // ***** Insert formatters, if any
-        %(formatters)s
-        
-        google.visualization.drawChart({
-            "containerId": "%(chart_div_id)s",    // ***** Insert chart div id
-            "dataTable": data,
-            "chartType": "%(chart_type)s",        // ***** Insert name of chart constructor
-            "options": %(chart_options)s          // ***** Insert chart options
-       });
-    }
-</script>
-        <!-- ***** Insert chart div id and div_styles into the html -->
-<div id="%(chart_div_id)s" %(div_styles)s></div>"""
-
-
-chart_chartwrapper_template = """
+<!--Load the AJAX API-->
 <script type="text/javascript">
 
     // Check if google jsapi is already loaded.  If not, load it.
@@ -185,105 +135,67 @@ chart_chartwrapper_template = """
     // load visualization library
     function google_loader() {
         // Insert list of packages with Python
-        google.load('visualization', '1.0', {'callback': doMyStuff});
-    }
-    
-    function doMyStuff() {
-        // ***** Insert dataTable method -- DataTable constructor or arrayToDatable()
-        var data = new google.visualization.%(data_method)s
-
-        // ***** Insert formatters, if any
-        %(formatters)s
         
-        var wrapper = new google.visualization.ChartWrapper({      
-            "containerId": "%(chart_div_id)s",    // ***** Insert chart div id
-            "dataTable": data,
-            "chartType": "%(chart_type)s",        // ***** Insert name of chart constructor
-            "options": %(chart_options)s          // ***** Insert chart options
-        });
-        wrapper.draw();
+          google.load('visualization', '1.0', {'packages':['controls'], 'callback': doMyStuff});
     }
-</script>
-        <!-- ***** Insert chart div id and div_styles into the html -->
-<div id="%(chart_div_id)s" %(div_styles)s></div>
+
+
+
+      function doMyStuff() {
+      
+
+        // Create our data table.
+        var data = google.visualization.arrayToDataTable([
+          ['Name', 'Donuts eaten'],
+          ['Michael' , 5],
+          ['Elisa', 7],
+          ['Robert', 3],
+          ['John', 2],
+          ['Jessica', 6],
+          ['Aaron', 1],
+          ['Margareth', 8]
+        ]);
+
+
+        // Create a chart
+        var pieChart = new google.visualization.ChartWrapper({
+          'chartType': 'PieChart',
+          'containerId': 'chart_div',
+          'options': {
+            'width': 300,
+            'height': 300,
+            'pieSliceText': 'value',
+            'legend': 'right'
+          }
+        });
+
+        // Create a dashboard.
+        var dashboard = new google.visualization.Dashboard(
+            document.getElementById('dashboard_div'));
+
+        // Create controls
+        var donutRangeSlider = new google.visualization.ControlWrapper({
+          'controlType': 'NumberRangeFilter',
+          'containerId': 'filter_div',
+          'options': {
+            'filterColumnLabel': 'Donuts eaten'
+            }
+        });
+
+        // Establish dependencies.
+        dashboard.bind(donutRangeSlider, pieChart);
+
+        // Draw the dashboard.
+        dashboard.draw(data);
+      }
+    </script>
+
+    <!--Div that will hold the dashboard-->
+    <div id="dashboard_div">
+      <!--Divs that will hold each control and chart-->
+      <div id="filter_div"></div>
+      <div id="chart_div"></div>
+    </div>
+
 """
 
-
-chart_chartwrapper_template2 = """
-<script type="text/javascript">
-
-    // Check if google jsapi is already loaded.  If not, load it.
-    if (typeof window.google == 'undefined') {
-        jQuery.getScript('https://www.google.com/jsapi', function( data, textStatus, jqxhr) {
-            google_loader();
-        });
-    } else {
-        google_loader();
-    }
-
-    // load visualization library
-    function google_loader() {
-        // Insert list of packages with Python
-        google.load('visualization', '1.0', {'callback': doMyStuff});
-    }
-    
-    
-    function doMyStuff() {
-        // ***** Insert dataTable method -- DataTable constructor or arrayToDatable()
-        var data = new google.visualization.%(data_method)s
-
-        // ***** Insert formatters, if any
-        %(formatters)s
-        
-        var wrapper = new google.visualization.ChartWrapper({      
-            "containerId": "%(chart_div_id)s",    // ***** Insert chart div id
-            "dataTable": data,
-            "chartType": "%(chart_type)s",        // ***** Insert name of chart constructor
-            "options": %(chart_options)s          // ***** Insert chart options
-        });
-        wrapper.draw();
-    }
-</script>
-        <!-- ***** Insert chart div id and div_styles into the html -->
-<div id="%(chart_div_id)s" %(div_styles)s></div>
-"""
-
-chart_chartdraw_template = """
-<script type="text/javascript">
-
-    // Check if google jsapi is already loaded.  If not, load it.
-    if (typeof window.google == 'undefined') {
-        alert("asdf");
-        jQuery.getScript('https://www.google.com/jsapi', function( data, textStatus, jqxhr) {
-            google_loader();
-        });
-    } else {
-        google_loader();
-    }
-
-    // load visualization library
-    function google_loader() {
-        // ***** Insert list of packages with Python
-        google.load('visualization', '1.0', {'callback': drawChart, 'packages': %(packages)s});
-    }
-    
-    function drawChart() {
-        // ***** Insert dataTable method -- DataTable constructor or arrayToDatable()
-        var data = new google.visualization.%(data_method)s
-        
-        
-        // ***** Insert formatters, if any
-        %(formatters)s
-        
-        // ***** Insert name of chart constructor and chart div id
-        var chart = new google.visualization.%(chart_type)s(document.getElementById('%(chart_div_id)s'));
-        
-        // ***** Insert chart options
-        var options = %(chart_options)s;
-        
-        chart.draw(data, options);
-}</script>
-        <!-- ***** Insert chart div id and div_styles into the html -->
-<div id="%(chart_div_id)s" %(div_styles)s></div>
-
-"""
