@@ -38,6 +38,7 @@ data2 = [
 data_table = gviz_api.DataTable(description)
 data_table.LoadData(data2)
 
+print data_table.ToJSon()
 
 
 

@@ -470,6 +470,11 @@ class JugleChart():
         
         self.filters.append(filter)
         self.load_controls = True
+        
+    def set_role(self, col, role):
+        
+        #TODO
+        pass
     
     
     def copy(self):
