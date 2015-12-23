@@ -522,6 +522,13 @@ class JugleChart():
 
 class ChartRow:
     
+    """
+    A ChartRow can create a row of charts to display side-by-side.  Currently,
+    The charts are rendered in 2-4 bootstrap columns of equal size.
+    
+    Pass 2-4 chart objects to the constructor.
+    """
+    
     def __init__(self, *charts):
         
         self.charts = charts
