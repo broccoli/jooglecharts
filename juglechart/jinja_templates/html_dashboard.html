@@ -1,0 +1,6 @@
+<div id="{{ chart.dashboard_div_id }}">
+	{% for filter in chart.filters %}
+	<div id="{{ filter.div_id }}"></div>
+	{% endfor %}
+	<div id="{{ chart.chart_div_id }}" {{ chart.div_styles|format_styles_list }}></div>
+</div>

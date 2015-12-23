@@ -14,9 +14,6 @@
 
 		{% include 'js_chartwrapper.html' %}
 		
-		
-		
-
         {% if chart.filters %}
 			{% include 'js_dashboard.html' %}
         
@@ -29,13 +26,12 @@
     
 </script>
 {% if chart.filters %}
-<div id="{{ chart.dashboard_div_id }}">
-	{% for filter in chart.filters %}
-	<div id="{{ filter.div_id }}"></div>
-	{% endfor %}
-	<div id="{{ chart.chart_div_id }}" {{ chart.div_styles|format_styles_list }}></div>
-</div>
+
+{% include 'html_dashboard.html' %}
+
 {% else %}
-<div id="{{ chart.chart_div_id }}" {{ chart.div_styles|format_styles_list }}></div>
+
+{% include 'html_chart.html' %}
+
 {% endif %}
 
