@@ -235,10 +235,13 @@ class Filter():
 
         
     
-    def add_state(self):
+    def add_state(self, state = None, **kwargs):
         
-        # TODO
-        pass
+        if state:
+            add_options_dict_to_dict(self.state, state)
+    
+        if kwargs:
+            add_options_dict_to_dict(self.state, kwargs)
 
     def bind_filter(self, bind_target):
         self.bind_target = bind_target

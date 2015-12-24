@@ -7,7 +7,8 @@
         var {{ filter.name }} = new google.visualization.ControlWrapper({
           'controlType': '{{ filter.type }}',
           'containerId': '{{ filter.div_id }}',
-          'options': {{ filter.options|default("{}")|to_json }}
+          'options': {{ filter.options|default("{}")|to_json }},
+          'state': {{ filter.state|default("{}")|to_json }}
         });
 			{% endfor %}
 
