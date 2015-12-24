@@ -500,6 +500,10 @@ class JugleChart():
         # set the visible columns if hide_cols is set
         # get the number of columns
         if self.hide_cols:
+            
+            if isinstance(self.hide_cols, int):
+                self.hide_cols = [self.hide_cols]
+            
             if self.json:
                 # data is in a dataframe
                 num_cols = len(self.data_frame.columns)
