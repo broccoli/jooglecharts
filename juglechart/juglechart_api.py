@@ -35,6 +35,17 @@ DEPENDENCIES:
 
 '''
 
+'''
+Running todo list
+-- add roles / tooltips (not sure how to handle all of it)
+-- add google sheet data load
+-- position filter on top or bottom?
+-- add style palettes (colors, font)?
+-- add title banner, like Tableau?
+
+
+'''
+
 import copy
 import json
 import os
