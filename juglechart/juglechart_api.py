@@ -42,12 +42,12 @@ Running todo list
 -- position filter on top or bottom?
 -- add style palettes (colors, font)?
 -- add title banner, like Tableau?
+-- all text in chart row column?
 
 
 '''
 
 import copy
-import json
 import os
 import gviz_api
 import pandas as pd
@@ -55,30 +55,17 @@ from IPython.display import display, HTML
 
 from jinja2 import Environment, FileSystemLoader
 
+from jinja_filters import to_json, format_styles_list
+
 
 
 
 DEFAULT_CHART_TYPE = "ColumnChart"
 
-
+# Set up Jinja
 PATH = os.path.dirname(os.path.abspath(__file__))
 loader=FileSystemLoader(os.path.join(PATH, 'jinja_templates'))
 j2_env = Environment(loader=loader, trim_blocks=True, lstrip_blocks=True)
-
-def to_json(s):
-    return json.dumps(s)
-
-def format_styles_list(div_styles):
-
-    if div_styles:
-        style_base = "%s: %s"
-        style_list = []
-        for k, v in div_styles.iteritems():
-            style_list.append(style_base % (k, v))
-        return 'style="%s"' % "; ".join(style_list)
-    else:
-        return ""
-
 j2_env.filters['to_json'] = to_json
 j2_env.filters['format_styles_list'] = format_styles_list
 
@@ -239,20 +226,20 @@ class Filter():
         """
         
         if options:
-            add_options_dict_to_dict(self.options, options)
+            _add_options_dict_to_dict(self.options, options)
     
         if kwargs:
-            add_options_dict_to_dict(self.options, kwargs)
+            _add_options_dict_to_dict(self.options, kwargs)
 
         
     
     def add_state(self, state = None, **kwargs):
         
         if state:
-            add_options_dict_to_dict(self.state, state)
+            _add_options_dict_to_dict(self.state, state)
     
         if kwargs:
-            add_options_dict_to_dict(self.state, kwargs)
+            _add_options_dict_to_dict(self.state, kwargs)
 
     def bind_filter(self, bind_target):
         self.bind_target = bind_target
@@ -312,16 +299,16 @@ class Formatter():
         
         
         
-def add_options_dict_to_dict(current_options, options_dict):
+def _add_options_dict_to_dict(current_options, options_dict):
     for k, v in options_dict.iteritems():
         k2 = k.replace('_', '.')
 #         key_list = k2.split(".")
 
-        nested_dict = create_nested_dict_from_dotted_key((k2, v))
-        add_nested_dict_to_dict(current_options, nested_dict)
+        nested_dict = _create_nested_dict_from_dotted_key((k2, v))
+        _add_nested_dict_to_dict(current_options, nested_dict)
 
 
-def create_nested_dict_from_dotted_key(k_v_tuple):
+def _create_nested_dict_from_dotted_key(k_v_tuple):
     # A dotted k_v_tuple is like this:  ("style.font.color", "#FF0000")
     # converts to this: {"style": {"font": {"color": "#FF0000"}}}
     
@@ -336,7 +323,7 @@ def create_nested_dict_from_dotted_key(k_v_tuple):
     return return_dict
     
         
-def add_nested_dict_to_dict(current_dict, input_dict):
+def _add_nested_dict_to_dict(current_dict, input_dict):
     
     right_dict = input_dict
     left_dict = current_dict
@@ -452,10 +439,10 @@ class JugleChart():
             self.chart_options = {}
         
         if options:
-            add_options_dict_to_dict(self.chart_options, options)
+            _add_options_dict_to_dict(self.chart_options, options)
     
         if kwargs:
-            add_options_dict_to_dict(self.chart_options, kwargs)
+            _add_options_dict_to_dict(self.chart_options, kwargs)
         
     
     def add_div_styles(self, style_dict = None, **kwargs):
@@ -463,10 +450,10 @@ class JugleChart():
         pass styles for the chart div in a dictionary or as keyword arguments
         """
         if style_dict:
-            add_options_dict_to_dict(self.div_styles, style_dict)
+            _add_options_dict_to_dict(self.div_styles, style_dict)
     
         if kwargs:
-            add_options_dict_to_dict(self.div_styles, kwargs)
+            _add_options_dict_to_dict(self.div_styles, kwargs)
 
     
     def add_formatter(self, formatter, options=None, cols=None, source_cols=None, pattern=None, dest_col=None):
@@ -495,7 +482,7 @@ class JugleChart():
         
         return copy.deepcopy(self)
     
-    def set_render_properties(self, chart_type=None):
+    def _set_render_properties(self, chart_type=None):
         
         # set the chart div id on rendering, so the chart can be displayed
         # multiple times with unique ids.
@@ -533,7 +520,7 @@ class JugleChart():
     
     def render(self, chart_type=None):
         
-        self.set_render_properties(chart_type)
+        self._set_render_properties(chart_type)
 
         return j2_env.get_template('chart_template.html').render(chart=self, load_controls=self.load_controls)
 
@@ -572,7 +559,7 @@ class ChartRow:
     def render(self):
         
         for chart in self.charts:
-            chart.set_render_properties()
+            chart._set_render_properties()
             
         return j2_env.get_template('chartrow_template.html').render(chartrow=self, load_controls=self.load_controls)
         
