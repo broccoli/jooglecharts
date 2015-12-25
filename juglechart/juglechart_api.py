@@ -566,3 +566,13 @@ class ChartRow:
     def show(self):
 
         return display(HTML(self.render()))
+
+
+def _gplot(self, chart_type=None, **kwargs):
+    
+    chart = JugleChart(self)
+    if kwargs:
+        chart.add_chart_options(kwargs)
+    chart.show(chart_type)
+
+pd.DataFrame.gplot = _gplot
