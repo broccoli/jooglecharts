@@ -51,6 +51,7 @@ import copy
 import os
 import gviz_api
 import pandas as pd
+import json
 from IPython.display import display, HTML 
 
 from jinja2 import Environment, FileSystemLoader
@@ -381,13 +382,20 @@ class JugleChart():
         self.filters = []
         self.load_controls = False
         self.datetime_cols = kwargs.pop('datetime_cols', None)
+        self.allow_nulls = kwargs.pop('allow_nulls', False)
         self.hide_cols = None
         self.display_cols = None
         self.json = None
+        self.roles = []
+        self.tooltip_html = False
 
         self.chart_div_id = None
         self.dashboard_div_id = None
         self.num = None
+
+        # add any leftover kwargs to options
+        if kwargs:
+            self.add_chart_options(**kwargs)
 
         # data can be passed as a 2d array, a DataFrame or 2 or more Series
         if len(args) == 1:
@@ -395,7 +403,7 @@ class JugleChart():
             
             data = args[0]
             if isinstance(data, pd.DataFrame):
-                table = dataframe_to_gviz(data, datetime_cols=self.datetime_cols)
+                table = dataframe_to_gviz(data, datetime_cols=self.datetime_cols, allow_nulls=self.allow_nulls)
                 self.json = table.ToJSon()
                 self.data_frame = table
             elif (isinstance(data, list) and isinstance(data, list)):
@@ -412,7 +420,7 @@ class JugleChart():
                 message = "Data must be passed as 2d array, a DataFrame, or 2 or more Series"
                 raise PythonGoogleChartsException(message)
             self.data_frame = df
-            table = dataframe_to_gviz(df)
+            table = dataframe_to_gviz(df, datetime_cols=self.datetime_cols, allow_nulls=self.allow_nulls)
             self.json = table.ToJSon()
         
         
@@ -474,15 +482,26 @@ class JugleChart():
         
     def set_role(self, col, role):
         
-        #TODO
-        pass
-    
+        if not col and not role:
+            message = "col and role are required parameters."
+            raise PythonGoogleChartsException(message)
+        
+        self.roles.append((col, role))
+
+    def set_tooltip(self, col, html=False):
+        self.set_role(col, 'tooltip')
+        self.tooltip_html = html
+        
     
     def copy(self):
         
         return copy.deepcopy(self)
     
     def _set_render_properties(self, chart_type=None):
+        
+        """
+        Set values needed for rendering the chart
+        """
         
         # set the chart div id on rendering, so the chart can be displayed
         # multiple times with unique ids.
@@ -513,10 +532,19 @@ class JugleChart():
                 num_cols = len(self.data[0])
             self.display_cols = [ix for ix in range(num_cols) if ix not in self.hide_cols]
         
+        # set chart type to display
         if chart_type == None:
             self.display_chart_type = self.chart_type
         else:
             self.display_chart_type = chart_type
+
+        # modify json with roles
+        if self.roles:
+            json_decode = json.loads(self.json)
+            for col, role in self.roles:
+                json_decode['cols'][col].update({'p': {'role': role}})
+            self.json = json.dumps(json_decode)
+
     
     def render(self, chart_type=None):
         
@@ -525,9 +553,15 @@ class JugleChart():
         return j2_env.get_template('chart_template.html').render(chart=self, load_controls=self.load_controls)
 
         
-    def show(self, chart_type=None):
-        
-        return display(HTML(self.render(chart_type)))
+    def show(self, chart_type=None, **kwargs):
+
+        # any leftover kwargs are assumed to be chart options
+        if kwargs:
+            chart = self.copy()
+            chart.add_chart_options(**kwargs)            
+        else:
+            chart = self
+        display(HTML(chart.render(chart_type)))
 
 
 class ChartRow:
@@ -565,7 +599,7 @@ class ChartRow:
         
     def show(self):
 
-        return display(HTML(self.render()))
+        display(HTML(self.render()))
 
 
 def _gplot(self, chart_type=None, **kwargs):
