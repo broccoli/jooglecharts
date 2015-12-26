@@ -542,18 +542,31 @@ class JugleChart():
         if self.roles:
             json_decode = json.loads(self.json)
             for col, role in self.roles:
-                json_decode['cols'][col].update({'p': {'role': role}})
+                if role == 'tooltip' and self.tooltip_html:
+                    json_decode['cols'][col].update({'p': {'role': role, 'html': True}})
+                    self.add_chart_options(tooltip_isHtml = True)
+                else:
+                    json_decode['cols'][col].update({'p': {'role': role}})
             self.json = json.dumps(json_decode)
 
     
     def render(self, chart_type=None):
         
+        """
+        Render chart code.
+        chart_type is one-off type; not saved to underlying chart.
+        """
         self._set_render_properties(chart_type)
 
         return j2_env.get_template('chart_template.html').render(chart=self, load_controls=self.load_controls)
 
         
     def show(self, chart_type=None, **kwargs):
+
+        """
+        .show creates chart with one-off chart type and style options.
+        They aren't saved to the underlying chart.
+        """
 
         # any leftover kwargs are assumed to be chart options
         if kwargs:
