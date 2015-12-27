@@ -43,6 +43,7 @@ class Test(unittest.TestCase):
     def test_flat_vals_003(self):
         
         gchart = JugleChart(self.df1)
+        
         gchart.add_chart_options(a=1)
         gchart.add_chart_options(a=2)
         
@@ -211,6 +212,6 @@ if __name__ == "__main__":
 #     unittest.main()
     
     suite = unittest.TestSuite()
-    suite.addTest(Test('test_flat_vals_005'))
+    suite.addTest(Test('test_flat_vals_003'))
     unittest.TextTestRunner().run(suite)
     

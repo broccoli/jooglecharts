@@ -229,10 +229,10 @@ class Filter():
         if self.options == None:
             self.options = {}
         if options:
-            _add_options_dict_to_dict(self.options, options)
+            _add_dict_to_dict(self.options, options)
     
         if kwargs:
-            _add_options_dict_to_dict(self.options, kwargs)
+            _add_dict_to_dict(self.options, kwargs)
 
         
     
@@ -241,10 +241,10 @@ class Filter():
         if self.state == None:
             self.state = {}
         if state:
-            _add_options_dict_to_dict(self.state, state)
+            _add_dict_to_dict(self.state, state)
     
         if kwargs:
-            _add_options_dict_to_dict(self.state, kwargs)
+            _add_dict_to_dict(self.state, kwargs)
 
     def bind_filter(self, bind_target):
         self.bind_target = bind_target
@@ -304,27 +304,24 @@ class Formatter():
         
         
         
-def _add_options_dict_to_dict(current_options, options_dict):
-#     for k, v in options_dict.iteritems():
-#         k2 = k.replace('_', '.')
-# #         key_list = k2.split(".")
-# 
-#         nested_dict = _get_nested_dict_from_dotted_key((k2, v))
-#         _add_nested_dict_to_dict(current_options, nested_dict)
+def _add_dict_to_dict(current_options, options_dict):
 
+    # before combining the dictionaries, convert keywords that are
+    # in underscore or dot notation into nested dictionaries
     new_dict = {}
     for k, v in options_dict.iteritems():
         k2 = k.replace('_', '.')
-        nested_dict = _get_nested_dict_from_dotted_key((k2, v))
-        new_dict.update(nested_dict)
-#     print 'new_dict: ', new_dict
+        if '.' in k2:
+            nested_dict = _get_nested_dict_from_dotted_key(k2, v)
+            new_dict.update(nested_dict)
+        else:
+            new_dict[k] = v
     _add_nested_dict_to_dict2(current_options, new_dict)
 
-def _get_nested_dict_from_dotted_key(k_v_tuple):
+def _get_nested_dict_from_dotted_key(key, val):
     # A dotted k_v_tuple is like this:  ("style.font.color", "#FF0000")
     # converts to this: {"style": {"font": {"color": "#FF0000"}}}
     
-    key, val = k_v_tuple
     key_list = key.split(".")
     return_dict = {}
     for key in key_list[1:][::-1]:
@@ -335,72 +332,6 @@ def _get_nested_dict_from_dotted_key(k_v_tuple):
     return return_dict
     
         
-def _add_nested_dict_to_dict(current_dict, input_dict):
-    
-    """
-    This method adds one dictionary to another.  It's similar to 
-    dictionary .update(), but it will loop through levels of nested
-    dictionaries and update at the lowest possible level.
-    
-    (Currently, the input dictionary can only have one item in any dictionary.
-    To handle multiple items, need to use recursion.)
-    
-    Example 1, non-nested dictionaries, behaves like .update():
-    d1 = {'a': 5}
-    d2 = {'b': 6}
-    _add_nested_dict_to_dict(d1, d2)
-    print d1 # {'a': 5, 'b': 6}
-    
-    Example 2, with nested dictionaries:
-    d1 = {'a': {'b': 3} }
-    d2 = {'a': {'c': 4} }
-    _add_nested_dict_to_dict(d1, d2)
-    print d1 # {'a': {'b': 3, 'c': 4}}
-    
-    """
-        
-    right_dict = input_dict
-    left_dict = current_dict
-    go_on = True
-    
-    while go_on:
-        
-        for k, v in right_dict.iteritems():
-            
-            if not k in left_dict:
-                # if the k is not in the dict, it's new, so add it.
-                left_dict[k] = v
-                go_on = False
-                break
-            else:
-
-                # Now we know that the right key is in the left
-                if (not isinstance(left_dict[k], dict)) or (not isinstance(right_dict[k], dict)):
-                    # In some cases we are going to overwrite the left value
-                    # with the right.  We are assuming that the developer wants to
-                    # overwrite a value that has been previously set.
-                    # These case are:
-                    #    1. The left value is not a dictionary
-                    #    2. Or, the right value is not a dictionary
-                    # In either case, the chain of dictionaries has ended.
-                    left_dict[k] = right_dict[k]
-                    go_on = False
-                    break
-                else:
-                    
-                    # we know the right v and left v are both dictionaries.
-#                     right_keys = v.keys()
-#                     left_keys = left_dict[k].keys()
-#                     if not set(right_keys).issubset(set(left_keys)):
-#                         left_dict[k].update(v)
-#                         go_on = False
-#                         break
-                    
-                    # Here, the dictionary on the left continues the same chain
-                    # as the left, so advance to the next value to look for a
-                    # new dict value.
-                    right_dict = v
-                    left_dict = left_dict[k]
                                 
     
 def _add_nested_dict_to_dict2(current_dict, input_dict):
@@ -479,7 +410,6 @@ class JugleChart():
         self.json = None
         self.roles = []
         self.tooltip_html = False
-
         self.chart_div_id = None
         self.dashboard_div_id = None
         self.num = None
@@ -537,11 +467,12 @@ class JugleChart():
         if self.chart_options == None:
             self.chart_options = {}
         
-        if options:
-            _add_options_dict_to_dict(self.chart_options, options)
-    
+        if options == None: # I was defaulting the options to an empty dict, but that saves state across unit tests for some reason.
+            options = {}
         if kwargs:
-            _add_options_dict_to_dict(self.chart_options, kwargs)
+            options.update(kwargs)
+            
+        _add_dict_to_dict(self.chart_options, options)
         
     
     def add_div_styles(self, style_dict = None, **kwargs):
@@ -552,10 +483,10 @@ class JugleChart():
         if self.div_styles == None:
             self.div_styles = {}
         if style_dict:
-            _add_options_dict_to_dict(self.div_styles, style_dict)
+            _add_dict_to_dict(self.div_styles, style_dict)
     
         if kwargs:
-            _add_options_dict_to_dict(self.div_styles, kwargs)
+            _add_dict_to_dict(self.div_styles, kwargs)
 
     
     def add_formatter(self, formatter, options=None, cols=None, source_cols=None, pattern=None, dest_col=None):
