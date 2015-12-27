@@ -316,7 +316,7 @@ def _add_dict_to_dict(current_options, options_dict):
             new_dict.update(nested_dict)
         else:
             new_dict[k] = v
-    _add_nested_dict_to_dict2(current_options, new_dict)
+    _add_nested_dict_to_dict(current_options, new_dict)
 
 def _get_nested_dict_from_dotted_key(key, val):
     # A dotted k_v_tuple is like this:  ("style.font.color", "#FF0000")
@@ -334,7 +334,7 @@ def _get_nested_dict_from_dotted_key(key, val):
         
                                 
     
-def _add_nested_dict_to_dict2(current_dict, input_dict):
+def _add_nested_dict_to_dict(current_dict, input_dict):
     
     """
     This method adds one dictionary to another.  It's similar to 
@@ -388,7 +388,7 @@ def _add_nested_dict_to_dict2(current_dict, input_dict):
                 # new dict value.
                 right_dict = v
                 left_dict = left_dict[k]
-                _add_nested_dict_to_dict2(left_dict, right_dict)
+                _add_nested_dict_to_dict(left_dict, right_dict)
 
 
 class JugleChart():
