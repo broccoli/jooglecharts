@@ -226,6 +226,8 @@ class Filter():
         
         """
         
+        if self.options == None:
+            self.options = {}
         if options:
             _add_options_dict_to_dict(self.options, options)
     
@@ -236,6 +238,8 @@ class Filter():
     
     def add_state(self, state = None, **kwargs):
         
+        if self.state == None:
+            self.state = {}
         if state:
             _add_options_dict_to_dict(self.state, state)
     
@@ -301,15 +305,22 @@ class Formatter():
         
         
 def _add_options_dict_to_dict(current_options, options_dict):
+#     for k, v in options_dict.iteritems():
+#         k2 = k.replace('_', '.')
+# #         key_list = k2.split(".")
+# 
+#         nested_dict = _get_nested_dict_from_dotted_key((k2, v))
+#         _add_nested_dict_to_dict(current_options, nested_dict)
+
+    new_dict = {}
     for k, v in options_dict.iteritems():
         k2 = k.replace('_', '.')
-#         key_list = k2.split(".")
+        nested_dict = _get_nested_dict_from_dotted_key((k2, v))
+        new_dict.update(nested_dict)
+#     print 'new_dict: ', new_dict
+    _add_nested_dict_to_dict2(current_options, new_dict)
 
-        nested_dict = _create_nested_dict_from_dotted_key((k2, v))
-        _add_nested_dict_to_dict(current_options, nested_dict)
-
-
-def _create_nested_dict_from_dotted_key(k_v_tuple):
+def _get_nested_dict_from_dotted_key(k_v_tuple):
     # A dotted k_v_tuple is like this:  ("style.font.color", "#FF0000")
     # converts to this: {"style": {"font": {"color": "#FF0000"}}}
     
@@ -326,6 +337,28 @@ def _create_nested_dict_from_dotted_key(k_v_tuple):
         
 def _add_nested_dict_to_dict(current_dict, input_dict):
     
+    """
+    This method adds one dictionary to another.  It's similar to 
+    dictionary .update(), but it will loop through levels of nested
+    dictionaries and update at the lowest possible level.
+    
+    (Currently, the input dictionary can only have one item in any dictionary.
+    To handle multiple items, need to use recursion.)
+    
+    Example 1, non-nested dictionaries, behaves like .update():
+    d1 = {'a': 5}
+    d2 = {'b': 6}
+    _add_nested_dict_to_dict(d1, d2)
+    print d1 # {'a': 5, 'b': 6}
+    
+    Example 2, with nested dictionaries:
+    d1 = {'a': {'b': 3} }
+    d2 = {'a': {'c': 4} }
+    _add_nested_dict_to_dict(d1, d2)
+    print d1 # {'a': {'b': 3, 'c': 4}}
+    
+    """
+        
     right_dict = input_dict
     left_dict = current_dict
     go_on = True
@@ -354,12 +387,14 @@ def _add_nested_dict_to_dict(current_dict, input_dict):
                     go_on = False
                     break
                 else:
-                    right_keys = v.keys()
-                    left_keys = left_dict[k].keys()
-                    if not set(right_keys).issubset(set(left_keys)):
-                        left_dict[k].update(v)
-                        go_on = False
-                        break
+                    
+                    # we know the right v and left v are both dictionaries.
+#                     right_keys = v.keys()
+#                     left_keys = left_dict[k].keys()
+#                     if not set(right_keys).issubset(set(left_keys)):
+#                         left_dict[k].update(v)
+#                         go_on = False
+#                         break
                     
                     # Here, the dictionary on the left continues the same chain
                     # as the left, so advance to the next value to look for a
@@ -368,6 +403,62 @@ def _add_nested_dict_to_dict(current_dict, input_dict):
                     left_dict = left_dict[k]
                                 
     
+def _add_nested_dict_to_dict2(current_dict, input_dict):
+    
+    """
+    This method adds one dictionary to another.  It's similar to 
+    dictionary .update(), but it will loop through levels of nested
+    dictionaries and update at the lowest possible level.
+    
+    (Currently, the input dictionary can only have one item in any dictionary.
+    To handle multiple items, need to use recursion.)
+    
+    Example 1, non-nested dictionaries, behaves like .update():
+    d1 = {'a': 5}
+    d2 = {'b': 6}
+    _add_nested_dict_to_dict(d1, d2)
+    print d1 # {'a': 5, 'b': 6}
+    
+    Example 2, with nested dictionaries:
+    d1 = {'a': {'b': 3} }
+    d2 = {'a': {'c': 4} }
+    _add_nested_dict_to_dict(d1, d2)
+    print d1 # {'a': {'b': 3, 'c': 4}}
+    
+    """
+        
+    right_dict = input_dict
+    left_dict = current_dict
+    go_on = True
+    
+    for k, v in right_dict.iteritems():
+        
+        if not k in left_dict:
+            # if the k is not in the dict, it's new, so add it.
+            left_dict[k] = v
+            continue
+        else:
+
+            # Now we know that the right key is in the left
+            if (not isinstance(left_dict[k], dict)) or (not isinstance(right_dict[k], dict)):
+                # In some cases we are going to overwrite the left value
+                # with the right.  We are assuming that the developer wants to
+                # overwrite a value that has been previously set.
+                # These case are:
+                #    1. The left value is not a dictionary
+                #    2. Or, the right value is not a dictionary
+                # In either case, the chain of dictionaries has ended.
+                left_dict[k] = right_dict[k]
+                continue
+            else:
+                
+                # Here, the dictionary on the left continues the same chain
+                # as the left, so advance to the next value to look for a
+                # new dict value.
+                right_dict = v
+                left_dict = left_dict[k]
+                _add_nested_dict_to_dict2(left_dict, right_dict)
+
 
 class JugleChart():
     
@@ -457,6 +548,9 @@ class JugleChart():
         """
         pass styles for the chart div in a dictionary or as keyword arguments
         """
+        
+        if self.div_styles == None:
+            self.div_styles = {}
         if style_dict:
             _add_options_dict_to_dict(self.div_styles, style_dict)
     
@@ -471,17 +565,24 @@ class JugleChart():
         requires pattern, source_cols, and col.
         """
         
+        if self.formatters == None:
+            self.formatters = []
+            
         self.formatters.append(Formatter(formatter, options=options, cols=cols,
                 source_cols=source_cols, pattern=pattern, dest_col=dest_col))
 
     
     def add_filter(self, filter):
         
+        if self.filters == None:
+            self.filters = []
         self.filters.append(filter)
         self.load_controls = True
         
     def set_role(self, col, role):
         
+        if self.roles == None:
+            self.roles = []
         if not col and not role:
             message = "col and role are required parameters."
             raise PythonGoogleChartsException(message)

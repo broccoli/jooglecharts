@@ -83,8 +83,23 @@ class Test(unittest.TestCase):
         
         self.assertEqual(expected, actual)
 
+
+    def test_flat_vals_007(self):
+        
+        gchart = JugleChart(self.df1)
+        gchart.add_chart_options(a=1)
+        gchart.add_chart_options({'b': 2, 'c': 4})
+        
+        expected = {'a': 1, 'b': 2, 'c': 4}
+        actual = gchart.chart_options
+        
+        self.assertEqual(expected, actual)
+
+    
+    
     def test_nested_vals_001(self):
 
+        # Add a nested dictionary with underscore notation in kwarg
         gchart = JugleChart(self.df1)
         gchart.add_chart_options(a_b = 1)
         
@@ -95,6 +110,7 @@ class Test(unittest.TestCase):
 
     def test_nested_vals_002(self):
 
+        # Add a nested dictionary with underscore notation in key
         gchart = JugleChart(self.df1)
         gchart.add_chart_options({'a_b':1})
         
@@ -105,6 +121,8 @@ class Test(unittest.TestCase):
 
 
     def test_nested_vals_003(self):
+        
+        # Add a nested dictionary with dot notation in key
 
         gchart = JugleChart(self.df1)
         gchart.add_chart_options({'a.b':1})
@@ -115,6 +133,7 @@ class Test(unittest.TestCase):
         self.assertEqual(expected, actual)
 
     def test_nested_vals_004(self):
+        # Add a nested dictionary with three levels
 
         gchart = JugleChart(self.df1)
         gchart.add_chart_options(a_b_c = 1)
@@ -125,6 +144,7 @@ class Test(unittest.TestCase):
         self.assertEqual(expected, actual)
 
     def test_nested_vals_005(self):
+        # Combine two nested dictionaries
 
         gchart = JugleChart(self.df1)
         gchart.add_chart_options(a_b = 1)
@@ -138,6 +158,7 @@ class Test(unittest.TestCase):
 
     def test_nested_vals_006(self):
 
+        # Overwrite a nested scalar with a dictionary
         gchart = JugleChart(self.df1)
         gchart.add_chart_options(a_b = 1)
         gchart.add_chart_options(a_b_c = 2)
@@ -150,6 +171,7 @@ class Test(unittest.TestCase):
     
     def test_nested_vals_007(self):
 
+        # Overwrite a nested dictionary with a scalar
         gchart = JugleChart(self.df1)
         gchart.add_chart_options(a_b_c = 2)
         gchart.add_chart_options(a_b = 1)
@@ -161,6 +183,7 @@ class Test(unittest.TestCase):
 
     def test_nested_vals_008(self):
 
+        # Overwrite one nested item scalar with another
         gchart = JugleChart(self.df1)
         gchart.add_chart_options(a_b = 2)
         gchart.add_chart_options(a_b = 1)
@@ -170,13 +193,24 @@ class Test(unittest.TestCase):
         
         self.assertEqual(expected, actual)
 
+    def test_nested_vals_009(self):
+
+        # Add dictionary that has multiple items at lower level
+        gchart = JugleChart(self.df1)
+        gchart.add_chart_options(a_b = 2)
+        gchart.add_chart_options({'a': {'c': 3, 'd': 4}})
+        
+        expected = {'a': {'b': 2, 'c': 3, 'd': 4}}
+        actual = gchart.chart_options
+        
+        self.assertEqual(expected, actual)
 
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
-    unittest.main()
+#     unittest.main()
     
-#     suite = unittest.TestSuite()
-#     suite.addTest(Test('test_flat_vals_005'))
-#     unittest.TextTestRunner().run(suite)
+    suite = unittest.TestSuite()
+    suite.addTest(Test('test_flat_vals_005'))
+    unittest.TextTestRunner().run(suite)
     
