@@ -142,7 +142,9 @@ def dataframe_to_gviz(df, datetime_cols=None, allow_nulls=False):
     translation_dict= {}
     translation_dict['object'] = 'string'
     translation_dict['float64'] = 'number'
+    translation_dict['float32'] = 'number'
     translation_dict['int64'] = 'number'
+    translation_dict['int32'] = 'number'
     translation_dict['datetime64[ns]'] = 'date'
     translation_dict['bool'] = 'boolean'
     
