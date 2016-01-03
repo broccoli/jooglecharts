@@ -1,5 +1,5 @@
         // Add formatters, if any
-        {% for formatter in chart.formatters %}
+        {% for formatter in jg.formatters %}
         	{% if formatter.type is equalto "PatternFormat" %}
         var {{ formatter.name }} = new google.visualization.{{ formatter.type }}("{{ formatter.pattern }}");
         {{ formatter.name }}.format({{ chart.data_name }}, {{ formatter.source_cols }}, {{ formatter.dest_col }});

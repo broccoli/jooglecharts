@@ -3,7 +3,7 @@
 {# only shows the other columns. #}
         var {{ chart.name }} = new google.visualization.ChartWrapper({      
             "containerId": "{{ chart.chart_div_id }}",
-            "dataTable": {{ chart.data_name }},
+            "dataTable": {{ jg.data_name }},
             {% if chart.display_cols %}
             "view": {columns: {{ chart.display_cols }}},  
             {% endif %}
