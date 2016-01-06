@@ -547,7 +547,9 @@ class JugleChart():
             self.json = table.ToJSon()
         
         
+    def add_chart_options(self, *args, **kwargs):
         
+        self.chart.add_chart_options(*args, **kwargs)
 
     
     def add_formatter(self, formatter, options=None, cols=None, source_cols=None, pattern=None, dest_col=None):
