@@ -398,15 +398,18 @@ def _add_nested_dict_to_dict(current_dict, input_dict):
 
 class _Chart():
     
-    def __init__(self, chart_type, **kwargs):
+    def __init__(self, chart_type=None, **kwargs):
         
         # Chart attributes
-        self.chart_type = kwargs.pop('chart_type', DEFAULT_CHART_TYPE)
+        if chart_type == None:
+            chart_type = DEFAULT_CHART_TYPE
+        self.chart_type = chart_type
         self.display_chart_type = None
         self.chart_options = {}
         self.div_styles = {}
-        self.hide_cols = None
-        self.display_cols = None
+#         self.hide_cols = None
+        self.view_cols = None
+#         self.display_cols = None
         self.chart_div_id = None
         self.num = None
         self.name = None
@@ -457,6 +460,13 @@ class _Chart():
         if kwargs:
             _add_dict_to_dict(self.div_styles, kwargs)
 
+    def set_view_cols(self, cols):
+
+        if isinstance(cols, int):
+            cols = [cols]
+        self.view_cols = cols
+
+
     def _set_render_properties(self, num_cols, chart_type=None):
 
         # chart render properties
@@ -468,12 +478,15 @@ class _Chart():
         if self.chart_options == None:
             self.chart_options = {}
 
-        if self.hide_cols:
-            
-            if isinstance(self.hide_cols, int):
-                self.hide_cols = [self.hide_cols]
-            
-            self.display_cols = [ix for ix in range(num_cols) if ix not in self.hide_cols]
+#         if self.hide_cols:
+#             
+#             if isinstance(self.hide_cols, int):
+#                 self.hide_cols = [self.hide_cols]
+#             
+#             self.display_cols = [ix for ix in range(num_cols) if ix not in self.hide_cols]
+# 
+#         print "========", self.hide_cols
+
 
         # set chart type to display
         if chart_type == None:
@@ -488,6 +501,7 @@ class JugleChart():
         # jg attributes
         self.num = None
         self.name = None
+        self.charts = []
 
         # Data attributes
         self.data = None
@@ -506,7 +520,7 @@ class JugleChart():
         # Chart attributes
         chart_type = kwargs.pop('chart_type', DEFAULT_CHART_TYPE)
         
-        self.chart = _Chart(chart_type)
+        self.charts.append(_Chart(chart_type))
 #         self.display_chart_type = None
 #         self.chart_options = {}
 #         self.div_styles = {}
@@ -514,11 +528,11 @@ class JugleChart():
 #         self.display_cols = None
 #         self.chart_div_id = None
 #         self.num = None
-        
+
 
         # add any leftover kwargs to options
         if kwargs:
-            self.chart.add_chart_options(**kwargs)
+            self.charts[0].add_chart_options(**kwargs)
 
         # data can be passed as a 2d array, a DataFrame or 2 or more Series
         if len(args) == 1:
@@ -549,8 +563,15 @@ class JugleChart():
         
     def add_chart_options(self, *args, **kwargs):
         
-        self.chart.add_chart_options(*args, **kwargs)
+        self.charts[0].add_chart_options(*args, **kwargs)
 
+    def set_view_cols(self, *args, **kwargs):
+        self.charts[0].set_view_cols(*args, **kwargs)
+        
+        
+    def set_chart_type(self, chart_type):
+        
+        self.charts[0].chart_type = chart_type
     
     def add_formatter(self, formatter, options=None, cols=None, source_cols=None, pattern=None, dest_col=None):
         
@@ -587,6 +608,8 @@ class JugleChart():
         self.set_role(col, 'tooltip')
         self.tooltip_html = html
         
+    def _add_chart(self, chart):
+        self.charts.append(chart)
 
     def copy(self):
         
@@ -630,7 +653,11 @@ class JugleChart():
             
         # set the visible columns if hide_cols is set
         # get the number of columns
-        self.chart._set_render_properties(num_cols, chart_type)
+        for index, chart in enumerate(self.charts):
+            if index == 0:
+                chart._set_render_properties(num_cols, chart_type)
+            else:
+                chart._set_render_properties(num_cols)
 
         
 
@@ -654,8 +681,7 @@ class JugleChart():
         """
         self._set_render_properties(chart_type)
 
-        return j2_env.get_template('chart_template.html').render(jg=self, load_controls=self.load_controls,
-                                                                 chart = self.chart)
+        return j2_env.get_template('chart_template.html').render(jg=self, load_controls=self.load_controls)
 
         
     def show(self, chart_type=None, **kwargs):
@@ -666,8 +692,8 @@ class JugleChart():
         """
 
         # any leftover kwargs are assumed to be chart options
+        chart = self.copy()
         if kwargs:
-            chart = self.copy()
             chart.add_chart_options(**kwargs)            
         else:
             chart = self
@@ -683,27 +709,27 @@ class ChartRow:
     Pass 2-4 chart objects to the constructor.
     """
     
-    def __init__(self, *charts):
+    def __init__(self, *jcs):
         
-        self.charts = charts
-        self.num_charts = len(self.charts)
+        self.jcs = jcs
+        self.num_jcs = len(self.jcs)
         self.load_controls = False
         
-        if self.num_charts not in [2, 3, 4]:
+        if self.num_jcs not in [2, 3, 4]:
             message = "A chart row must have 2-4 charts"
             raise PythonGoogleChartsException(message)
         
-        self.bootstrap_num = 12 / self.num_charts
-        for chart in self.charts:
-            if chart.filters:
+        self.bootstrap_num = 12 / self.num_jcs
+        for jc in self.jcs:
+            if jc.filters:
                 self.load_controls = True
                 break
-                
+
 
     def render(self):
         
-        for chart in self.charts:
-            chart._set_render_properties()
+        for jc in self.jcs:
+            jc._set_render_properties()
             
         return j2_env.get_template('chartrow_template.html').render(chartrow=self, load_controls=self.load_controls)
         

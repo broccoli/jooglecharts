@@ -14,18 +14,21 @@
 
 		{% include 'js_chartwrapper.html' %}
 		
-        {% if chart.filters %}
+        {% if jg.filters %}
 			{% include 'js_dashboard.html' %}
         
         {% else %}
+        	{% for chart in jg.charts %}
         
         {{ chart.name }}.draw();
+        
+        	{% endfor %}
         
         {% endif %}
     }
     
 </script>
-{% if chart.filters %}
+{% if jg.filters %}
 
 {% include 'html_dashboard.html' %}
 

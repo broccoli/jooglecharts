@@ -4,20 +4,24 @@
 
     function doStuff() {
     
-		{% for chart in chartrow.charts %}
+		{% for jg in chartrow.jcs %}
 	// ==================== CHARTROW CHART {{ loop.index }} ============================= //
 			{% include 'js_data.html' %}
-	        {% if chart.formatters %}
+	        {% if jg.formatters %}
 			{% include 'js_formatters.html' %}
 			{% endif %}
 	
 			{% include 'js_chartwrapper.html' %}
 			
-	        {% if chart.filters %}
+	        {% if jg.filters %}
 				{% include 'js_dashboard.html' %}
 	        {% else %}
 	        
-	        {{ chart.name }}.draw();
+	        	{% for chart in jg.charts %}
+        
+        			{{ chart.name }}.draw();
+        
+    	    	{% endfor %}
 	        {% endif %}
 	// ==================================================================== //
 	        
@@ -26,9 +30,9 @@
     
 </script>
 <div class="row">
-	{% for chart in chartrow.charts %}
+	{% for jg in chartrow.jcs %}
 	<div class="col-sm-{{ chartrow.bootstrap_num }}">
-		{% if chart.filters %}
+		{% if jg.filters %}
 			{% include 'html_dashboard.html' %}
 		{% else %}
 			{% include 'html_chart.html' %}
