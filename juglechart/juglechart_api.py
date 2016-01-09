@@ -478,14 +478,6 @@ class _Chart():
         if self.chart_options == None:
             self.chart_options = {}
 
-#         if self.hide_cols:
-#             
-#             if isinstance(self.hide_cols, int):
-#                 self.hide_cols = [self.hide_cols]
-#             
-#             self.display_cols = [ix for ix in range(num_cols) if ix not in self.hide_cols]
-# 
-#         print "========", self.hide_cols
 
 
         # set chart type to display
@@ -521,14 +513,6 @@ class JugleChart():
         chart_type = kwargs.pop('chart_type', DEFAULT_CHART_TYPE)
         
         self.charts.append(_Chart(chart_type))
-#         self.display_chart_type = None
-#         self.chart_options = {}
-#         self.div_styles = {}
-#         self.hide_cols = None
-#         self.display_cols = None
-#         self.chart_div_id = None
-#         self.num = None
-
 
         # add any leftover kwargs to options
         if kwargs:
@@ -607,7 +591,11 @@ class JugleChart():
     def set_tooltip(self, col, html=False):
         self.set_role(col, 'tooltip')
         self.tooltip_html = html
+
+    def add_div_styles(self, *args, **kwargs):
         
+        self.charts[0].add_div_styles(*args, **kwargs)
+                
     def _add_chart(self, chart):
         self.charts.append(chart)
 
@@ -620,19 +608,6 @@ class JugleChart():
         """
         Set values needed for rendering the chart
         """
-        
-        
-        # set the chart div id on rendering, so the chart can be displayed
-        # multiple times with unique ids.
-        
-#         # chart render properties
-#         self.num = get_chart_counter()
-#         self.name = "google_chart_" + str(self.num)
-#         self.chart_div_id = self.name + "_div_id"
-# 
-#         # set chart options to empty dict if it's been nulled out
-#         if self.chart.chart_options == None:
-#             self.chart.chart_options = {}
         
         
         # jg render properties
@@ -720,14 +695,16 @@ class ChartRow:
             raise PythonGoogleChartsException(message)
         
         self.bootstrap_num = 12 / self.num_jcs
-        for jc in self.jcs:
-            if jc.filters:
-                self.load_controls = True
-                break
+
 
 
     def render(self):
         
+        for jc in self.jcs:
+            if jc.filters:
+                self.load_controls = True
+                break
+            
         for jc in self.jcs:
             jc._set_render_properties()
             
