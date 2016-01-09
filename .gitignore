@@ -1,7 +1,7 @@
 
 # a list of local files I don't uploaded.
 NLYZR-367*
-driver.py
+driver*
 sandbox.py
 *sandbox*
 test_chart_string.ipynb
