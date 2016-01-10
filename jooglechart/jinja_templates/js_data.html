@@ -1,0 +1,6 @@
+        // Create DataTable object from DataTable constructor or arrayToDatable()
+        {% if jg.json %}
+        var {{ jg.data_name }} = new google.visualization.DataTable({{ jg.json }});
+        {% else %}
+        var {{ jg.data_name }} = new google.visualization.arrayToDataTable({{ jg.data }})
+        {% endif %}

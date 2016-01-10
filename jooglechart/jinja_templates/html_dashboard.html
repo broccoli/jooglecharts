@@ -1,0 +1,8 @@
+<div id="{{ jg.dashboard_div_id }}">
+	{% for filter in jg.filters %}
+	<div id="{{ filter.div_id }}"></div>
+	{% endfor %}
+	{% for chart in jg.charts %}
+	<div id="{{ chart.chart_div_id }}" {{ chart.div_styles|format_styles_list }}></div>
+	{% endfor %}
+</div>
