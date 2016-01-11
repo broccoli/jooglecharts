@@ -17,7 +17,11 @@ setup(
     author_email='richd@indeed.com',
     install_requires=[
         'Jinja2==2.8',
-        'gviz_api',
+        'gviz_api.py==1.8.2',
         'IPython[notebook]==4.0.0',
         'pandas',
-    ],)
+    ],
+    dependency_links = ['git+https://github.com/google/google-visualization-python.git#egg=gviz_api-1.8.2'],
+
+      
+      )
