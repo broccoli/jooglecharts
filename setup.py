@@ -10,6 +10,7 @@ setup(
     name='jooglechart',
     version='0.1',
     packages=['jooglechart',],
+    data_files=["*.ipynb", "notebooks/*.ipynb", "jinja_templates/*.html"],
     license='Creative Commons Attribution-Noncommercial-Share Alike license',
     description='Module for formatting dataframes and other common ishbook notebook outputs, in particular for styling and adding javascript to tables.',
     long_description=open('README.md').read(),
@@ -22,6 +23,4 @@ setup(
         'pandas',
     ],
     dependency_links = ['git+https://github.com/google/google-visualization-python.git#egg=gviz_api-1.8.2'],
-
-      
-      )
+    )
