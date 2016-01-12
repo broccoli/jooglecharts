@@ -1,6 +1,0 @@
-recursive-include *.ipynb
-include jooglechart *.ipynb
-include jooglechart *.md
-recursive-include jooglechart/jinja_templates *
-recursive-include jooglechart/notebooks *
-recursive-exclude sandbox driver
