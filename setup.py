@@ -10,7 +10,7 @@ setup(
     name='jooglechart',
     version='0.1',
     packages=['jooglechart',],
-    data_files=["*.ipynb", "notebooks/*.ipynb", "jinja_templates/*.html"],
+    package_data={'mypkg': ['jinja_templates/*.html', '*.ipynb']},
     license='Creative Commons Attribution-Noncommercial-Share Alike license',
     description='Module for formatting dataframes and other common ishbook notebook outputs, in particular for styling and adding javascript to tables.',
     long_description=open('README.md').read(),
