@@ -485,7 +485,7 @@ class _Chart():
         else:
             self.display_chart_type = chart_type
 
-class JugleChart():
+class JoogleChart():
     
     def __init__(self, *args, **kwargs):
 
@@ -716,7 +716,7 @@ class ChartRow:
 
 def _gplot(self, chart_type=None, **kwargs):
     
-    chart = JugleChart(self)
+    chart = JoogleChart(self)
     if kwargs:
         chart.add_chart_options(kwargs)
     chart.show(chart_type)
