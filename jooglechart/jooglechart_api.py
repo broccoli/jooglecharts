@@ -654,8 +654,13 @@ class JoogleChart():
         chart_type is one-off type; not saved to underlying chart.
         """
         self._set_render_properties(chart_type)
+        
+        context = {}
+        context['jg'] = self
+        context['load_controls'] = self.load_controls
+        context['callback_name'] = 'doStuff_' + str(self.num)
 
-        return j2_env.get_template('chart_template.html').render(jg=self, load_controls=self.load_controls)
+        return j2_env.get_template('chart_template.html').render(context)
 
         
     def show(self, chart_type=None, **kwargs):
@@ -699,6 +704,8 @@ class ChartRow:
 
     def render(self):
         
+        self.num = get_jugle_chart_counter()
+
         for jc in self.jcs:
             if jc.filters:
                 self.load_controls = True
@@ -706,8 +713,12 @@ class ChartRow:
             
         for jc in self.jcs:
             jc._set_render_properties()
-            
-        return j2_env.get_template('chartrow_template.html').render(chartrow=self, load_controls=self.load_controls)
+        
+        context = {}
+        context['chartrow'] = self
+        context['load_controls'] = self.load_controls
+        context['callback_name'] = 'doStuff_' + str(self.num)
+        return j2_env.get_template('chartrow_template.html').render(context)
         
     def show(self):
 

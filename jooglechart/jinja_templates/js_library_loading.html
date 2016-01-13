@@ -10,8 +10,8 @@
     // load visualization library    
     function google_loader() {
     {% if load_controls %}
-		google.load('visualization', '1.0', {'packages':['controls'], 'callback': doStuff});
+		google.load('visualization', '1.0', {'packages':['controls'], 'callback': {{ callback_name }}});
 	{% else %}    
-        google.load('visualization', '1.0', {'callback': doStuff});
+        google.load('visualization', '1.0', {'callback': {{ callback_name }}});
     {% endif %}
     }

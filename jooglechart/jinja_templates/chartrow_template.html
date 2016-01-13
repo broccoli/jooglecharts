@@ -2,7 +2,7 @@
 
 	{% include 'js_library_loading.html' %}
 
-    function doStuff() {
+    function {{ callback_name }}() {
     
 		{% for jg in chartrow.jcs %}
 	// ==================== CHARTROW CHART {{ loop.index }} ============================= //
