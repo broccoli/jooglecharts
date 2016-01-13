@@ -10,6 +10,11 @@ import pandas as pd
 import numpy as np
 
 
+x = ['a', 'b', 'c', 'd']
+y = [4, 2, 5, 3]
+d = {'x': x, 'y': y}
+test_df = pd.DataFrame(d)
+
 
 def get_random_int():
 
