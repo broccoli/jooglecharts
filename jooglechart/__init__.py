@@ -1,1 +1,1 @@
-from jooglechart_api import JoogleChart, ChartRow, Filter, _Chart
+# from jooglechart_api import JoogleChart, ChartRow, Filter, _Chart
