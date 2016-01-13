@@ -365,7 +365,6 @@ def _add_nested_dict_to_dict(current_dict, input_dict):
         
     right_dict = input_dict
     left_dict = current_dict
-    go_on = True
     
     for k, v in right_dict.iteritems():
         
