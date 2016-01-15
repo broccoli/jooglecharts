@@ -659,6 +659,7 @@ class JoogleChart():
         context['jg'] = self
         context['load_controls'] = self.load_controls
         context['callback_name'] = 'doStuff_' + str(self.num)
+        context['google_loader_name'] = 'google_loader_' + str(self.num)
 
         return j2_env.get_template('chart_template.html').render(context)
 
@@ -718,6 +719,7 @@ class ChartRow:
         context['chartrow'] = self
         context['load_controls'] = self.load_controls
         context['callback_name'] = 'doStuff_' + str(self.num)
+        context['google_loader_name'] = 'google_loader_' + str(self.num)
         return j2_env.get_template('chartrow_template.html').render(context)
         
     def show(self):

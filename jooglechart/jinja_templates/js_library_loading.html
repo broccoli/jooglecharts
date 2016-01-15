@@ -1,14 +1,14 @@
     // Check if google jsapi is already loaded.  If not, load it.
     if (typeof window.google == 'undefined') {
         jQuery.getScript('https://www.google.com/jsapi', function( data, textStatus, jqxhr) {
-            google_loader();
+            {{ google_loader_name }}();
         });
     } else {
-        google_loader();
+        {{ google_loader_name }}();
     }
 
     // load visualization library    
-    function google_loader() {
+    function {{ google_loader_name }}() {
     {% if load_controls %}
 		google.load('visualization', '1.0', {'packages':['controls'], 'callback': {{ callback_name }}});
 	{% else %}    
