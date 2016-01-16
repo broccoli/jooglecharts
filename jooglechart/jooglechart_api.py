@@ -469,11 +469,18 @@ class _Chart():
         
         if self.div_styles == None:
             self.div_styles = {}
-        if style_dict:
+
+        if style_dict == None and not kwargs:
+            # user is resetting options
+            
+            self.div_styles = {}
+        else:
+            if style_dict == None:
+                style_dict = {}
+            if kwargs:
+                style_dict.update(kwargs)
             _add_dict_to_dict(self.div_styles, style_dict)
     
-        if kwargs:
-            _add_dict_to_dict(self.div_styles, kwargs)
 
     def set_view_cols(self, cols):
 
@@ -561,9 +568,7 @@ class JoogleChart():
         
         
     def add_chart_options(self, options=None, **kwargs):
-        
-        print kwargs
-        
+                
         self.charts[0].add_chart_options(options, **kwargs)
 
     def set_view_cols(self, *args, **kwargs):
