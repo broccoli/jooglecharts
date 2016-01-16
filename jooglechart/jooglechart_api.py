@@ -434,16 +434,32 @@ class _Chart():
         
         """
         
+        
         # Set chart to empty dictionary if user has nulled it out.
         if self.chart_options == None:
             self.chart_options = {}
         
-        if options == None: # I was defaulting the options to an empty dict, but that saves state across unit tests for some reason.
-            options = {}
-        if kwargs:
-            options.update(kwargs)
+        # case 1 User has passed None
+        # -- options is None, kwargs is empty
+        
+        # case 2.  User has passed an options dictionary, with or without kwargs, too
+        # -- options is not None; kwargs may or may not be empty
+        
+        # case 3.  User has passed no dictionary, but has passed kwargs
+        # -- options is None, kwargs is not empty
+        
+        
+        if options == None and not kwargs:
+            # user is resetting options
             
-        _add_dict_to_dict(self.chart_options, options)
+            self.chart_options = {}
+        else:
+            if options == None:
+                options = {}
+            if kwargs:
+                options.update(kwargs)
+            
+            _add_dict_to_dict(self.chart_options, options)
         
     
     def add_div_styles(self, style_dict = None, **kwargs):
@@ -544,9 +560,11 @@ class JoogleChart():
             self.json = table.ToJSon()
         
         
-    def add_chart_options(self, *args, **kwargs):
+    def add_chart_options(self, options=None, **kwargs):
         
-        self.charts[0].add_chart_options(*args, **kwargs)
+        print kwargs
+        
+        self.charts[0].add_chart_options(options, **kwargs)
 
     def set_view_cols(self, *args, **kwargs):
         self.charts[0].set_view_cols(*args, **kwargs)
