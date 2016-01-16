@@ -207,10 +207,6 @@ class Filter():
         self.type = type
         self.options = {}
         self.state = {}
-    
-        self.num = get_filter_counter()
-        self.name = "google_filter_" + str(self.num)
-        self.div_id = self.name + "_div_id"
         self.bind_target = None
 
 
@@ -254,6 +250,10 @@ class Filter():
     def bind_filter(self, bind_target):
         self.bind_target = bind_target
 
+    def _set_render_properties(self):
+        self.num = get_filter_counter()
+        self.name = "google_filter_" + str(self.num)
+        self.div_id = self.name + "_div_id"
 
 
 class Formatter():
@@ -633,6 +633,9 @@ class JoogleChart():
             else:
                 chart._set_render_properties(num_cols)
 
+        for filter_ in self.filters:
+            filter_._set_render_properties()
+            
         
 
         # modify json with roles
