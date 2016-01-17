@@ -439,16 +439,6 @@ class _Chart():
         if self.chart_options == None:
             self.chart_options = {}
         
-        # case 1 User has passed None
-        # -- options is None, kwargs is empty
-        
-        # case 2.  User has passed an options dictionary, with or without kwargs, too
-        # -- options is not None; kwargs may or may not be empty
-        
-        # case 3.  User has passed no dictionary, but has passed kwargs
-        # -- options is None, kwargs is not empty
-        
-        
         if options == None and not kwargs:
             # user is resetting options
             
@@ -471,7 +461,7 @@ class _Chart():
             self.div_styles = {}
 
         if style_dict == None and not kwargs:
-            # user is resetting options
+            # user is resetting styles
             
             self.div_styles = {}
         else:
