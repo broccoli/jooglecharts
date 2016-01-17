@@ -9,7 +9,7 @@ from pandas import DataFrame
 import pandas as pd
 import numpy as np
 
-from juglechart.juglechart_api import dataframe_to_gviz, PythonGoogleChartsException
+from jooglechart.jooglechart_api import dataframe_to_gviz, PythonGoogleChartsException
 
 from datetime import datetime, date
 
