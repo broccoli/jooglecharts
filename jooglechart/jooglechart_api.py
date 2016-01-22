@@ -52,6 +52,7 @@ import os
 import gviz_api
 import pandas as pd
 import json
+
 from IPython.display import display, HTML 
 
 from jinja2 import Environment, FileSystemLoader
@@ -313,15 +314,22 @@ def _add_dict_to_dict(current_options, options_dict):
 
     # before combining the dictionaries, convert keywords that are
     # in underscore or dot notation into nested dictionaries
-    new_dict = {}
+#     new_dict = {}
+    new_dicts = []
     for k, v in options_dict.iteritems():
         k2 = k.replace('_', '.')
         if '.' in k2:
             nested_dict = _get_nested_dict_from_dotted_key(k2, v)
-            new_dict.update(nested_dict)
+
+            
+            new_dicts.append(nested_dict)
+
         else:
-            new_dict[k] = v
-    _add_nested_dict_to_dict(current_options, new_dict)
+            new_dicts.append({k: v})
+
+
+    for d in new_dicts:
+        _add_nested_dict_to_dict(current_options, d)
 
 def _get_nested_dict_from_dotted_key(key, val):
     # A dotted k_v_tuple is like this:  ("style.font.color", "#FF0000")
@@ -337,7 +345,6 @@ def _get_nested_dict_from_dotted_key(key, val):
     return return_dict
     
         
-                                
     
 def _add_nested_dict_to_dict(current_dict, input_dict):
     
