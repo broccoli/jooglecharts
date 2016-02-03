@@ -776,7 +776,7 @@ def _frame_globals():
 
 # ISHBOOK-495
 # Hack to get the notebook id if in the ishbook context.
-def _get_nbid(frame_globals)
+def _get_nbid(frame_globals):
     return frame_globals["__nbparams__"]["__meta__"]["notebook"]
 
 # ISHBOOK-495
@@ -789,7 +789,7 @@ def _get_nbparams(frame_globals):
 def _get_notebook_url():
     import urllib
     fg = _frame_globals()
-    if _is_real_ishbook(frame_globals):
+    if _is_real_ishbook(fg):
         (nbid, nbparams) = (_get_nbid(fg), _get_nbparams(fg))
         qs = urllib.urlencode(nbparams, doseq=True)
         return BASE_NOTEBOOK_URL.format(nbid=nbid, qs=qs)
