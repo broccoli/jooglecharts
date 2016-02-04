@@ -13,7 +13,7 @@ import json
 class DateEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, datetime):
-            return "|new Date({}, {}, {}, {}, {}, {})|".format(obj.year, obj.month, obj.day,
+            return "|new Date({}, {}, {}, {}, {}, {})|".format(obj.year, obj.month - 1, obj.day,
                                 obj.hour, obj.minute, obj.second)
         # Let the base class default method raise the TypeError
         return json.JSONEncoder.default(self, obj)
