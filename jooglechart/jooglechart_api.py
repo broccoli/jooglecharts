@@ -777,7 +777,8 @@ def _frame_globals():
 # ISHBOOK-495
 # Hack to get the notebook id if in the ishbook context.
 def _get_nbid(frame_globals):
-    return frame_globals["__nbparams__"]["__meta__"]["notebook"]
+    ls_dict = frame_globals["__nbparams__"]["__meta__"]["lookup_service"]
+    return json.loads(ls_dict["data"])["notebook"]
 
 # ISHBOOK-495
 # Hack to get the notebook params if in the ishbook context.
