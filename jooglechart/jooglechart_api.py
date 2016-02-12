@@ -53,6 +53,10 @@ import gviz_api
 import pandas as pd
 import json
 
+import sys
+reload(sys)
+sys.setdefaultencoding('utf-8') #@UndefinedVariable
+
 from IPython.display import display, HTML 
 
 from jinja2 import Environment, FileSystemLoader
