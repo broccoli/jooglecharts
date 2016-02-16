@@ -4,6 +4,7 @@ driver*
 *sandbox*
 test_chart_string.ipynb
 *ignore*
+demo*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
