@@ -3,26 +3,28 @@
 
 <script type="text/javascript">
 
-	{% include 'js_library_loading.html' %}
+  {% include 'js_library_loading.html' %}
 
     function {{ callback_name }}() {
     
 
-		{% include 'js_data.html' %}
+    {% include 'js_data.html' %}
         
-		{% include 'js_formatters.html' %}
+    {% include 'js_formatters.html' %}
 
-		{% include 'js_chartwrapper.html' %}
-		
+    {% include 'js_chartwrapper.html' %}
+    
         {% if jg.filters %}
-			{% include 'js_dashboard.html' %}
+      {% include 'js_dashboard.html' %}
         
         {% else %}
-        	{% for chart in jg.charts %}
+          {% for chart in jg.charts %}
         
-        {{ chart.name }}.draw();
+            whenDivAvailable('{{ chart.chart_div_id }}', function() {
+              {{ chart.name }}.draw();
+            });
         
-        	{% endfor %}
+          {% endfor %}
         
         {% endif %}
     }

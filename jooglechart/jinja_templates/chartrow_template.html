@@ -1,31 +1,33 @@
 <script type="text/javascript">
 
-	{% include 'js_library_loading.html' %}
+    {% include 'js_library_loading.html' %}
 
     function {{ callback_name }}() {
     
-		{% for jg in chartrow.jcs %}
-	// ==================== CHARTROW CHART {{ loop.index }} ============================= //
-			{% include 'js_data.html' %}
-	        {% if jg.formatters %}
-			{% include 'js_formatters.html' %}
-			{% endif %}
-	
-			{% include 'js_chartwrapper.html' %}
-			
-	        {% if jg.filters %}
-				{% include 'js_dashboard.html' %}
-	        {% else %}
-	        
-	        	{% for chart in jg.charts %}
+        {% for jg in chartrow.jcs %}
+    // ==================== CHARTROW CHART {{ loop.index }} ============================= //
+            {% include 'js_data.html' %}
+            {% if jg.formatters %}
+            {% include 'js_formatters.html' %}
+            {% endif %}
+    
+            {% include 'js_chartwrapper.html' %}
+            
+            {% if jg.filters %}
+                {% include 'js_dashboard.html' %}
+            {% else %}
+            
+                {% for chart in jg.charts %}
         
-        			{{ chart.name }}.draw();
+                    whenDivAvailable('{{ chart.chart_div_id }}', function() {
+                        {{ chart.name }}.draw();
+                    });
         
-    	    	{% endfor %}
-	        {% endif %}
-	// ==================================================================== //
-	        
-		{% endfor %}
+                {% endfor %}
+            {% endif %}
+    // ==================================================================== //
+            
+        {% endfor %}
     }
     
 </script>
@@ -38,15 +40,15 @@
   {% endif %}
 </noscript>
 <div class="row">
-	{% for jg in chartrow.jcs %}
-	<div class="col-sm-{{ chartrow.bootstrap_num }}">
-		{% if jg.filters %}
-			{% include 'html_dashboard.html' %}
-		{% else %}
-			{% include 'html_chart.html' %}
-		{% endif %}
-	</div>
-	{% endfor %}
+    {% for jg in chartrow.jcs %}
+    <div class="col-sm-{{ chartrow.bootstrap_num }}">
+        {% if jg.filters %}
+            {% include 'html_dashboard.html' %}
+        {% else %}
+            {% include 'html_chart.html' %}
+        {% endif %}
+    </div>
+    {% endfor %}
 </div>
 
 
