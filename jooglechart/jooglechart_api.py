@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 '''
 Created on Dec 5, 2015
 
@@ -647,6 +649,15 @@ class JoogleChart():
         if self.json:
             # data is in a dataframe
             num_cols = len(self.data_frame.columns)
+
+            # unicode            
+            # Need to wrap the decoding in a try block so the user will be able to reshow
+            # a chart in Jupyter.  If you reshow a chart, the code below will 
+            # try to decode an already decoded string.         
+            try:
+                self.json = self.json.decode('utf-8')
+            except UnicodeEncodeError:
+                pass
         else:
             # data is in a 2d array
             num_cols = len(self.data[0])
@@ -694,7 +705,7 @@ class JoogleChart():
         context['notebook_url'] = _get_notebook_url()
 
 
-        return j2_env.get_template('chart_template.html').render(context)
+        return j2_env.get_template('chart_template.html').render(context).encode('utf-8')
 
 
     def show(self, chart_type=None, **kwargs):
@@ -757,7 +768,7 @@ class ChartRow:
         # ISHBOOK-495
         context['notebook_url'] = _get_notebook_url()
 
-        return j2_env.get_template('chartrow_template.html').render(context)
+        return j2_env.get_template('chartrow_template.html').render(context).encode('utf-8')
 
     def show(self):
 
