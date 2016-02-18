@@ -56,9 +56,6 @@ import pandas as pd
 import json
 from IPython.display import display, HTML
 
-import sys
-reload(sys)
-sys.setdefaultencoding('utf-8') #@UndefinedVariable
 
 
 from jinja2 import Environment, FileSystemLoader
