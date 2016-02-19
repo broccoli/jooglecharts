@@ -14,6 +14,7 @@
 
     {% include 'js_chartwrapper.html' %}
     
+    
         {% if jg.filters %}
       {% include 'js_dashboard.html' %}
         
@@ -27,6 +28,14 @@
           {% endfor %}
         
         {% endif %}
+
+
+    {% if true %}
+    	{% include 'js_series_filter.html' %}
+    {% endif %}
+
+
+
     }
     
 </script>
@@ -38,6 +47,10 @@
   {{notebook_url}}
   {% endif %}
 </noscript>
+
+<div id="colFilter_div"></div>
+
+
 {% if jg.filters %}
 
 {% include 'html_dashboard.html' %}
