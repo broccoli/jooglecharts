@@ -84,7 +84,7 @@ class PythonGoogleChartsException(Exception):
     pass
 
 
-def dataframe_to_gviz(df, datetime_cols=None, allow_nulls=False):
+def dataframe_to_gviz(cities_df, datetime_cols=None, allow_nulls=False):
 
     """
     This method takes a pandas data frame and returns a gviz_api DataFrame
@@ -140,7 +140,7 @@ def dataframe_to_gviz(df, datetime_cols=None, allow_nulls=False):
 
     """
 
-    if allow_nulls == False and df.isnull().any().any():
+    if allow_nulls == False and cities_df.isnull().any().any():
         message = "The DataFrame has null values (None, NaN, or NaT);"
         message += " replace these values, or pass allow_nulls = True to get null"
         message += " values in the javascript DataTable."
@@ -158,7 +158,7 @@ def dataframe_to_gviz(df, datetime_cols=None, allow_nulls=False):
 
     # get the description with the column names and types
     description = []
-    for ix, (t, col) in enumerate(zip(df.dtypes, df.columns)):
+    for ix, (t, col) in enumerate(zip(cities_df.dtypes, cities_df.columns)):
         if datetime_cols and ix in datetime_cols:
             description.append((col, 'datetime'))
         else:
@@ -166,7 +166,7 @@ def dataframe_to_gviz(df, datetime_cols=None, allow_nulls=False):
 
     # get a 2d-array of the data
     data = []
-    for row in df.iterrows():
+    for row in cities_df.iterrows():
         if allow_nulls:
 
             # isnull detects NaN, NaT, and None.  Nones are converted to js nulls
@@ -204,7 +204,7 @@ def get_jugle_chart_counter():
 
 
 
-class Filter():
+class Filter(object):
 
     """
     filter object that you pass to a chart object.
@@ -254,15 +254,92 @@ class Filter():
 
         if kwargs:
             _add_dict_to_dict(self.state, kwargs)
-
+            
     def bind_filter(self, bind_target):
         self.bind_target = bind_target
+        
+        if isinstance(bind_target, SeriesFilter):
+            message = "Cannot bind a SeriesFilter"
+            raise PythonGoogleChartsException(message)
 
     def _set_render_properties(self):
         self.num = get_filter_counter()
         self.name = "google_filter_" + str(self.num)
         self.div_id = self.name + "_div_id"
 
+
+class SeriesFilter(Filter):
+    
+    """
+    A SeriesFilter filters columns of data that are represented as series
+    of columns, lines, etc.
+    
+    A SeriesFilter can apply to JoogleCharts with multiple charts, but each
+    one must have the same columns used as series.  That is, they must have the 
+    same visible columns.
+    
+    When determining the series columns, role columns will be skipped, and the 
+    first visible non-role columns (since it is the category, or y-axis).
+    """
+    
+    def __init__(self):
+        super(SeriesFilter, self).__init__(None)
+#         Filter.__init__(self, None)
+        self.add_options(ui_label = "Columns")
+        self.add_options(filterColumnIndex = 0)
+
+    def add_options(self, options = None, **kwargs):
+        
+        message = "filter column is automatically set on a SeriesFilter"
+        if options and (("columnFilterIndex" in options) or ("columnFilterLabel" in options)):
+            raise PythonGoogleChartsException(message)
+        if kwargs.get("columnFilterIndex") or kwargs.get("columnFilterLabel"):
+            raise PythonGoogleChartsException(message)
+
+        super(SeriesFilter, self).add_options(options, **kwargs) 
+
+    def bind_filter(self, *args):
+        
+        message = "data is automatically bound on a SeriesFilter"
+        raise PythonGoogleChartsException(message)
+
+    def _set_render_properties(self, jooglechart):
+        
+        # check if all charts have the same view cols
+        if len(jooglechart.charts) > 1:
+            charts = jooglechart.charts
+            view_cols = charts[0]
+            for chart in charts[1:]:
+                if chart.view_cols != view_cols:
+                    message = "For SeriesFilter, all charts must have the same view cols"
+                    raise PythonGoogleChartsException(message)
+        
+        # get a list of series columns
+        try:
+            columns = jooglechart._dataframe.columns.values.tolist()
+        except:
+            # TODO: data is in a 2d array
+            columns = jooglechart._2d_array[0]
+        
+        # get role cols and remove them from column list
+        role_cols = [role[0] for role in jooglechart.roles]
+        for col in role_cols:
+            columns.pop(col)
+        
+        # remove first non-role column
+        columns.pop(0)
+        
+        df = pd.DataFrame({'columns': columns})
+
+        # default selectedValues to all
+        if not self.state.get('selectedValues'):
+            self.state['selectedValues'] = columns
+
+        self._filter_table_json = dataframe_to_gviz(df).ToJSon()
+        self._columns = columns
+        self.num = get_filter_counter()
+        self.name = "series_filter_" + str(self.num)
+        self.div_id = self.name + "_div_id"
 
 class Formatter():
 
@@ -526,7 +603,7 @@ class JoogleChart():
         self.charts = []
 
         # Data attributes
-        self.data = None
+        self._2d_array = None
         self.formatters = []
         self.filters = []
         self.datetime_cols = kwargs.pop('datetime_cols', None)
@@ -534,6 +611,8 @@ class JoogleChart():
         self.json = None
         self.roles = []
         self.tooltip_html = False
+        self._series_filter = None
+        self._dataframe = None
 
         # Dashboard attributes
         self.load_controls = False
@@ -556,22 +635,22 @@ class JoogleChart():
             if isinstance(data, pd.DataFrame):
                 table = dataframe_to_gviz(data, datetime_cols=self.datetime_cols, allow_nulls=self.allow_nulls)
                 self.json = table.ToJSon()
-                self.data_frame = table
+                self._dataframe = data
             elif (isinstance(data, list) and isinstance(data, list)):
-                self.data = data
+                self._2d_array = data
         else:
             # Data can only be Series at this point
             try:
 
-                df = pd.DataFrame(args[0])
+                cities_df = pd.DataFrame(args[0])
                 for s in args[1:]:
-                    df[s.name] = s
+                    cities_df[s.name] = s
 
             except:
                 message = "Data must be passed as 2d array, a DataFrame, or 2 or more Series"
                 raise PythonGoogleChartsException(message)
-            self.data_frame = df
-            table = dataframe_to_gviz(df, datetime_cols=self.datetime_cols, allow_nulls=self.allow_nulls)
+            self._dataframe = cities_df
+            table = dataframe_to_gviz(cities_df, datetime_cols=self.datetime_cols, allow_nulls=self.allow_nulls)
             self.json = table.ToJSon()
 
 
@@ -602,11 +681,18 @@ class JoogleChart():
 
 
     def add_filter(self, filter):
-
+        
+        if isinstance(filter, SeriesFilter):
+            self._add_series_filter(filter)
+            return
         if self.filters == None:
             self.filters = []
         self.filters.append(filter)
         self.load_controls = True
+
+    def _add_series_filter(self, filter):
+        
+        self._series_filter = filter
 
     def set_role(self, col, role):
 
@@ -651,7 +737,7 @@ class JoogleChart():
 
         if self.json:
             # data is in a dataframe
-            num_cols = len(self.data_frame.columns)
+            num_cols = len(self._dataframe.columns)
 
             # unicode            
             # Need to wrap the decoding in a try block so the user will be able to reshow
@@ -663,7 +749,7 @@ class JoogleChart():
                 pass
         else:
             # data is in a 2d array
-            num_cols = len(self.data[0])
+            num_cols = len(self._2d_array[0])
 
         # set the visible columns if hide_cols is set
         # get the number of columns
@@ -676,7 +762,8 @@ class JoogleChart():
         for filter_ in self.filters:
             filter_._set_render_properties()
 
-
+        if self._series_filter:
+            self._series_filter._set_render_properties(self)
 
         # modify json with roles
         if self.roles:

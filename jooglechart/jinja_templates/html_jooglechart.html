@@ -1,0 +1,13 @@
+{% if jg._series_filter %}
+<div id="{{ jg._series_filter.div_id }}"></div>
+{% endif %}
+
+{% if jg.filters %}
+
+{% include 'html_dashboard.html' %}
+
+{% else %}
+
+{% include 'html_chart.html' %}
+
+{% endif %}
