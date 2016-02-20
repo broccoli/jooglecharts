@@ -24,11 +24,7 @@
 <div class="row">
     {% for jg in chartrow.jcs %}
     <div class="col-sm-{{ chartrow.bootstrap_num }}">
-        {% if jg.filters %}
-            {% include 'html_dashboard.html' %}
-        {% else %}
-            {% include 'html_chart.html' %}
-        {% endif %}
+		{% include 'html_jooglechart.html' %}
     </div>
     {% endfor %}
 </div>
