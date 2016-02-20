@@ -8,32 +8,7 @@
     function {{ callback_name }}() {
     
 
-    {% include 'js_data.html' %}
-        
-    {% include 'js_formatters.html' %}
-
-    {% include 'js_chartwrapper.html' %}
-    
-    
-        {% if jg.filters %}
-      {% include 'js_dashboard.html' %}
-        
-        {% else %}
-          {% for chart in jg.charts %}
-        
-            whenDivAvailable('{{ chart.chart_div_id }}', function() {
-              {{ chart.name }}.draw();
-            });
-        
-          {% endfor %}
-        
-        {% endif %}
-
-
-    {% if jg._series_filter %}
-    	{% include 'js_series_filter.html' %}
-    {% endif %}
-
+  {% include 'js_jooglechart.html' %}
 
 
     }
