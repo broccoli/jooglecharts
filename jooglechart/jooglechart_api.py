@@ -254,7 +254,7 @@ class Filter(object):
 
         if kwargs:
             _add_dict_to_dict(self.state, kwargs)
-
+            
     def bind_filter(self, bind_target):
         self.bind_target = bind_target
         
@@ -332,7 +332,7 @@ class SeriesFilter(Filter):
         df = pd.DataFrame({'columns': columns})
 
         # default selectedValues to all
-        if not self.state.get('selectValues'):
+        if not self.state.get('selectedValues'):
             self.state['selectedValues'] = columns
 
         self._filter_table_json = dataframe_to_gviz(df).ToJSon()
