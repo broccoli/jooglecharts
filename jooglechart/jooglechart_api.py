@@ -320,13 +320,23 @@ class SeriesFilter(Filter):
         except:
             # TODO: data is in a 2d array
             columns = jooglechart._2d_array[0]
-        # null out the role columns
+        
+        # get role cols and remove them from column list
         role_cols = [role[0] for role in jooglechart.roles]
-        columns = []
+        for col in role_cols:
+            columns.pop(col)
         
-        print columns
+        # remove first non-role column
+        columns.pop(0)
         
-        
+        df = pd.DataFrame({'columns': columns})
+
+        # default selectedValues to all
+        if not self.state.get('selectValues'):
+            self.state['selectedValues'] = columns
+
+        self._filter_table_json = dataframe_to_gviz(df).ToJSon()
+        self._columns = columns
         self.num = get_filter_counter()
         self.name = "series_filter_" + str(self.num)
         self.div_id = self.name + "_div_id"
