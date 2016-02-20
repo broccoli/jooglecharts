@@ -14,7 +14,7 @@
 		var sfTable = new google.visualization.DataTable({{ jg._series_filter._filter_table_json }});
 	    var columnFilter = new google.visualization.ControlWrapper({
 	      controlType: 'CategoryFilter',
-	      containerId: 'colFilter_div',
+	      containerId: '{{ jg._series_filter.div_id }}',
 	      dataTable: sfTable,
 	      options: {{ jg._series_filter.options|default("{}")|to_json }},
 	      state: {{ jg._series_filter.state|default("{}")|to_json }}
