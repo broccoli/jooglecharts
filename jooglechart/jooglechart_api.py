@@ -749,7 +749,7 @@ class JoogleChart():
                 pass
         else:
             # data is in a 2d array
-            num_cols = len(self.data[0])
+            num_cols = len(self._2d_array[0])
 
         # set the visible columns if hide_cols is set
         # get the number of columns

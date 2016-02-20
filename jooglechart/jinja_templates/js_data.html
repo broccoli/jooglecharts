@@ -2,5 +2,5 @@
         {% if jg.json %}
         var {{ jg.data_name }} = new google.visualization.DataTable({{ jg.json }});
         {% else %}
-        var {{ jg.data_name }} = new google.visualization.arrayToDataTable({{ jg.data }})
+        var {{ jg.data_name }} = new google.visualization.arrayToDataTable({{ jg._2d_array|to_json }})
         {% endif %}
