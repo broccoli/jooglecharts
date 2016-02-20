@@ -32,15 +32,7 @@
 	      controlType: 'CategoryFilter',
 	      containerId: 'colFilter_div',
 	      dataTable: columnsTable,
-	      options: {
-	        filterColumnLabel: 'colLabel',
-	        ui: {
-	          label: 'Columns',
-	          allowTyping: false,
-	          allowMultiple: true,
-	          allowNone: true,
-	        }
-	      },
+	      options: {{ jg._series_filter.options|default("{}")|to_json }},
 	      state: initState
 	    });
 

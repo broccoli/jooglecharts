@@ -30,7 +30,7 @@
         {% endif %}
 
 
-    {% if true %}
+    {% if jg._series_filter %}
     	{% include 'js_series_filter.html' %}
     {% endif %}
 
@@ -48,8 +48,9 @@
   {% endif %}
 </noscript>
 
+{% if jg._series_filter %}
 <div id="colFilter_div"></div>
-
+{% endif %}
 
 {% if jg.filters %}
 
