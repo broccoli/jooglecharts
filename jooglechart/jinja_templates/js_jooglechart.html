@@ -10,9 +10,7 @@
         {% else %}
           {% for chart in jg.charts %}
         
-            whenDivAvailable('{{ chart.chart_div_id }}', function() {
-              {{ chart.name }}.draw();
-            });
+          {{ chart.name }}.draw();
         
           {% endfor %}
         
