@@ -25,6 +25,9 @@ $(document).ready(function() {
   {{notebook_url}}
   {% endif %}
 </noscript>
+
+{% include 'css_jooglechart.html' %}
+
 <div class="row">
     {% for jg in chartrow.jcs %}
     <div class="col-sm-{{ chartrow.bootstrap_num }}">

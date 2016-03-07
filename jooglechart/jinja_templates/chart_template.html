@@ -19,6 +19,7 @@ $(document).ready(function() {
     }
     
 </script>
+
 <noscript>
   {% if notebook_url %}
   It looks like you have javascript disabled or are in an environment
@@ -28,5 +29,6 @@ $(document).ready(function() {
   {% endif %}
 </noscript>
 
+{% include 'css_jooglechart.html' %}
 
   {% include 'html_jooglechart.html' %}
