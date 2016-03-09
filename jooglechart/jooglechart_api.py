@@ -351,7 +351,7 @@ class SeriesFilter(Filter):
             self.state['selectedValues'] = series_names
 
         self._filter_table_json = dataframe_to_gviz(df).ToJSon()
-        self._columns = columns
+        self._series_indexes = series_indexes
         self.num = get_filter_counter()
         self.name = "series_filter_" + str(self.num)
         self.div_id = self.name + "_div_id"
