@@ -9,8 +9,6 @@
 			create a new view for redrawing the chart(s).
 		*/
 
-	    num_series = {{ jg._series_filter._columns }}.length;
-
 		var sfTable = new google.visualization.DataTable({{ jg._series_filter._filter_table_json }});
 	    var columnFilter = new google.visualization.ControlWrapper({
 	      controlType: 'CategoryFilter',
@@ -22,41 +20,59 @@
 
 	    columnFilter.draw();
 
+		// pass an array of the series' columns in the orignal datatable from python
+		// series cols are the viewable, non-role, non-category cols
+		var series_cols = {{ jg._series_filter._series_indexes|to_json }};
+
+		// initialize the array of dataTable column indices, e.g, [0, 1, 2, etc.]
 	    var columns = [];
-	    var series = {};
 	    for (var i = 0; i < {{ jg.data_name }}.getNumberOfColumns(); i++) {
 	        columns.push(i);
-	        if (i > 0) {
-	            series[i - 1] = {};
-	        }
 	    }
+
+		// an object of series properties will be passed to the chart wrapper for setting color
+	    var series = {};
 
 		function series_filter_update_chart() {
 			
 			var selectedValues = columnFilter.getState().selectedValues;
-			// loop through number of rows in columnTable
-			
-			for (var i = 0; i < num_series; i++) {
-				test_val = sfTable.getValue(i, 0);
+
+			// Loop through series cols
+			for (var i = 0; i < series_cols.length; i++) {
 				
+				// initialize series object
+				series[i] = {}
+				
+				// get series column index in the original data table
+				var ix = series_cols[i]
+								
+				// check if series has been selected
+				var test_val = {{ jg.data_name }}.getColumnLabel(ix);
 				if ($.inArray(test_val, selectedValues) >= 0) {
-					columns[i + 1] = i + 1;
-					series[i].color = null;					
+					// if the series is selected, just pass the normal column
+					// and get the default color
+					columns[ix] = ix;
+					series[i].color = null;
 				} else {
-	                columns[i + 1] = {
-	                    label: {{ jg.data_name }}.getColumnLabel(i + 1),
-	                    type: {{ jg.data_name }}.getColumnType(i + 1),
+					
+					// create a column object that returns null, hiding the series on the chart
+	                columns[ix] = {
+	                    label: {{ jg.data_name }}.getColumnLabel(ix),
+	                    type: {{ jg.data_name }}.getColumnType(ix),
 	                    calc: function () {
 	                        return null;
 	                    }
 	                };
-					series[i].color = '#CCCCCC';
 					
+					// gray out the series color for the legend
+					series[i].color = '#CCCCCC';
 				}
+				
 			}
+
             var view = new google.visualization.DataView({{ jg.data_name }});
             view.setColumns(columns);
-            
+
             {% for chart in jg.charts %}
 				{{ chart.name }}.setDataTable(view);
 				{{ chart.name }}.setOption('series', series);
