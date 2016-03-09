@@ -291,9 +291,9 @@ class SeriesFilter(Filter):
     def add_options(self, options = None, **kwargs):
         
         message = "filter column is automatically set on a SeriesFilter"
-        if options and (("columnFilterIndex" in options) or ("columnFilterLabel" in options)):
+        if options and (("filterColumnIndex" in options) or ("filterColumnLabel" in options)):
             raise PythonGoogleChartsException(message)
-        if kwargs.get("columnFilterIndex") or kwargs.get("columnFilterLabel"):
+        if kwargs.get("filterColumnIndex") or kwargs.get("filterColumnLabel"):
             raise PythonGoogleChartsException(message)
 
         super(SeriesFilter, self).add_options(options, **kwargs) 
