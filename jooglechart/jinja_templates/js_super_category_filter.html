@@ -1,0 +1,30 @@
+
+
+		// Create superfilter table
+		var superFilterTable = new google.visualization.DataTable({{ super_filter._json }});
+
+		// create superfilter CategoryFilter
+		var superFilter = new google.visualization.ControlWrapper({
+			controlType: 'CategoryFilter',
+			containerId: '{{ super_filter._div_id}}',
+			dataTable: superFilterTable,
+			options: {"ui": {"label": "Categories"}, "filterColumnIndex": 0}
+		});
+
+		superFilter.draw();
+
+		function superfilter_update() {
+		
+			// update bound filters with the selected values of the superfilter.
+
+			var selected_values = superFilter.getState().selectedValues;
+			
+			{% for filter_name in super_filter._filter_names %}
+			
+			var {{ filter_name }}_state = {{ filter_name }}.getState();
+			{{ filter_name }}_state.selectedValues = selected_values;
+			{{ filter_name }}.setState({{ filter_name }}_state);
+			{{ filter_name }}.draw()			
+			{% endfor %}
+		}
+		

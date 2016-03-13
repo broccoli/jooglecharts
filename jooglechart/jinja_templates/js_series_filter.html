@@ -9,13 +9,13 @@
 			create a new view for redrawing the chart(s).
 		*/
 
-		var sfTable = new google.visualization.DataTable({{ jg._series_filter._filter_table_json }});
+		var series_filter_table = new google.visualization.DataTable({{ jg._series_filter._filter_table_json }});
 	    var columnFilter = new google.visualization.ControlWrapper({
 	      controlType: 'CategoryFilter',
-	      containerId: '{{ jg._series_filter.div_id }}',
-	      dataTable: sfTable,
-	      options: {{ jg._series_filter.options|default("{}")|to_json }},
-	      state: {{ jg._series_filter.state|default("{}")|to_json }}
+	      containerId: '{{ jg._series_filter._div_id }}',
+	      dataTable: series_filter_table,
+	      options: {{ jg._series_filter._options|default("{}")|to_json }},
+	      state: {{ jg._series_filter._state|default("{}")|to_json }}
 	    });
 
 	    columnFilter.draw();

@@ -4,21 +4,28 @@
 
         // Create controls
 			{% for filter in jg.filters %}
-        var {{ filter.name }} = new google.visualization.ControlWrapper({
-          'controlType': '{{ filter.type }}',
-          'containerId': '{{ filter.div_id }}',
-          'options': {{ filter.options|default("{}")|to_json }},
-          'state': {{ filter.state|default("{}")|to_json }}
+			
+			{% if filter._global_name %}
+        {{ filter._name }} = new google.visualization.ControlWrapper({
+			
+			{% else %}
+        var {{ filter._name }} = new google.visualization.ControlWrapper({
+			
+			{% endif %}
+          'controlType': '{{ filter._type }}',
+          'containerId': '{{ filter._div_id }}',
+          'options': {{ filter._options|default("{}")|to_json }},
+          'state': {{ filter._state|default("{}")|to_json }}
         });
 			{% endfor %}
 
         // Establish dependencies.
 			{% for filter in jg.filters %}
         		{% if filter.bind_target %}
-		{{ jg.dashboard_name }}.bind({{ filter.name }}, {{ filter.bind_target.name }});
+		{{ jg.dashboard_name }}.bind({{ filter._name }}, {{ filter._bind_target.name }});
 			    {% else %}
 			    	{% for chart in jg.charts %}
-		{{ jg.dashboard_name }}.bind({{ filter.name }}, {{ chart.name }});
+		{{ jg.dashboard_name }}.bind({{ filter._name }}, {{ chart.name }});
 					{% endfor %}
 				{% endif %}
 			{% endfor %}

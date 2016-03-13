@@ -5,7 +5,7 @@ Created on Dec 20, 2015
 '''
 import unittest
 
-from juglechart.juglechart_api import Formatter, PythonGoogleChartsException
+from juglechart.juglechart_api import Formatter, JoogleChartsException
 
 class Test(unittest.TestCase):
 
@@ -85,32 +85,32 @@ class Test(unittest.TestCase):
 
     def test_format_type_011(self):
         
-        self.assertRaises(PythonGoogleChartsException, Formatter, "ColorFormat", options={'foo': 'bar'}, cols=[0, 1])
+        self.assertRaises(JoogleChartsException, Formatter, "ColorFormat", options={'foo': 'bar'}, cols=[0, 1])
 
     def test_format_type_012(self):
         
-        self.assertRaises(PythonGoogleChartsException, Formatter, "color", options={'foo': 'bar'}, cols=[0, 1])
+        self.assertRaises(JoogleChartsException, Formatter, "color", options={'foo': 'bar'}, cols=[0, 1])
 
     def test_format_type_013(self):
         
         # invalid format type
-        self.assertRaises(PythonGoogleChartsException, Formatter, "blah", options={'foo': 'bar'}, cols=[0, 1])
+        self.assertRaises(JoogleChartsException, Formatter, "blah", options={'foo': 'bar'}, cols=[0, 1])
 
     
     def test_missing_kwargs_001(self):
 
         # missing options    
-        self.assertRaises(PythonGoogleChartsException, Formatter, "number", cols=[0, 1])
+        self.assertRaises(JoogleChartsException, Formatter, "number", cols=[0, 1])
         
     def test_missing_kwargs_002(self):
 
         # missing cols        
-        self.assertRaises(PythonGoogleChartsException, Formatter, "number", options={'foo': 'bar'})
+        self.assertRaises(JoogleChartsException, Formatter, "number", options={'foo': 'bar'})
 
     def test_missing_kwargs_003(self):
 
         # missing source_cols
-        self.assertRaises(PythonGoogleChartsException, Formatter, "pattern")
+        self.assertRaises(JoogleChartsException, Formatter, "pattern")
         
 
     

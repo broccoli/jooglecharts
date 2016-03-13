@@ -68,6 +68,8 @@ from jinja_filters import to_json, format_styles_list
 
 DEFAULT_CHART_TYPE = "ColumnChart"
 
+FILTER_NAME_ADD_ON = "__jooglechart_user_filter_name"
+
 # ISHBOOK-495
 BASE_NOTEBOOK_URL = "https://ishbook.corp.indeed.com/nb/{nbid}/dashboard/{qs}"
 
@@ -79,9 +81,10 @@ j2_env.filters['to_json'] = to_json
 j2_env.filters['format_styles_list'] = format_styles_list
 
 
-class PythonGoogleChartsException(Exception):
+class JoogleChartsException(Exception):
     """ General exception object thrown by python google charts API """
     pass
+
 
 
 def dataframe_to_gviz(cities_df, datetime_cols=None, allow_nulls=False):
@@ -122,7 +125,7 @@ def dataframe_to_gviz(cities_df, datetime_cols=None, allow_nulls=False):
         gviz DataTable object.
 
     Raises:
-        PythonGoogleChartsException: generic exception class for any special
+        JoogleChartsException: generic exception class for any special
             exception.  A message is passed with the details.
 
     Why use the gviz_api for converting a DataFrame?  There are several ways to generate a
@@ -144,7 +147,7 @@ def dataframe_to_gviz(cities_df, datetime_cols=None, allow_nulls=False):
         message = "The DataFrame has null values (None, NaN, or NaT);"
         message += " replace these values, or pass allow_nulls = True to get null"
         message += " values in the javascript DataTable."
-        raise PythonGoogleChartsException(message)
+        raise JoogleChartsException(message)
 
     # dictionary to translate pandas dtypes to js DataTable types
     translation_dict= {}
@@ -187,7 +190,7 @@ def dataframe_to_gviz(cities_df, datetime_cols=None, allow_nulls=False):
 chart_counter = [0]
 formatter_counter = [0]
 filter_counter = [0]
-juggle_chart_counter = [0]
+jooglechart_counter = [0]
 
 def get_counter(counter_list):
     counter_list[0] += 1
@@ -199,24 +202,20 @@ def get_formatter_counter():
     return get_counter(formatter_counter)
 def get_filter_counter():
     return get_counter(filter_counter)
-def get_jugle_chart_counter():
-    return get_counter(juggle_chart_counter)
+def get_jooglechart_counter():
+    return get_counter(jooglechart_counter)
 
 
 
-class Filter(object):
-
-    """
-    filter object that you pass to a chart object.
-    By default binds the data.  But can bind another filter.
-    """
-
+class _GoogleFilter(object):
+    
     def __init__(self, type):
-        self.type = type
-        self.options = {}
-        self.state = {}
-        self.bind_target = None
-
+        self._type = type
+        self._options = {}
+        self._state = {}
+        self._bind_target = None
+        self._name = None
+        self._global_name = False
 
     def add_options(self, options = None, **kwargs):
         """
@@ -235,40 +234,60 @@ class Filter(object):
 
         """
 
-        if self.options == None:
-            self.options = {}
+        if self._options == None:
+            self._options = {}
         if options:
-            _add_dict_to_dict(self.options, options)
+            _add_dict_to_dict(self._options, options)
 
         if kwargs:
-            _add_dict_to_dict(self.options, kwargs)
-
-
+            _add_dict_to_dict(self._options, kwargs)
 
     def add_state(self, state = None, **kwargs):
 
-        if self.state == None:
-            self.state = {}
+        if self._state == None:
+            self._state = {}
         if state:
-            _add_dict_to_dict(self.state, state)
+            _add_dict_to_dict(self._state, state)
 
         if kwargs:
-            _add_dict_to_dict(self.state, kwargs)
-            
+            _add_dict_to_dict(self._state, kwargs)
+
+
+class Filter(_GoogleFilter):
+
+    """
+    filter object that you pass to a chart object.
+    By default binds the data.  But can bind another filter.
+    """
+
+    def __init__(self, type):
+        self._type = type
+        self._options = {}
+        self._state = {}
+        self._bind_target = None
+        self._name = None
+        self._global_name = False
+
     def bind_filter(self, bind_target):
-        self.bind_target = bind_target
+        self._bind_target = bind_target
         
         if isinstance(bind_target, SeriesFilter):
             message = "Cannot bind a SeriesFilter"
-            raise PythonGoogleChartsException(message)
+            raise JoogleChartsException(message)
+
+    def set_global_name(self, name):
+        
+        self._name = name + FILTER_NAME_ADD_ON
+        self._global_name = True
 
     def _set_render_properties(self):
-        self.num = get_filter_counter()
-        self.name = "google_filter_" + str(self.num)
-        self.div_id = self.name + "_div_id"
+        self._num = get_filter_counter()
+        if not self._name:
+            self._name = "google_filter_" + str(self._num)
+        self._div_id = self._name + "_div_id"
 
 
-class SeriesFilter(Filter):
+class SeriesFilter(_GoogleFilter):
     
     """
     A SeriesFilter filters columns of data that are represented as series
@@ -292,16 +311,16 @@ class SeriesFilter(Filter):
         
         message = "filter column is automatically set on a SeriesFilter"
         if options and (("filterColumnIndex" in options) or ("filterColumnLabel" in options)):
-            raise PythonGoogleChartsException(message)
+            raise JoogleChartsException(message)
         if kwargs.get("filterColumnIndex") or kwargs.get("filterColumnLabel"):
-            raise PythonGoogleChartsException(message)
+            raise JoogleChartsException(message)
 
         super(SeriesFilter, self).add_options(options, **kwargs) 
 
     def bind_filter(self, *args):
         
         message = "data is automatically bound on a SeriesFilter"
-        raise PythonGoogleChartsException(message)
+        raise JoogleChartsException(message)
 
     def _set_render_properties(self, jooglechart):
         
@@ -314,7 +333,7 @@ class SeriesFilter(Filter):
             for chart in charts[1:]:
                 if chart.view_cols != view_cols:
                     message = "For SeriesFilter, all charts must have the same view cols"
-                    raise PythonGoogleChartsException(message)
+                    raise JoogleChartsException(message)
         
         
         try:
@@ -347,14 +366,65 @@ class SeriesFilter(Filter):
         df = pd.DataFrame({'columns': series_names})
 
         # default selectedValues to all
-        if not self.state.get('selectedValues'):
-            self.state['selectedValues'] = series_names
+        if not self._state.get('selectedValues'):
+            self._state['selectedValues'] = series_names
 
         self._filter_table_json = dataframe_to_gviz(df).ToJSon()
         self._series_indexes = series_indexes
-        self.num = get_filter_counter()
-        self.name = "series_filter_" + str(self.num)
-        self.div_id = self.name + "_div_id"
+        self._num = get_filter_counter()
+        self._name = "series_filter_" + str(self._num)
+        self._div_id = self._name + "_div_id"
+
+class SuperCategoryFilter(_GoogleFilter):
+    
+    def __init__(self, filter_options):
+        
+        self._base_filter_names = []
+        
+        try:
+            if isinstance(filter_options, pd.Series):
+                pass
+            else:
+                filter_options = pd.Series(filter_options)
+        except:
+            message = "SuperCategoryFilter options must be a pandas Series or list"
+            raise JoogleChartsException(message)
+        filter_options.name = "options"
+        df = pd.DataFrame(filter_options, columns=['options'])
+        table = dataframe_to_gviz(df)
+        self._json = table.ToJSon()
+    
+    def add_filter_name(self, filter_name):
+        self._base_filter_names.append(filter_name)
+
+    def _set_render_properties(self):
+        
+        # set name, div id, data name, bound filter names
+        self._num = get_filter_counter()
+        self._name = "super_category_filter_" + str(self._num)
+        self._div_id = self._name + "_div_id"
+#         self._data_name = self.name + "_data"
+        self._filter_names = [name + FILTER_NAME_ADD_ON for name in self._base_filter_names]
+    
+    def render(self):
+        
+        self._set_render_properties()
+        context = {}
+        context['load_controls'] = True
+        context['callback_name'] = 'doStuff_' + str(self._num)
+        context['google_loader_name'] = 'google_loader_' + str(self._num)
+        context['super_filter'] = self
+        context['super_filter_type'] = 'category'
+    
+        return j2_env.get_template('super_filter_template.html').render(context).encode('utf-8')
+
+
+    def show(self):
+
+        display(HTML(self.render()))
+
+
+
 
 class Formatter():
 
@@ -374,22 +444,22 @@ class Formatter():
                 formatter_ix = self.FORMATTER_TYPES_LOWER.index(formatter)
             except ValueError:
                 message = "Format type submitted is not valid"
-                raise PythonGoogleChartsException(message)
+                raise JoogleChartsException(message)
 
         type = self.FORMATTER_TYPES[formatter_ix]
 
         if type == "ColorFormat":
             message = "ColorFormat is not currently supported"
-            raise PythonGoogleChartsException(message)
+            raise JoogleChartsException(message)
 
 
         if type == 'PatternFormat':
             if source_cols is None or pattern is None:
                 message = "PatternFormat requires source_cols and pattern"
-                raise PythonGoogleChartsException(message)
+                raise JoogleChartsException(message)
         elif cols is None or options is None:
             message = "This format requires options and cols"
-            raise PythonGoogleChartsException(message)
+            raise JoogleChartsException(message)
 
 
         self.type = type
@@ -667,7 +737,7 @@ class JoogleChart():
 
             except:
                 message = "Data must be passed as 2d array, a DataFrame, or 2 or more Series"
-                raise PythonGoogleChartsException(message)
+                raise JoogleChartsException(message)
             self._dataframe = cities_df
             table = dataframe_to_gviz(cities_df, datetime_cols=self.datetime_cols, allow_nulls=self.allow_nulls)
             self.json = table.ToJSon()
@@ -719,7 +789,7 @@ class JoogleChart():
             self.roles = []
         if not col and not role:
             message = "col and role are required parameters."
-            raise PythonGoogleChartsException(message)
+            raise JoogleChartsException(message)
 
         self.roles.append((col, role))
 
@@ -746,8 +816,8 @@ class JoogleChart():
 
 
         # jg render properties
-        self.num = get_jugle_chart_counter()
-        self.name = "jugle_chart_" + str(self.num)
+        self.num = get_jooglechart_counter()
+        self.name = "jooglechart_" + str(self.num)
         self.data_name = self.name + "_data"
         self.view_name = self.name + "_view"
         self.dashboard_name = self.name + "_dashboard"
@@ -850,7 +920,7 @@ class ChartRow:
 
         if self.num_jcs not in [2, 3, 4]:
             message = "A chart row must have 2-4 charts"
-            raise PythonGoogleChartsException(message)
+            raise JoogleChartsException(message)
 
         self.bootstrap_num = 12 / self.num_jcs
 
@@ -858,7 +928,7 @@ class ChartRow:
 
     def render(self):
 
-        self.num = get_jugle_chart_counter()
+        self.num = get_jooglechart_counter()
 
         for jc in self.jcs:
             if jc.filters:
