@@ -379,6 +379,11 @@ class SuperCategoryFilter(_GoogleFilter):
     
     def __init__(self, filter_options):
         
+        super(SuperCategoryFilter, self).__init__(None)
+#         Filter.__init__(self, None)
+        self.add_options(ui_label = "Options")
+        self.add_options(filterColumnIndex = 0)
+
         self._base_filter_names = []
         
         try:
@@ -393,6 +398,8 @@ class SuperCategoryFilter(_GoogleFilter):
         df = pd.DataFrame(filter_options, columns=['options'])
         table = dataframe_to_gviz(df)
         self._json = table.ToJSon()
+
+
     
     def add_filter_name(self, filter_name):
         self._base_filter_names.append(filter_name)

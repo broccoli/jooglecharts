@@ -8,7 +8,8 @@
 			controlType: 'CategoryFilter',
 			containerId: '{{ super_filter._div_id}}',
 			dataTable: superFilterTable,
-			options: {"ui": {"label": "Categories"}, "filterColumnIndex": 0}
+			options: {{ super_filter._options|default("{}")|to_json }},
+			state: {{ super_filter._state|default("{}")|to_json }}
 		});
 
 		superFilter.draw();
