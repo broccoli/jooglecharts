@@ -1,1 +1,1 @@
-from jooglechart_api import JoogleChart, ChartRow, Filter, _Chart, SeriesFilter
+from jooglechart_api import JoogleChart, ChartRow, Filter, _Chart, SeriesFilter, SuperCategoryFilter
