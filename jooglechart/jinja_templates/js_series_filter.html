@@ -10,7 +10,13 @@
 		*/
 
 		var series_filter_table = new google.visualization.DataTable({{ jg._series_filter._filter_table_json }});
-	    var columnFilter = new google.visualization.ControlWrapper({
+		
+		{# if there's a global name don't use var #}
+		{% if jg._series_filter._global_name %}
+	    {{ jg._series_filter._name }} = new google.visualization.ControlWrapper({
+		{% else %}
+	    var {{ jg._series_filter._name }} = new google.visualization.ControlWrapper({		
+		{% endif %}
 	      controlType: 'CategoryFilter',
 	      containerId: '{{ jg._series_filter._div_id }}',
 	      dataTable: series_filter_table,
@@ -18,7 +24,7 @@
 	      state: {{ jg._series_filter._state|default("{}")|to_json }}
 	    });
 
-	    columnFilter.draw();
+	    {{ jg._series_filter._name }}.draw();
 
 		// pass an array of the series' columns in the orignal datatable from python
 		// series cols are the viewable, non-role, non-category cols
@@ -35,7 +41,7 @@
 
 		function series_filter_update_chart() {
 			
-			var selectedValues = columnFilter.getState().selectedValues;
+			var selectedValues = {{ jg._series_filter._name }}.getState().selectedValues;
 
 			// Loop through series cols
 			for (var i = 0; i < series_cols.length; i++) {
@@ -86,5 +92,11 @@
             {% endif %}
 			
 		}
-	    google.visualization.events.addListener(columnFilter, 'statechange', series_filter_update_chart);
+		
+		/*
+			including both ready and statechange listeners as hack. The statechange event won't fire
+			for the SuperCategoryFilter but the ready event will.
+		*/
+	    google.visualization.events.addListener({{ jg._series_filter._name }}, 'ready', series_filter_update_chart);
+	    google.visualization.events.addListener({{ jg._series_filter._name }}, 'statechange', series_filter_update_chart);
 		series_filter_update_chart();

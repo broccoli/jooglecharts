@@ -1,4 +1,5 @@
-
+{# The superfilter template just draws a super filter.  It does not draw a chart. #}
+{# A chart must be drawn by calling show() on a chart #}
 
 
 <script type="text/javascript">
@@ -28,8 +29,7 @@ $(document).ready(function() {
     }
 </script>
 
-<style>
-
-</style>
-{% include 'css_super_filter.html' %}
+{% if not super_filter.show_child_filters %}
+	{% include 'css_super_filter.html' %}
+{% endif %}
 {% include 'html_super_filter.html' %}

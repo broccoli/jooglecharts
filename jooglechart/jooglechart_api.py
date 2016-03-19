@@ -282,7 +282,7 @@ class Filter(_GoogleFilter):
 
     def _set_render_properties(self):
         self._num = get_filter_counter()
-        if not self._name:
+        if not self._global_name:
             self._name = "google_filter_" + str(self._num)
         self._div_id = self._name + "_div_id"
 
@@ -306,6 +306,8 @@ class SeriesFilter(_GoogleFilter):
 #         Filter.__init__(self, None)
         self.add_options(ui_label = "Columns")
         self.add_options(filterColumnIndex = 0)
+        self._name = None
+        self._global_name = False
 
     def add_options(self, options = None, **kwargs):
         
@@ -321,6 +323,11 @@ class SeriesFilter(_GoogleFilter):
         
         message = "data is automatically bound on a SeriesFilter"
         raise JoogleChartsException(message)
+
+    def set_global_name(self, name):
+        
+        self._name = name + FILTER_NAME_ADD_ON
+        self._global_name = True
 
     def _set_render_properties(self, jooglechart):
         
@@ -372,12 +379,16 @@ class SeriesFilter(_GoogleFilter):
         self._filter_table_json = dataframe_to_gviz(df).ToJSon()
         self._series_indexes = series_indexes
         self._num = get_filter_counter()
-        self._name = "series_filter_" + str(self._num)
+        if not self._global_name:
+#             self._name = "google_filter_" + str(self._num)
+            self._name = "series_filter_" + str(self._num)
         self._div_id = self._name + "_div_id"
 
 class SuperCategoryFilter(_GoogleFilter):
-    
-    def __init__(self, filter_options):
+
+    show_child_filters = False
+        
+    def __init__(self, choices, show_child_filters=False):
         
         super(SuperCategoryFilter, self).__init__(None)
 #         Filter.__init__(self, None)
@@ -385,17 +396,18 @@ class SuperCategoryFilter(_GoogleFilter):
         self.add_options(filterColumnIndex = 0)
 
         self._base_filter_names = []
+        self.show_child_filters = show_child_filters
         
         try:
-            if isinstance(filter_options, pd.Series):
+            if isinstance(choices, pd.Series):
                 pass
             else:
-                filter_options = pd.Series(filter_options)
+                choices = pd.Series(choices)
         except:
             message = "SuperCategoryFilter options must be a pandas Series or list"
             raise JoogleChartsException(message)
-        filter_options.name = "options"
-        df = pd.DataFrame(filter_options, columns=['options'])
+        choices.name = "options"
+        df = pd.DataFrame(choices, columns=['options'])
         table = dataframe_to_gviz(df)
         self._json = table.ToJSon()
 
