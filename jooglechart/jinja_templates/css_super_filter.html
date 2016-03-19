@@ -1,0 +1,8 @@
+<style>
+/* Hide filters controlled by the super filter. */
+{% for filter_name in super_filter._filter_names %}
+#{{ filter_name }}_div_id {
+	display:none;
+}
+{% endfor %}
+</style>

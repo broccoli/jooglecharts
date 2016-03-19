@@ -9,7 +9,7 @@ from pandas import DataFrame
 import pandas as pd
 import numpy as np
 
-from jooglechart.jooglechart_api import dataframe_to_gviz, PythonGoogleChartsException
+from jooglechart.jooglechart_api import dataframe_to_gviz, JoogleChartsException
 
 from datetime import datetime, date
 
@@ -174,7 +174,7 @@ data.setCell(1, 0, "1999-12-01");
         df = DataFrame({'nums': [3,np.nan, 5]})
 #         table = dataframe_to_gviz(df)
 
-        self.assertRaises(PythonGoogleChartsException, dataframe_to_gviz, df)
+        self.assertRaises(JoogleChartsException, dataframe_to_gviz, df)
 
 
     def test_null_002(self):
@@ -199,7 +199,7 @@ data.setCell(2, 0, 5.0);
         df = DataFrame({'dates': [datetime(2015, 03, 21), pd.NaT, datetime(1999, 12, 01 )]} )
 #         table = dataframe_to_gviz(df)
 
-        self.assertRaises(PythonGoogleChartsException, dataframe_to_gviz, df)
+        self.assertRaises(JoogleChartsException, dataframe_to_gviz, df)
 
 
     def test_null_004(self):
@@ -225,7 +225,7 @@ data.setCell(2, 0, new Date(1999,11,1));
         df = DataFrame({'fruit': ['apple', None, 'plum']})
 #         table = dataframe_to_gviz(df)
 
-        self.assertRaises(PythonGoogleChartsException, dataframe_to_gviz, df)
+        self.assertRaises(JoogleChartsException, dataframe_to_gviz, df)
 
 
     def test_null_006(self):

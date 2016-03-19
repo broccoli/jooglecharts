@@ -1,0 +1,35 @@
+{# The superfilter template just draws a super filter.  It does not draw a chart. #}
+{# A chart must be drawn by calling show() on a chart #}
+
+
+<script type="text/javascript">
+
+$(document).ready(function() {
+
+	{% include 'js_library_loading.html' %}
+
+});
+
+
+    function {{ callback_name }}() {
+    
+    {% if super_filter_type == 'category' %}
+    
+    	// The superfilter controls the filters of other charts on the page.
+
+    	{% include 'js_super_category_filter.html' %}
+    	
+    {% endif %}
+
+		// fix overflow setting on IPython output area that constrains dropdown.
+		$("#{{ super_filter._div_id }}").closest("div.output_subarea").css("overflow-x", "inherit");
+		
+		google.visualization.events.addListener(superFilter, 'statechange', superfilter_update);
+    
+    }
+</script>
+
+{% if not super_filter.show_child_filters %}
+	{% include 'css_super_filter.html' %}
+{% endif %}
+{% include 'html_super_filter.html' %}
