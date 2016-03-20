@@ -265,7 +265,7 @@ class Filter(_GoogleFilter):
         self._options = {}
         self._state = {}
         self._bind_target = None
-        self._name = None
+        self._label = None
         self._global_name = False
 
     def bind_filter(self, bind_target):
@@ -275,14 +275,16 @@ class Filter(_GoogleFilter):
             message = "Cannot bind a SeriesFilter"
             raise JoogleChartsException(message)
 
-    def set_global_name(self, name):
+    def set_filter_label(self, label):
         
-        self._name = name + FILTER_NAME_ADD_ON
-        self._global_name = True
+        self._label = label
 
     def _set_render_properties(self):
         self._num = get_filter_counter()
-        if not self._global_name:
+        if self._label:
+            self._name = self._label + FILTER_NAME_ADD_ON
+            self._global_name = True
+        else:
             self._name = "google_filter_" + str(self._num)
         self._div_id = self._name + "_div_id"
 
@@ -306,7 +308,7 @@ class SeriesFilter(_GoogleFilter):
 #         Filter.__init__(self, None)
         self.add_options(ui_label = "Columns")
         self.add_options(filterColumnIndex = 0)
-        self._name = None
+        self._label = None
         self._global_name = False
 
     def add_options(self, options = None, **kwargs):
@@ -324,10 +326,9 @@ class SeriesFilter(_GoogleFilter):
         message = "data is automatically bound on a SeriesFilter"
         raise JoogleChartsException(message)
 
-    def set_global_name(self, name):
+    def set_filter_label(self, label):
         
-        self._name = name + FILTER_NAME_ADD_ON
-        self._global_name = True
+        self._label = label
 
     def _set_render_properties(self, jooglechart):
         
@@ -379,9 +380,13 @@ class SeriesFilter(_GoogleFilter):
         self._filter_table_json = dataframe_to_gviz(df).ToJSon()
         self._series_indexes = series_indexes
         self._num = get_filter_counter()
-        if not self._global_name:
-#             self._name = "google_filter_" + str(self._num)
-            self._name = "series_filter_" + str(self._num)
+        
+        if self._label:
+            self._name = self._label + FILTER_NAME_ADD_ON
+            self._global_name = True
+        else:
+            self._name = "google_filter_" + str(self._num)
+                    
         self._div_id = self._name + "_div_id"
 
 class SuperCategoryFilter(_GoogleFilter):
@@ -395,7 +400,7 @@ class SuperCategoryFilter(_GoogleFilter):
         self.add_options(ui_label = "Options")
         self.add_options(filterColumnIndex = 0)
 
-        self._base_filter_names = []
+        self._filter_labels = []
         self.show_child_filters = show_child_filters
         
         try:
@@ -413,8 +418,8 @@ class SuperCategoryFilter(_GoogleFilter):
 
 
     
-    def add_filter_name(self, filter_name):
-        self._base_filter_names.append(filter_name)
+    def add_filter_label(self, filter_label):
+        self._filter_labels.append(filter_label)
 
     def _set_render_properties(self):
         
@@ -423,7 +428,7 @@ class SuperCategoryFilter(_GoogleFilter):
         self._name = "super_category_filter_" + str(self._num)
         self._div_id = self._name + "_div_id"
 #         self._data_name = self.name + "_data"
-        self._filter_names = [name + FILTER_NAME_ADD_ON for name in self._base_filter_names]
+        self._filter_names = [name + FILTER_NAME_ADD_ON for name in self._filter_labels]
     
     def render(self):
         
