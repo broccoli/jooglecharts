@@ -190,7 +190,7 @@ def dataframe_to_gviz(cities_df, datetime_cols=None, allow_nulls=False):
 chart_counter = [0]
 formatter_counter = [0]
 filter_counter = [0]
-jooglechart_counter = [0]
+joogle_object_counter = [0]
 
 def get_counter(counter_list):
     counter_list[0] += 1
@@ -202,8 +202,8 @@ def get_formatter_counter():
     return get_counter(formatter_counter)
 def get_filter_counter():
     return get_counter(filter_counter)
-def get_jooglechart_counter():
-    return get_counter(jooglechart_counter)
+def get_joogle_object_counter():
+    return get_counter(joogle_object_counter)
 
 
 
@@ -424,10 +424,9 @@ class SuperCategoryFilter(_GoogleFilter):
     def _set_render_properties(self):
         
         # set name, div id, data name, bound filter names
-        self._num = get_filter_counter()
+        self._num = get_joogle_object_counter()
         self._name = "super_category_filter_" + str(self._num)
         self._div_id = self._name + "_div_id"
-#         self._data_name = self.name + "_data"
         self._filter_names = [name + FILTER_NAME_ADD_ON for name in self._filter_labels]
     
     def render(self):
@@ -840,7 +839,7 @@ class JoogleChart():
 
 
         # jg render properties
-        self.num = get_jooglechart_counter()
+        self.num = get_joogle_object_counter()
         self.name = "jooglechart_" + str(self.num)
         self.data_name = self.name + "_data"
         self.view_name = self.name + "_view"
@@ -952,7 +951,7 @@ class ChartRow:
 
     def render(self):
 
-        self.num = get_jooglechart_counter()
+        self.num = get_joogle_object_counter()
 
         for jc in self.jcs:
             if jc.filters:
