@@ -187,21 +187,21 @@ def dataframe_to_gviz(cities_df, datetime_cols=None, allow_nulls=False):
 
 ### Keep a running counter for all instances of JugChart.
 ### The counter is appended to the div's id to insure that each id is unique
-chart_counter = [0]
-formatter_counter = [0]
-filter_counter = [0]
+# chart_counter = [0]
+# formatter_counter = [0]
+# filter_counter = [0]
 joogle_object_counter = [0]
 
 def get_counter(counter_list):
     counter_list[0] += 1
     return counter_list[0]
 
-def get_chart_counter():
-    return get_counter(chart_counter)
-def get_formatter_counter():
-    return get_counter(formatter_counter)
-def get_filter_counter():
-    return get_counter(filter_counter)
+# def get_joogle_object_counter():
+#     return get_counter(chart_counter)
+# def get_joogle_object_counter():
+#     return get_counter(formatter_counter)
+# def get_joogle_object_counter():
+#     return get_counter(filter_counter)
 def get_joogle_object_counter():
     return get_counter(joogle_object_counter)
 
@@ -280,7 +280,7 @@ class Filter(_GoogleFilter):
         self._label = label
 
     def _set_render_properties(self):
-        self._num = get_filter_counter()
+        self._num = get_joogle_object_counter()
         if self._label:
             self._name = self._label + FILTER_NAME_ADD_ON
             self._global_name = True
@@ -379,7 +379,7 @@ class SeriesFilter(_GoogleFilter):
 
         self._filter_table_json = dataframe_to_gviz(df).ToJSon()
         self._series_indexes = series_indexes
-        self._num = get_filter_counter()
+        self._num = get_joogle_object_counter()
         
         if self._label:
             self._name = self._label + FILTER_NAME_ADD_ON
@@ -497,7 +497,7 @@ class Formatter():
             self.dest_col = dest_col
         self.pattern = pattern
 
-        self.num = get_formatter_counter()
+        self.num = get_joogle_object_counter()
         self.name = "formatter" + str(self.num)
 
 
@@ -679,7 +679,7 @@ class _Chart():
     def _set_render_properties(self, num_cols, chart_type=None):
 
         # chart render properties
-        self.num = get_chart_counter()
+        self.num = get_joogle_object_counter()
         self.name = "google_chart_" + str(self.num)
         self.chart_div_id = self.name + "_div_id"
 
