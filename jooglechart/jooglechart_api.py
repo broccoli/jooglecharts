@@ -356,13 +356,14 @@ class SeriesFilter(_GoogleFilter):
         if view_cols:
             series_indexes = view_cols[:]
         else:
-            series_indexes = [i for i in range(len(columns))]
+            series_indexes = jooglechart._num_cols
 
         # remove role cols from series indexes
         if jooglechart.roles:
             role_cols = [role[0] for role in jooglechart.roles]
             for col in role_cols:
-                series_indexes.remove(col)
+                if col in series_indexes:
+                    series_indexes.remove(col)
         
         # remove the category column -- first remaining series column
         series_indexes.pop(0)
@@ -725,6 +726,9 @@ class JoogleChart():
         self.tooltip_html = False
         self._series_filter = None
         self._dataframe = None
+        self._stylers = []
+        self._num_cols = None
+        self._num_rows = None
 
         # Dashboard attributes
         self.load_controls = False
@@ -754,17 +758,25 @@ class JoogleChart():
             # Data can only be Series at this point
             try:
 
-                cities_df = pd.DataFrame(args[0])
+                df = pd.DataFrame(args[0])
                 for s in args[1:]:
-                    cities_df[s.name] = s
+                    df[s.name] = s
 
             except:
                 message = "Data must be passed as 2d array, a DataFrame, or 2 or more Series"
                 raise JoogleChartsException(message)
-            self._dataframe = cities_df
-            table = dataframe_to_gviz(cities_df, datetime_cols=self.datetime_cols, allow_nulls=self.allow_nulls)
+            self._dataframe = df
+            table = dataframe_to_gviz(df, datetime_cols=self.datetime_cols, allow_nulls=self.allow_nulls)
             self.json = table.ToJSon()
 
+
+        if self._2d_array:
+            self._num_cols = len(self._2d_array[0])
+            self._num_rows = len(self._2d_array) - 1  #minus one for header row
+        else:
+            self._num_cols = len(self._dataframe.columns)
+            self._num_rows = len(self._dataframe)
+            
 
     def add_chart_options(self, options=None, **kwargs):
 
@@ -823,6 +835,10 @@ class JoogleChart():
     def add_div_styles(self, *args, **kwargs):
 
         self.charts[0].add_div_styles(*args, **kwargs)
+
+    def add_styler(self, styler):
+        
+        self._stylers.append(styler)
 
     def _add_chart(self, chart):
         self.charts.append(chart)
@@ -896,6 +912,10 @@ class JoogleChart():
         chart_type is one-off type; not saved to underlying chart.
         """
         self._set_render_properties(chart_type)
+        
+        for styler in self._stylers:
+            styler(self)
+            
 
         context = {}
         context['jg'] = self
