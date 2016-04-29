@@ -2,7 +2,7 @@
 
 
 
-def get_styler(size="medium", legend_position="top", debug=False):
+def get_styler(width="medium", legend_position="top", debug=False):
     
     H_WIDTH_SMALL = 350
     H_WIDTH_MEDIUM = 500
@@ -14,10 +14,7 @@ def get_styler(size="medium", legend_position="top", debug=False):
     
     H_CHARTAREA_LEFT = 60
     V_CHARTAREA_LEFT = 100
-    
-    Y_AXIS_TITLE = 40
-#     X_AXIS_TITLE = 40
-    
+        
     LEFT_SPACE_TITLE = 30
     RIGHT_SPACE_LEGEND = 120
     BOTTOM_SPACE_UNITS = 40
@@ -46,7 +43,7 @@ def get_styler(size="medium", legend_position="top", debug=False):
         if chart_type in horizontal_chart_types:
             return True
     
-    def get_width_options(chart, legend_position, size):
+    def get_width_options(chart, legend_position, width):
         
         
 #         print chart_type
@@ -59,7 +56,7 @@ def get_styler(size="medium", legend_position="top", debug=False):
         try:
             width = chart_opts['width']
         except:
-            width = h_width_dict[size]
+            width = h_width_dict[width]
         
         # get chartArea.left
         try:
@@ -131,7 +128,7 @@ def get_styler(size="medium", legend_position="top", debug=False):
         # Determine ratio of bar group width to gap width.  Increase the ratio
         # as series get added.
     
-        BASE_GAP_FACTOR = .6    # ratio of bar size to gap size
+        BASE_GAP_FACTOR = .6    # ratio of bar width to gap width
         SERIES_GAP_FACTOR = .2  # factor by which to decrease gap for each additional series
         modified_gap_ratio = BASE_GAP_FACTOR * ((1 - SERIES_GAP_FACTOR) ** (num_series - 1))
         
@@ -141,7 +138,7 @@ def get_styler(size="medium", legend_position="top", debug=False):
     
         chart_width = chart.chart_options['chartArea']['width']
         
-        MAX_BAR_RATIO = .15     # largest size bar
+        MAX_BAR_RATIO = .15     # largest width bar
         MIN_GAP_RATIO = .01     # smallest gap
         
         # 1.  Get unrestricted bar gap width
@@ -151,12 +148,12 @@ def get_styler(size="medium", legend_position="top", debug=False):
         # 2.  Check of bars are too thick
         max_bar_width = MAX_BAR_RATIO * chart_width        
         if bar_group_width > max_bar_width * num_series:
-            # if a bar exceeds max size, compute bar group width based on max
+            # if a bar exceeds max width, compute bar group width based on max
             bar_group_width = max_bar_width * num_series
         
         # 3. Check if gap is too small
         else:
-            # if gap size is below minimum, compute group width based on minimum gap
+            # if gap width is below minimum, compute group width based on minimum gap
             resulting_gap_width = bar_group_width * gap_ratio
             min_gap_width = MIN_GAP_RATIO * chart_width
             if resulting_gap_width < min_gap_width: 
@@ -221,7 +218,7 @@ def get_styler(size="medium", legend_position="top", debug=False):
 
         chart_width = chart.chart_options['chartArea']['width']
         
-        MAX_BAR_RATIO = .15     # largest size bar
+        MAX_BAR_RATIO = .15     # largest width bar
         MIN_GAP_RATIO = .01     # smallest gap
         
         # 1.  Get unrestricted bar gap width
@@ -231,12 +228,12 @@ def get_styler(size="medium", legend_position="top", debug=False):
         # 2.  Check of bars are too thick
         max_bar_width = MAX_BAR_RATIO * chart_width        
         if bar_group_width > max_bar_width * num_series:
-            # if a bar exceeds max size, compute bar group width based on max
+            # if a bar exceeds max width, compute bar group width based on max
             bar_group_width = max_bar_width * num_series
         
         # 3. Check if gap is too small
         else:
-            # if gap size is below minimum, compute group width based on minimum gap
+            # if gap width is below minimum, compute group width based on minimum gap
             resulting_gap_width = bar_group_width * gap_ratio
             min_gap_width = MIN_GAP_RATIO * chart_width
             if resulting_gap_width < min_gap_width: 
@@ -260,7 +257,7 @@ def get_styler(size="medium", legend_position="top", debug=False):
         else:
             num_series = get_num_series(jc, chart)
 
-        MAX_BAR_RATIO = .15     # largest size bar
+        MAX_BAR_RATIO = .15     # largest width bar
         MIN_LABEL_PX = 20
         CA_LEFT_BAR = 100
         MIN_BAR_WIDTH = 7
@@ -279,7 +276,7 @@ def get_styler(size="medium", legend_position="top", debug=False):
         max_bar_group_width = MAX_BAR_RATIO * ca_height    
                 
         if bar_group_width > max_bar_group_width * num_series:
-            # if a bar exceeds max size, compute bar group width based on max
+            # if a bar exceeds max width, compute bar group width based on max
             bar_group_width = max_bar_group_width * num_series
         
         resize_height = False
@@ -326,7 +323,7 @@ def get_styler(size="medium", legend_position="top", debug=False):
 #                 chart.add_chart_options(get_bar_group_width(jc, chart))
             chart.add_chart_options(legend_position=legend_position)
             chart.add_chart_options(basic_opts)
-            chart.add_chart_options(get_width_options(chart, legend_position, size))
+            chart.add_chart_options(get_width_options(chart, legend_position, width))
             chart.add_chart_options(get_base_height_options(chart))
             
             if chart_type == 'BarChart':
