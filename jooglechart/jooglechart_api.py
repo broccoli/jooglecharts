@@ -60,7 +60,7 @@ from IPython.display import display, HTML
 
 from jinja2 import Environment, FileSystemLoader
 
-from jinja_filters import to_json, format_styles_list
+from jinja_filters import to_json, format_styles_list, get_classes
 
 
 
@@ -79,6 +79,7 @@ loader=FileSystemLoader(os.path.join(PATH, 'jinja_templates'))
 j2_env = Environment(loader=loader, trim_blocks=True, lstrip_blocks=True)
 j2_env.filters['to_json'] = to_json
 j2_env.filters['format_styles_list'] = format_styles_list
+j2_env.filters['get_classes'] = get_classes
 
 
 class JoogleChartsException(Exception):
@@ -610,6 +611,7 @@ class _Chart():
         self.chart_div_id = None
         self.num = None
         self.name = None
+        self._div_classes = []
 
         # add any leftover kwargs to options
         if kwargs:
@@ -669,6 +671,12 @@ class _Chart():
                 style_dict.update(kwargs)
             _add_dict_to_dict(self.div_styles, style_dict)
 
+    def add_div_class(self, _class):
+        
+        if _class == None:
+            self._div_classes = []
+        else:
+            self._div_classes.append(_class)
 
     def set_view_cols(self, cols):
 
@@ -688,6 +696,13 @@ class _Chart():
         if self.chart_options == None:
             self.chart_options = {}
 
+
+        # add default classes
+        self.add_div_class("jooglechart_container")
+#         self._div_classes.append("jooglechart_container")        
+        chart_type_class = "jooglechart_type_" + self.chart_type
+        self.add_div_class(chart_type_class)
+#         self._div_classes.append(chart_type_class)
 
 
         # set chart type to display
@@ -835,6 +850,10 @@ class JoogleChart():
     def add_div_styles(self, *args, **kwargs):
 
         self.charts[0].add_div_styles(*args, **kwargs)
+        
+    def add_div_class(self, _class):
+        
+        self.charts[0].add_div_class(_class)
 
     def add_styler(self, styler):
         
