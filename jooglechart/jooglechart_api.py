@@ -698,9 +698,11 @@ class _Chart():
 
 
         # add default classes
-        self._div_classes.append("jooglechart_container")        
+        self.add_div_class("jooglechart_container")
+#         self._div_classes.append("jooglechart_container")        
         chart_type_class = "jooglechart_type_" + self.chart_type
-        self._div_classes.append(chart_type_class)
+        self.add_div_class(chart_type_class)
+#         self._div_classes.append(chart_type_class)
 
 
         # set chart type to display
