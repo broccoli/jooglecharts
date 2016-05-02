@@ -697,6 +697,11 @@ class _Chart():
             self.chart_options = {}
 
 
+        # add default classes
+        self._div_classes.append("jooglechart_container")        
+        chart_type_class = "jooglechart_type_" + self.chart_type
+        self._div_classes.append(chart_type_class)
+
 
         # set chart type to display
         if chart_type == None:
