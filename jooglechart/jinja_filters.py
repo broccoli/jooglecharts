@@ -39,3 +39,12 @@ def format_styles_list(div_styles):
         return 'style="%s"' % "; ".join(style_list)
     else:
         return ""
+    
+def get_classes(class_list):
+    
+    if class_list:
+        
+        return 'class="%s"' % " ".join(class_list)
+    
+    else:
+        return ""
