@@ -357,7 +357,7 @@ class SeriesFilter(_GoogleFilter):
         if view_cols:
             series_indexes = view_cols[:]
         else:
-            series_indexes = jooglechart._num_cols
+            series_indexes = range(jooglechart._num_cols)
 
         # remove role cols from series indexes
         if jooglechart.roles:
