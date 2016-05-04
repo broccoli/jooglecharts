@@ -744,6 +744,7 @@ class JoogleChart():
         self._stylers = []
         self._num_cols = None
         self._num_rows = None
+        self._global_title = None
 
         # Dashboard attributes
         self.load_controls = False
@@ -858,6 +859,10 @@ class JoogleChart():
     def add_styler(self, styler):
         
         self._stylers.append(styler)
+
+    def add_global_title(self, title):
+        
+        self._global_title = title
 
     def _add_chart(self, chart):
         self.charts.append(chart)

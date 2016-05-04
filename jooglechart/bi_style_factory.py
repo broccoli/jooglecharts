@@ -10,7 +10,7 @@ def get_styler(width="medium", legend_position="top", debug=False):
 
     TOP_SPACE_MIN = 10
     TOP_SPACE_TITLE = 25
-    TOP_SPACE_LEGEND = 30
+    TOP_SPACE_LEGEND = 10
     
     H_CHARTAREA_LEFT = 60
     V_CHARTAREA_LEFT = 100

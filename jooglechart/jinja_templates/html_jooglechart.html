@@ -1,3 +1,7 @@
+{% if jg._global_title %}
+<h1 class="jooglechart_global_title">{{ jg._global_title }}</h1>
+{% endif %}
+
 {% if jg._series_filter %}
 <div id="{{ jg._series_filter._div_id }}"></div>
 {% endif %}
