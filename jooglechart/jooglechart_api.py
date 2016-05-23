@@ -886,6 +886,8 @@ class JoogleChart():
         self.dashboard_name = self.name + "_dashboard"
         self.dashboard_div_id = self.dashboard_name + "_div_id"
 
+        for styler in self._stylers:
+            styler(self)            
 
         if self.json:
             # data is in a dataframe
@@ -903,7 +905,6 @@ class JoogleChart():
             # data is in a 2d array
             num_cols = len(self._2d_array[0])
 
-        # set the visible columns if hide_cols is set
         # get the number of columns
         for index, chart in enumerate(self.charts):
             if index == 0:
@@ -911,9 +912,11 @@ class JoogleChart():
             else:
                 chart._set_render_properties(num_cols)
 
+        # set render properties for filters
         for filter_ in self.filters:
             filter_._set_render_properties()
 
+        # set render properties for series filter
         if self._series_filter:
             self._series_filter._set_render_properties(self)
 
@@ -937,10 +940,6 @@ class JoogleChart():
         """
         self._set_render_properties(chart_type)
         
-        for styler in self._stylers:
-            styler(self)
-            
-
         context = {}
         context['jg'] = self
         context['load_controls'] = self.load_controls
