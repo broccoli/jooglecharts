@@ -21,8 +21,8 @@
 
         // Establish dependencies.
 			{% for filter in jg.filters %}
-        		{% if filter.bind_target %}
-		{{ jg.dashboard_name }}.bind({{ filter._name }}, {{ filter._bind_target.name }});
+        		{% if filter._bind_target %}
+		{{ jg.dashboard_name }}.bind({{ filter._name }}, {{ filter._bind_target._name }});
 			    {% else %}
 			    	{% for chart in jg.charts %}
 		{{ jg.dashboard_name }}.bind({{ filter._name }}, {{ chart.name }});
