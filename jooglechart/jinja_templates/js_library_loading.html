@@ -7,19 +7,6 @@
         {{ google_loader_name }}();
     }
 
-    <!-- taken from http://stackoverflow.com/questions/8618464/how-to-wait-for-another-js-to-load-to-proceed-operation/8618519#8618519 -->
-    function whenDivAvailable(name, callback) {
-        var intervalInMs = 10;
-        window.setTimeout(function() {
-            if (window[name]) {
-                callback();
-            } else {
-                window.setTimeout(arguments.callee, intervalInMs);
-            }
-
-        }, intervalInMs);
-    }
-
     // load visualization library    
     function {{ google_loader_name }}() {
     {% if load_controls %}
