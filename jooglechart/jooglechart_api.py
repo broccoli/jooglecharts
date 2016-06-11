@@ -56,11 +56,14 @@ import pandas as pd
 import json
 from IPython.display import display, HTML
 
+import sonar_keys
+
 
 
 from jinja2 import Environment, FileSystemLoader
 
 from jinja_filters import to_json, format_styles_list, get_classes
+
 
 
 
@@ -230,6 +233,8 @@ class _GoogleFilter(object):
         self._bind_target = None
         self._name = None
         self._global_name = False
+        self._senders = []
+        self._receivers = []
 
     def add_options(self, options = None, **kwargs):
         """
@@ -266,6 +271,15 @@ class _GoogleFilter(object):
         if kwargs:
             _add_dict_to_dict(self._state, kwargs)
 
+    def add_sender(self, key, on="statechange", type='send_selection'):
+        
+        self._senders.append({'on': on, 'key': key, 'type': type})
+                
+    
+    def add_receiver(self, key, action="update_selection"):
+        
+        self._receivers.append({'key': key, 'action': action})
+
 
 class Filter(_GoogleFilter):
 
@@ -275,12 +289,13 @@ class Filter(_GoogleFilter):
     """
 
     def __init__(self, type):
-        self._type = type
-        self._options = {}
-        self._state = {}
-        self._bind_target = None
+        super(Filter, self).__init__(type)
+#         self._type = type
+#         self._options = {}
+#         self._state = {}
+#         self._bind_target = None
         self._label = None
-        self._global_name = False
+#         self._global_name = False
 
     def bind_filter(self, bind_target):
         self._bind_target = bind_target
@@ -294,6 +309,7 @@ class Filter(_GoogleFilter):
         self._label = label
 
     def _set_render_properties(self):
+        
         self._num = get_joogle_object_counter()
         if self._label:
             self._name = self._label + FILTER_NAME_ADD_ON

@@ -1,0 +1,6 @@
+{% if sender.type == 'send_selection' %}
+        google.visualization.events.addListener({{ filter._name }}, "{{ sender.on }}", function () {
+			var selected_values = {{ filter._name }}.getState().selectedValues;
+			globals.sonar.send("{{ sender.key }}", selected_values);
+		});
+{% endif %}

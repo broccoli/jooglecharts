@@ -1,0 +1,7 @@
+		globals.sonar.add_handler(function (data) {
+			if (data.sonar_key == "{{ receiver.key }}") {
+				{%- if receiver.action == "update_selection" -%}			
+				globals.update_filter({{ filter._name }}, data.sonar_value);
+				{%- endif -%}
+			}
+		});

@@ -5,7 +5,46 @@ $(document).ready(function() {
 
 	/* GLOBALS AREA >>>>>>>>>>>>>>>>>>>>>>>>>>>>>> */
 
+	window.addEventListener('message', function(msg) {
+	// listener for sonar message from iframe parent
+		if (msg.data.sonar_key !== undefined && msg.data.sonar_value !== undefined && msg.originId != msg.destinationId) {
+			if (globals.sonar_handler_array !== undefined) {
+				globals.sonar.call_handlers(msg.data);
+			}
+		}
+	});
+
+
 	window.globals = {};
+
+	window.globals.sonar = new (function () {
+		// object for holding all sonar pieces
+		this.handler_array = []
+		this.add_handler = function(handler) { this.handler_array.push(handler)};
+		this.send = function(key, value) {
+			var data = { sonar_key: key, sonar_value: value };
+			if (window.self !== window.top) {
+				window.parent.postMessage(data, window.location.origin + window.location.pathname);
+			}
+			if (globals.sonar.handler_array !== undefined) {
+				globals.sonar.call_handlers(data);
+			}
+		}
+		this.call_handlers = function(data) {
+			for (i = 0; i < this.handler_array.length; i++) {
+				this.handler_array[i](data);
+			}
+		}
+	})();
+	
+	window.globals.update_filter = function(filter, selected_values) {
+		// utility function for updating Google Charts filter
+		var filter_state = filter.getState();
+		filter_state.selectedValues = selected_values;
+		filter.setState(filter_state);
+		filter.draw();		
+	}
+	
 
 	/*
 		The google.load function can only be called once per page.  On the first
