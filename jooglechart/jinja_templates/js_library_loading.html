@@ -1,4 +1,7 @@
 
+
+	window.globals = {};
+
 	/*
 		The google.load function can only be called once per page.  On the first
 		jooglechart, load the api and call loader with a callback.  For
@@ -14,29 +17,25 @@
 			}, 100); // wait 100 ms
 		} else { callback (); }
 	}
-
 	
-    // Check if a jooglechart has already been created
-    if (typeof window.jooglechart_has_been_created === "undefined") {
-		window.jooglechart_has_been_created = true;
-        jQuery.getScript('https://www.gstatic.com/charts/loader.js', function( data, textStatus, jqxhr) {
-            google_loader();
-        });
-		// The Google Charts docs say both libraries are needed for Geo and Map charts.  The Geo chart
-		// I tested worked fine, but if now, use this script load:
-        // jQuery.getScript('https://www.gstatic.com/charts/loader.js', function( data, textStatus, jqxhr) {
-        // 	        jQuery.getScript('https://www.google.com/jsapi', function( data, textStatus, jqxhr) {
-        // 	            google_loader();
-        // 	        });
-        // });
-
-    } else {
-		when_google_vis_loaded({{ callback_name }});
-    }
-
     // load visualization library    
-    function google_loader() {    
+    function google_loader(callback) {    
 	    google.charts.load('current', {packages: ['table', 'corechart', 'controls']});
-	    google.charts.setOnLoadCallback({{ callback_name }});
+	    google.charts.setOnLoadCallback(callback);
     }
+	
+	window.globals.call_jooglechart_callback = function(callback) {
+		if (typeof window.jooglechart_has_been_created === "undefined") {
+			window.jooglechart_has_been_created = true;
+			jQuery.getScript('https://www.gstatic.com/charts/loader.js', function( data, textStatus, jqxhr) {
+		    	google_loader(callback);
+			});
+		} else {
+			when_google_vis_loaded(callback);
+		}
+	}
+	
+	/* <<<<<<<<<<<<<<<<<<<<<<<<<<<<< GLOBALS AREA */
+	
+	globals.call_jooglechart_callback({{ callback_name }});
 
