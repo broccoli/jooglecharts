@@ -1,12 +1,22 @@
+'''
+Created on Apr 29, 2016
 
+@author: richd
+'''
+
+
+# importable constants
+WIDTH_SMALL = 350
+WIDTH_MEDIUM = 500
+WIDTH_LARGE = 1000
 
 
 
 def get_styler(width="medium", legend_position="top", debug=False):
     
-    H_WIDTH_SMALL = 350
-    H_WIDTH_MEDIUM = 500
-    H_WIDTH_LARGE = 1000
+#     WIDTH_SMALL = 350
+#     WIDTH_MEDIUM = 500
+#     WIDTH_LARGE = 1000
 
     TOP_SPACE_MIN = 10
     TOP_SPACE_TITLE = 25
@@ -22,7 +32,7 @@ def get_styler(width="medium", legend_position="top", debug=False):
     BOTTOM_SPACE_TITLE = 15
     BASE_HEIGHT = 375
 
-    h_width_dict = {'small': H_WIDTH_SMALL, 'medium': H_WIDTH_MEDIUM, 'large': H_WIDTH_LARGE}
+    h_width_dict = {'small': WIDTH_SMALL, 'medium': WIDTH_MEDIUM, 'large': WIDTH_LARGE}
     
     # basic options common to all charts
     basic_opts = {}
@@ -93,7 +103,11 @@ def get_styler(width="medium", legend_position="top", debug=False):
         chart_opts = chart.chart_options
         
         height_opts = {}
-        height_opts['height'] = BASE_HEIGHT
+        try:
+            chart_height = chart_opts['height']
+        except:
+            chart_height = BASE_HEIGHT
+        height_opts['height'] = chart_height
         
         chartarea_top = TOP_SPACE_MIN
         if chart_opts.get('title'):
@@ -106,7 +120,7 @@ def get_styler(width="medium", legend_position="top", debug=False):
         
         height_opts['chartArea.top'] = chartarea_top
         
-        chartarea_height = BASE_HEIGHT - chartarea_top
+        chartarea_height = chart_height - chartarea_top
         try:
             if 'title' in chart_opts['hAxis']:
                 chartarea_height -= BOTTOM_SPACE_TITLE
@@ -302,8 +316,9 @@ def get_styler(width="medium", legend_position="top", debug=False):
             resize_height = True
 
         if resize_height:
+            height_diff = chart_opts['height'] - chart_opts['chartArea']['height']
             opts['chartArea.height'] = ca_height
-            opts['height'] = ca_height + chart_opts['chartArea']['top']
+            opts['height'] = ca_height + height_diff
         opts['bar.groupWidth'] = int(round(bar_group_width))
         opts['chartArea.left'] = CA_LEFT_BAR
         
