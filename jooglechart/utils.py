@@ -45,5 +45,25 @@ def get_random_date_data(days=4, num_series=4):
     return pd.DataFrame(data)
 
 
-print get_random_date_data(10)
+capitals = ['Sacramento', 'Montpelier', 'Juneau', 'Montgomery', 'Little Rock',
+              'Phoenix', 'Denver', 'Hartford', 'Tallahassee', 'Dover', 'Atlanta', 'Honolulu',
+           'Austin', 'Albany', 'Frankfurt', 'Topeka', 'Baton Rouge']
 
+def get_df(rows=5, cols=1, min=20, max=100, category_column=False):
+    random.seed(2)
+    cities = capitals[:rows]
+    d = {}
+    columns = []
+    d['cities'] = cities
+    columns.append('cities')
+    if category_column:
+        categories = [chr(random.randint(65, 67)) for x in range(rows)]
+        d['categories'] = categories
+        columns.append('categories')
+        
+    for x in range(cols):
+        name = chr(x + 65) + (chr(x + 97) * 8) # + chr(x + 97)
+        data = [random.randint(min, max) for i in range(rows)]
+        d[name] = data
+        columns.append(name)
+    return pd.DataFrame(d, columns=columns)
