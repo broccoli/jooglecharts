@@ -1,0 +1,9 @@
+{% if sender.type == 'send_selection' %}
+        google.visualization.events.addListener({{ chart.name }}, '{{ sender.on }}', function() {
+  			var selection = {{ chart.name }}.getChart().getSelection()[0];
+			if (selection) {
+				var selected_category = {{ jg.data_name }}.getValue(selection.row, 0);
+				globals.sonar.send('{{ sender.key }}', [selected_category]);
+			}
+		});
+{% endif %}

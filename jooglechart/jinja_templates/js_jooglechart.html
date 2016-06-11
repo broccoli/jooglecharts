@@ -9,13 +9,19 @@
         
         {% else %}
           {% for chart in jg.charts %}
-        
           {{ chart.name }}.draw();
-        
           {% endfor %}
-        
         {% endif %}
 
+	{% if jg._has_senders %}
+          {% for chart in jg.charts %}
+          {% if chart._senders %}
+          {% for sender in chart._senders %}
+          {% include 'js_chartwrapper_sender.html' %}
+          {% endfor %}          
+          {% endif %}
+          {% endfor %}
+	{% endif %}
 
     {% if jg._series_filter %}
     	{% include 'js_series_filter.html' %}

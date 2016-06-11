@@ -272,11 +272,18 @@ class _GoogleFilter(object):
             _add_dict_to_dict(self._state, kwargs)
 
     def add_sender(self, key, on="statechange", type='send_selection'):
+        # possible types:
+        #   send date range
+        #   send number range
         
         self._senders.append({'on': on, 'key': key, 'type': type})
                 
     
     def add_receiver(self, key, action="update_selection"):
+        
+        # possible actions
+        #  update date range
+        #  update number range
         
         self._receivers.append({'key': key, 'action': action})
 
@@ -646,6 +653,7 @@ class _Chart():
         self.num = None
         self.name = None
         self._div_classes = []
+        self._senders = []
 
         # add any leftover kwargs to options
         if kwargs:
@@ -718,6 +726,12 @@ class _Chart():
             cols = [cols]
         self.view_cols = cols
 
+    def add_sender(self, key, on="select", type='send_selection'):
+        # possible types:
+        #   send date range
+        #   send number range
+        
+        self._senders.append({'on': on, 'key': key, 'type': type})
 
     def _set_render_properties(self, num_cols, chart_type=None):
 
@@ -779,6 +793,7 @@ class JoogleChart():
         self._num_cols = None
         self._num_rows = None
         self._global_title = None
+        self._has_senders = False
 
         # Dashboard attributes
         self.load_controls = False
@@ -905,6 +920,15 @@ class JoogleChart():
 
         return copy.deepcopy(self)
 
+    def add_sender(self, key, on="select", type='send_selection'):
+        # possible types:
+        #   send date range
+        #   send number range
+        
+        self._has_senders = True
+        self.charts[0].add_sender(key, on, type)
+#         self._senders.append({'on': on, 'key': key, 'type': type})
+
     def _set_render_properties(self, chart_type=None):
 
         """
@@ -986,7 +1010,7 @@ class JoogleChart():
         context['notebook_url'] = _get_notebook_url()
         
         set_common_on_context(context, force_common)
-
+        
         return j2_env.get_template('chart_template.html').render(context).encode('utf-8')
 
 
