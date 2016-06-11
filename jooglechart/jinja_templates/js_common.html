@@ -1,0 +1,47 @@
+
+<script>
+
+$(document).ready(function() {
+
+	/* GLOBALS AREA >>>>>>>>>>>>>>>>>>>>>>>>>>>>>> */
+
+	window.globals = {};
+
+	/*
+		The google.load function can only be called once per page.  On the first
+		jooglechart, load the api and call loader with a callback.  For
+		subsequent jooglecharts, just run the "callback" on its own
+		after waiting to see of the google vis library is loaded.
+	*/
+	
+	function when_google_vis_loaded (callback) {
+		// check to see if google visualization library has been loaded.
+		if (typeof window.google === 'undefined' || typeof window.google.visualization === 'undefined') {
+			setTimeout (function () {
+				when_google_vis_loaded (callback);
+			}, 100); // wait 100 ms
+		} else { callback (); }
+	}
+	
+    // load visualization library    
+    function google_loader(callback) {    
+	    google.charts.load('current', {packages: ['table', 'corechart', 'controls']});
+	    google.charts.setOnLoadCallback(callback);
+    }
+	
+	window.globals.call_jooglechart_callback = function(callback) {
+		if (typeof window.jooglechart_has_been_created === "undefined") {
+			window.jooglechart_has_been_created = true;
+			jQuery.getScript('https://www.gstatic.com/charts/loader.js', function( data, textStatus, jqxhr) {
+		    	google_loader(callback);
+			});
+		} else {
+			when_google_vis_loaded(callback);
+		}
+	}
+	
+	/* <<<<<<<<<<<<<<<<<<<<<<<<<<<<< GLOBALS AREA */
+
+});
+
+</script>
