@@ -2,6 +2,11 @@
 {# A chart must be drawn by calling show() on a chart #}
 
 
+{% if common %}
+{% include "common_template.html" %}
+{% endif %}
+
+
 <script type="text/javascript">
 
 $(document).ready(function() {

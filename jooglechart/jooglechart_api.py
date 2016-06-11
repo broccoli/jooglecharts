@@ -212,9 +212,6 @@ is_first_joogle = [True]
 
 def set_common_on_context(context, force_common):
     
-    print force_common
-    print is_first_joogle
-    
     if force_common:
         context['common'] = True
     elif is_first_joogle[0]:
@@ -447,7 +444,7 @@ class SuperCategoryFilter(_GoogleFilter):
         self._div_id = self._name + "_div_id"
         self._filter_names = [name + FILTER_NAME_ADD_ON for name in self._filter_labels]
     
-    def render(self):
+    def render(self, force_common=True):
         
         self._set_render_properties()
         context = {}
@@ -457,12 +454,14 @@ class SuperCategoryFilter(_GoogleFilter):
         context['super_filter'] = self
         context['super_filter_type'] = 'category'
     
+        set_common_on_context(context, force_common)
+        
         return j2_env.get_template('super_filter_template.html').render(context).encode('utf-8')
 
 
-    def show(self):
+    def show(self, force_common=False):
 
-        display(HTML(self.render()))
+        display(HTML(self.render(force_common)))
 
 
 
