@@ -1,6 +1,15 @@
+
+		{% if filter._json %}
+		var data = new google.visualization.DataTable({{ filter._json }});
+		{% else %}
+        var data = new google.visualization.DataTable();
+        data.addColumn('{{ filter._data_type }}', 'Slices');
+		{% endif %}
+
 		var {{ filter._name }} = new google.visualization.ControlWrapper({
 			'controlType': '{{ filter._type }}',
 			'containerId': '{{ filter._div_id }}',
+			'dataTable': data,
 			'options': {{ filter._options|default("{}")|to_json }},
 			'state': {{ filter._state|default("{}")|to_json }}
 		});

@@ -241,7 +241,6 @@ class _GoogleFilter(object):
         self._global_name = False
         self._senders = []
         self._receivers = []
-        self._series = None
 
     def add_options(self, options = None, **kwargs):
         """
@@ -294,31 +293,11 @@ class _GoogleFilter(object):
         
         self._receivers.append({'key': key, 'action': action})
 
-    def add_values_series(self, series):
-        
-        self._series = series
-        
-        
 
     def _set_render_properties(self):
         raise JoogleChartsException("_set_render_properties not implemented")
         
 
-    def render(self, force_common=True):
-        
-        self._set_render_properties()
-        context = {}
-        context['callback_name'] = 'doStuff_' + str(self._num)
-        context['filter'] = self
-        
-        set_common_on_context(context, force_common)
-        
-        return j2_env.get_template('top_freestanding_filter.html').render(context).encode('utf-8')
-
-
-    def show(self, force_common=False):
-
-        display(HTML(self.render(force_common)))
 
 class Filter(_GoogleFilter):
 
@@ -336,6 +315,9 @@ class Filter(_GoogleFilter):
         self._label = None
 #         self._global_name = False
 
+        self._json = None
+        self._data_type = None
+
     def bind_filter(self, bind_target):
         self._bind_target = bind_target
         
@@ -345,9 +327,17 @@ class Filter(_GoogleFilter):
 
     def set_filter_label(self, label):
         
+        # deprecated function for super category filter target
+        
         self._label = label
 
-    def _set_render_properties(self):
+    def add_values_series(self, series):
+        df = pd.DataFrame(series)
+        table = dataframe_to_gviz(df, allow_nulls=True)
+        self._json = table.ToJSon()
+        
+
+    def _set_render_properties(self, freestanding=False):
         
         self._num = get_joogle_object_counter()
         if self._label:
@@ -356,7 +346,33 @@ class Filter(_GoogleFilter):
         else:
             self._name = "google_filter_" + str(self._num)
         self._div_id = self._name + "_div_id"
+        
+        # get data type, but only used for freestanding filters
+        
+        if freestanding:
+            self.add_options(filterColumnIndex=0)
+            if self._type == "CategoryFilter":
+                self._data_type = "string"
+            elif self._type == "DateRangeFilter":
+                self._data_type = "date"
+            elif self._type == "NumberRangeFilter":
+                self._data_type = "number"
+        
+    def render(self, force_common=True, freestanding=True):
+        
+        self._set_render_properties(freestanding)
+        context = {}
+        context['callback_name'] = 'doStuff_' + str(self._num)
+        context['filter'] = self
+        
+        set_common_on_context(context, force_common)
+        
+        return j2_env.get_template('top_freestanding_filter.html').render(context).encode('utf-8')
 
+
+    def show(self, force_common=False):
+
+        display(HTML(self.render(force_common)))
 
 class SeriesFilter(_GoogleFilter):
     
