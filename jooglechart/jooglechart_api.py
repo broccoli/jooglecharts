@@ -471,7 +471,6 @@ class SuperCategoryFilter(_GoogleFilter):
         
         self._set_render_properties()
         context = {}
-        context['load_controls'] = True
         context['callback_name'] = 'doStuff_' + str(self._num)
         context['google_loader_name'] = 'google_loader_' + str(self._num)
         context['super_filter'] = self
@@ -796,7 +795,6 @@ class JoogleChart():
         self._has_senders = False
 
         # Dashboard attributes
-        self.load_controls = False
         self.dashboard_div_id = None
 
         # Chart attributes
@@ -877,7 +875,6 @@ class JoogleChart():
         if self.filters == None:
             self.filters = []
         self.filters.append(filter)
-        self.load_controls = True
 
     def _add_series_filter(self, filter):
         
@@ -1002,7 +999,6 @@ class JoogleChart():
         
         context = {}
         context['jg'] = self
-        context['load_controls'] = self.load_controls
         context['callback_name'] = 'doStuff_' + str(self.num)
         context['google_loader_name'] = 'google_loader_' + str(self.num)
 
@@ -1046,7 +1042,6 @@ class ChartRow:
 
         self.jcs = jcs
         self.num_jcs = len(self.jcs)
-        self.load_controls = False
 
         if self.num_jcs not in [2, 3, 4]:
             message = "A chart row must have 2-4 charts"
@@ -1061,16 +1056,10 @@ class ChartRow:
         self.num = get_joogle_object_counter()
 
         for jc in self.jcs:
-            if jc.filters:
-                self.load_controls = True
-                break
-
-        for jc in self.jcs:
             jc._set_render_properties()
 
         context = {}
         context['chartrow'] = self
-        context['load_controls'] = self.load_controls
         context['callback_name'] = 'doStuff_' + str(self.num)
         context['google_loader_name'] = 'google_loader_' + str(self.num)
 
