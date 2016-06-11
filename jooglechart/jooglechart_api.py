@@ -1014,7 +1014,7 @@ class ChartRow:
 
 
 
-    def render(self):
+    def render(self, force_common=True):
 
         self.num = get_joogle_object_counter()
 
@@ -1035,11 +1035,13 @@ class ChartRow:
         # ISHBOOK-495
         context['notebook_url'] = _get_notebook_url()
 
+        set_common_on_context(context, force_common)
+
         return j2_env.get_template('chartrow_template.html').render(context).encode('utf-8')
 
-    def show(self):
+    def show(self, force_common=False):
 
-        display(HTML(self.render()))
+        display(HTML(self.render(force_common)))
 
 # ISHBOOK-495
 def _is_real_ishbook(frame_globals):
