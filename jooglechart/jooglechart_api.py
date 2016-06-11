@@ -454,6 +454,9 @@ class SuperCategoryFilter(_GoogleFilter):
         context['super_filter'] = self
         context['super_filter_type'] = 'category'
     
+        # ISHBOOK-495
+        context['notebook_url'] = _get_notebook_url()
+
         set_common_on_context(context, force_common)
         
         return j2_env.get_template('super_filter_template.html').render(context).encode('utf-8')
