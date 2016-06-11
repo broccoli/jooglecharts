@@ -1,0 +1,8 @@
+		var {{ filter._name }} = new google.visualization.ControlWrapper({
+			'controlType': '{{ filter._type }}',
+			'containerId': '{{ filter._div_id }}',
+			'options': {{ filter._options|default("{}")|to_json }},
+			'state': {{ filter._state|default("{}")|to_json }}
+		});
+		
+		{{ filter._name }}.draw();

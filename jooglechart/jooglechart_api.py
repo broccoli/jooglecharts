@@ -223,6 +223,12 @@ def set_common_on_context(context, force_common):
     else:
         context['common'] = False
 
+    if context['common'] == True:
+        
+        # ISHBOOK-495
+        context['notebook_url'] = _get_notebook_url()
+    
+
 
 class _GoogleFilter(object):
     
@@ -235,6 +241,7 @@ class _GoogleFilter(object):
         self._global_name = False
         self._senders = []
         self._receivers = []
+        self._series = None
 
     def add_options(self, options = None, **kwargs):
         """
@@ -287,6 +294,31 @@ class _GoogleFilter(object):
         
         self._receivers.append({'key': key, 'action': action})
 
+    def add_values_series(self, series):
+        
+        self._series = series
+        
+        
+
+    def _set_render_properties(self):
+        raise JoogleChartsException("_set_render_properties not implemented")
+        
+
+    def render(self, force_common=True):
+        
+        self._set_render_properties()
+        context = {}
+        context['callback_name'] = 'doStuff_' + str(self._num)
+        context['filter'] = self
+        
+        set_common_on_context(context, force_common)
+        
+        return j2_env.get_template('top_freestanding_filter.html').render(context).encode('utf-8')
+
+
+    def show(self, force_common=False):
+
+        display(HTML(self.render(force_common)))
 
 class Filter(_GoogleFilter):
 
