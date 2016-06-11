@@ -472,7 +472,6 @@ class SuperCategoryFilter(_GoogleFilter):
         self._set_render_properties()
         context = {}
         context['callback_name'] = 'doStuff_' + str(self._num)
-        context['google_loader_name'] = 'google_loader_' + str(self._num)
         context['super_filter'] = self
         context['super_filter_type'] = 'category'
     
@@ -1000,7 +999,6 @@ class JoogleChart():
         context = {}
         context['jg'] = self
         context['callback_name'] = 'doStuff_' + str(self.num)
-        context['google_loader_name'] = 'google_loader_' + str(self.num)
 
         # ISHBOOK-495
         context['notebook_url'] = _get_notebook_url()
@@ -1061,7 +1059,6 @@ class ChartRow:
         context = {}
         context['chartrow'] = self
         context['callback_name'] = 'doStuff_' + str(self.num)
-        context['google_loader_name'] = 'google_loader_' + str(self.num)
 
         # ISHBOOK-495
         context['notebook_url'] = _get_notebook_url()
