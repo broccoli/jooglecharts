@@ -208,6 +208,22 @@ def get_joogle_object_counter():
 
 
 
+is_first_joogle = [True]
+
+def set_common_on_context(context, force_common):
+    
+    print force_common
+    print is_first_joogle
+    
+    if force_common:
+        context['common'] = True
+    elif is_first_joogle[0]:
+        is_first_joogle[0] = False
+        context['common'] = True
+    else:
+        context['common'] = False
+
+
 class _GoogleFilter(object):
     
     def __init__(self, type):
@@ -932,11 +948,13 @@ class JoogleChart():
             self.json = json.dumps(json_decode)
 
 
-    def render(self, chart_type=None):
+    def render(self, chart_type=None, force_common=True):
 
         """
         Render chart code.
         chart_type is one-off type; not saved to underlying chart.
+        
+        By default, DO force common for render()
         """
         self._set_render_properties(chart_type)
         
@@ -948,17 +966,21 @@ class JoogleChart():
 
         # ISHBOOK-495
         context['notebook_url'] = _get_notebook_url()
-
+        
+        set_common_on_context(context, force_common)
 
         return j2_env.get_template('chart_template.html').render(context).encode('utf-8')
 
 
-    def show(self, chart_type=None, **kwargs):
+    def show(self, chart_type=None, force_common=False, **kwargs):
 
         """
         .show creates chart with one-off chart type and style options.
         They aren't saved to the underlying chart.
+        
+        By default don't force common for show()
         """
+        
 
         # any leftover kwargs are assumed to be chart options
         chart = self.copy()
@@ -966,7 +988,7 @@ class JoogleChart():
             chart.add_chart_options(**kwargs)
         else:
             chart = self
-        display(HTML(chart.render(chart_type)))
+        display(HTML(chart.render(chart_type, force_common)))
 
 
 class ChartRow:
