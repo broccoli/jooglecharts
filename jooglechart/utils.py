@@ -175,16 +175,20 @@ def get_date_df(days=4, num_series=4):
     data['dates'] = sample_date_sequence(days)
     label_num = 65 # ascii 'A'
     
+    columns = ['dates']
+    
     for num in range(num_series):
         
-        label = chr(label_num)
-        mu = random.randint(20, 51)
+        label = chr(label_num + num)
+        mu = random.randint(20, 40)
         sd = 2
         s = np.random.normal(mu, sd, days)
         data[label] = s
+        columns.append(label)
 
         
-    return pd.DataFrame(data)
+    return pd.DataFrame(data, columns=columns)
+
 
 
 capitals = ['Sacramento', 'Montpelier', 'Juneau', 'Montgomery', 'Little Rock',
