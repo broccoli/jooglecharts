@@ -5,15 +5,157 @@ Created on Jan 9, 2016
 '''
 
 import random 
-import pandas as pd
+import json
+import os
 
+from ishbook_495 import _get_notebook_url
+
+import pandas as pd
 import numpy as np
+
+from jinja2 import Environment, FileSystemLoader
+from jinja_filters import to_json, format_styles_list, get_classes
 
 
 x = ['a', 'b', 'c', 'd']
 y = [4, 2, 5, 3]
 d = {'x': x, 'y': y}
 test_df = pd.DataFrame(d)
+
+
+# Set up Jinja
+PATH = os.path.dirname(os.path.abspath(__file__))
+loader=FileSystemLoader(os.path.join(PATH, 'jinja_templates'))
+j2_env = Environment(loader=loader, trim_blocks=True, lstrip_blocks=True)
+j2_env.filters['to_json'] = to_json
+j2_env.filters['format_styles_list'] = format_styles_list
+j2_env.filters['get_classes'] = get_classes
+
+
+class JoogleChartsException(Exception):
+    """ General exception object thrown by python google charts API """
+    pass
+
+
+### Keep a running counter for all instances of JugChart.
+### The counter is appended to the div's id to insure that each id is unique
+# chart_counter = [0]
+# formatter_counter = [0]
+# filter_counter = [0]
+joogle_object_counter = [0]
+
+def get_counter(counter_list):
+    counter_list[0] += 1
+    return counter_list[0]
+
+def get_joogle_object_counter():
+    return get_counter(joogle_object_counter)
+
+is_first_joogle = [True]
+def set_common_on_context(context, force_common):
+    
+    if force_common:
+        context['common'] = True
+    elif is_first_joogle[0]:
+        is_first_joogle[0] = False
+        context['common'] = True
+    else:
+        context['common'] = False
+
+    if context['common'] == True:
+        
+        # ISHBOOK-495
+        context['notebook_url'] = _get_notebook_url()
+
+
+def _add_dict_to_dict(current_options, options_dict):
+
+    # before combining the dictionaries, convert keywords that are
+    # in underscore or dot notation into nested dictionaries
+#     new_dict = {}
+    new_dicts = []
+    for k, v in options_dict.iteritems():
+        k2 = k.replace('_', '.')
+        if '.' in k2:
+            nested_dict = _get_nested_dict_from_dotted_key(k2, v)
+
+
+            new_dicts.append(nested_dict)
+
+        else:
+            new_dicts.append({k: v})
+
+
+    for d in new_dicts:
+        _add_nested_dict_to_dict(current_options, d)
+
+def _get_nested_dict_from_dotted_key(key, val):
+    # A dotted k_v_tuple is like this:  ("style.font.color", "#FF0000")
+    # converts to this: {"style": {"font": {"color": "#FF0000"}}}
+
+    key_list = key.split(".")
+    return_dict = {}
+    for key in key_list[1:][::-1]:
+        new_dict = {key:val}
+        val = new_dict
+    return_dict[key_list[0]] = val
+
+    return return_dict
+
+def _add_nested_dict_to_dict(current_dict, input_dict):
+
+    """
+    This method adds one dictionary to another.  It's similar to
+    dictionary .update(), but it will loop through levels of nested
+    dictionaries and update at the lowest possible level.
+
+    (Currently, the input dictionary can only have one item in any dictionary.
+    To handle multiple items, need to use recursion.)
+
+    Example 1, non-nested dictionaries, behaves like .update():
+    d1 = {'a': 5}
+    d2 = {'b': 6}
+    _add_nested_dict_to_dict(d1, d2)
+    print d1 # {'a': 5, 'b': 6}
+
+    Example 2, with nested dictionaries:
+    d1 = {'a': {'b': 3} }
+    d2 = {'a': {'c': 4} }
+    _add_nested_dict_to_dict(d1, d2)
+    print d1 # {'a': {'b': 3, 'c': 4}}
+
+    """
+
+    right_dict = input_dict
+    left_dict = current_dict
+
+    for k, v in right_dict.iteritems():
+
+        if not k in left_dict:
+            # if the k is not in the dict, it's new, so add it.
+            left_dict[k] = v
+            continue
+        else:
+
+            # Now we know that the right key is in the left
+            if (not isinstance(left_dict[k], dict)) or (not isinstance(right_dict[k], dict)):
+                # In some cases we are going to overwrite the left value
+                # with the right.  We are assuming that the developer wants to
+                # overwrite a value that has been previously set.
+                # These case are:
+                #    1. The left value is not a dictionary
+                #    2. Or, the right value is not a dictionary
+                # In either case, the chain of dictionaries has ended.
+                left_dict[k] = right_dict[k]
+                continue
+            else:
+
+                # Here, the dictionary on the left continues the same chain
+                # as the left, so advance to the next value to look for a
+                # new dict value.
+                right_dict = v
+                left_dict = left_dict[k]
+                _add_nested_dict_to_dict(left_dict, right_dict)
 
 
 def get_random_int():
