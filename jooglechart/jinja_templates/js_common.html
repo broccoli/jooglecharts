@@ -37,10 +37,20 @@ $(document).ready(function() {
 		}
 	})();
 	
-	window.globals.update_filter = function(filter, selected_values) {
+	window.globals.update_category_filter = function(filter, selected_values) {
 		// utility function for updating Google Charts filter
 		var filter_state = filter.getState();
 		filter_state.selectedValues = selected_values;
+		filter.setState(filter_state);
+		filter.draw();
+	}
+	window.globals.update_daterange_filter = function(filter, date_range) {
+		// utility function for updating Google Charts filter		
+		var filter_state = filter.getState();
+		filter_state.lowValue = date_range[0];
+		filter_state.highValue = date_range[1];
+		filter_state.lowThumbAtMinimum = false; // buggy without this
+		filter_state.highThumbAtMaximum = false;
 		filter.setState(filter_state);
 		filter.draw();		
 	}
