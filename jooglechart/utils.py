@@ -169,7 +169,7 @@ def sample_date_sequence(periods):
     return rng
 
 
-def get_random_date_data(days=4, num_series=4):
+def get_date_df(days=4, num_series=4):
 
     data = {}
     data['dates'] = sample_date_sequence(days)
