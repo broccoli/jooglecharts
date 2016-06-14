@@ -1,0 +1,23 @@
+{% if common %}
+{% include "common_template.html" %}
+{% endif %}
+
+<script type="text/javascript">
+
+$(document).ready(function() {
+	{% include 'js_library_loading.html' %}
+});
+
+    function {{ callback_name }}() {
+    
+    	{% include 'js_checkbox_group.html' %}    	
+
+    
+    }
+</script>
+
+{% if cbg._orientation == "horizontal" %}
+{% include 'css_checkbox_group_horizontal.html' %}		
+{% endif %}
+		
+<div id="{{ cbg._div_id }}" ></div>

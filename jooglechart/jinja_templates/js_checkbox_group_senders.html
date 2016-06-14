@@ -1,0 +1,7 @@
+		// add senders before before creating checkboxes
+		{% for sender in cbg._senders %}
+		senders.push(function() {
+			var selected_values = get_selected_values();
+			globals.sonar.send("{{ sender.key }}", selected_values);
+		})
+		{% endfor %}

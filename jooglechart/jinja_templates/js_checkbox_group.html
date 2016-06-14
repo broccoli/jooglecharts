@@ -1,0 +1,78 @@
+		var senders = [];
+		var values = {{ cbg._values }};
+		var $main_div = $("#{{ cbg._div_id }}");
+		var add_clear = {{ cbg._clear_button }};
+		{% if cbg._initial_values %}
+		var initial_values = {{ cbg._initial_values|to_json }};
+		{% endif %}
+		
+		
+		
+		// --------- Add sonar senders, if any ---------
+		{% include 'js_checkbox_group_senders.html' %}
+		
+		// ---------------------------------------------
+		// define call_senders before call to create_checkboxes()
+		function call_senders() {
+			$.each(senders, function(index, value) { value() });
+		}
+
+		function add_clear_button() {
+			var $clear_all = $("<button>");
+			$clear_all.addClass("btn btn-default btn-sm").html("clear all").click(function() {
+				$main_div.find("input").prop('checked', false);
+				call_senders();
+			});
+			var $div = $("<div>");
+			$div.append($clear_all).{{ cbg._append_or_prepend }}To($main_div);
+		}
+		
+		function create_checkboxes() {
+			$main_div.addClass("checkbox");
+			for (var i = 0; i < values.length; i++) {
+				var value = values[i];
+				var $div = $("<div>");
+				var $label = $("<label>");
+				var $input = $("<input>");
+				$input.attr("type", "checkbox").attr("value", value).click(function(event) {
+					call_senders();
+				})
+				$label.html(value).prepend($input).appendTo($div);
+				$main_div.append($div);
+			}			
+			if (add_clear) { add_clear_button(); }
+			
+			if (typeof initial_values != "undefined") {
+				update_checkboxes(initial_values);
+			}
+		}
+		
+		create_checkboxes();
+
+		function update_checkboxes(values) {
+			// clear_buttons();
+			$main_div.find("input").each(function(index, value) {
+				$input = $(this);
+				var input_val = $input.attr("value");
+				if ($.inArray(input_val, values) >= 0) {
+					// $label.addClass("active");
+					$input.prop("checked", true);
+				}
+				else {
+					$input.prop("checked", false);					
+				}
+			});
+			call_senders();
+		}
+
+		function get_selected_values() {
+			var selected_values = [];
+			$main_div.find("input").each(function(){
+				$this = $(this);
+				if ($this.is(":checked")) {
+					selected_values.push($this.attr("value"));
+				}
+			});
+			return selected_values;
+		}
+
