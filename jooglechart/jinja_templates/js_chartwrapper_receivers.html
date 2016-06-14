@@ -1,0 +1,12 @@
+		{% for chart in jg.charts %}
+		{% for receiver in chart._receivers %}
+		{% if receiver.action == 'update_selection' %}
+		globals.sonar.add_handler(function(data) {
+			if (data.sonar_key == "{{ receiver.key }}") {
+				globals.update_chart(data.sonar_value, {{ jg.data_name }}, {{ chart.name }});				
+			}
+		})
+		{% endif %}
+
+		{% endfor %}          
+		{% endfor %}
