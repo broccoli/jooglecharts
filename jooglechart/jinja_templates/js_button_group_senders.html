@@ -1,0 +1,7 @@
+		{% for sender in bg._senders %}
+		senders.push(function() {
+			var selected_values = get_selected_values();
+			globals.sonar.send("{{ sender.key }}", selected_values);
+		})
+		{% endfor %}
+		

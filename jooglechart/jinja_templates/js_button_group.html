@@ -1,0 +1,110 @@
+
+
+		var senders = [];
+		var values = {{ bg._values|to_json }};
+		var add_clear = {{ bg._clear_button }};	
+		var id = "{{ bg._div_id }}";
+		var $div = $("#" + id);
+		{% if bg._initial_values %}
+		var initial_values = {{ bg._initial_values|to_json }};
+		{% endif %}
+		var type = "{{ bg._type }}";
+		var btn_group_class = '{{ bg._button_group_class }}';
+
+		function get_selected_values() {
+			var selected_values = [];
+			$div.find("input").each(function(){
+				$this = $(this);
+				if ($this.is(":checked")) {
+					selected_values.push($this.attr("value"));
+				}
+			});
+			return selected_values;
+		}
+
+		// --------- Add sonar senders, if any ---------
+		{% include 'js_button_group_senders.html' %}
+		
+		// ---------------------------------------------
+
+		/*
+			To get the inputs clicked properly, I had to put the click on event on the
+			label and then trigger click on the input before calling senders.  PITA.
+		*/
+		function create_buttons(id, values, type) {
+			// create labels, checkboxes/radios, attach click events
+			$div.addClass(btn_group_class).attr('data-toggle', "buttons");
+			for (var i = 0; i < values.length; i++) {
+				var value = values[i];
+				$label = $("<label>");
+				$input = $("<input>");
+				$input.attr("type", type).attr("value", value).click(function(event) {
+					if (type == "radio") {  // For radio, need to force uncheck the other inputs.  PITA.
+						$div.find("input").not($(this)).attr("checked", false);
+					}
+					event.stopPropagation();  // stop bubbling up to label
+				})
+				$label.addClass("btn btn-default").html(value).prepend($input).click(function(event) {
+					// event.preventDefault();
+					$(this).find("input").click();
+					console.log("--- calling senders from label click function");
+					call_senders();
+				});
+				$div.append($label);
+			}
+			
+			if (add_clear) { add_clear_button(); }
+			
+			if (typeof initial_values != "undefined") {
+				update_button_group(initial_values);
+			}
+		}
+		
+		function clear_buttons() {
+			$div.find("label").each(function() {
+				$div.find("input").attr('checked', false);
+				$(this).removeClass("active");
+			});
+		}
+		
+		function add_clear_button() {
+			$button = $("<button>");
+			$button.addClass("btn btn-default").html("clear all").{{ bg._append_or_prepend }}To($div)
+			.click(function() {
+				clear_buttons();
+				$button.blur();
+				call_senders();
+			});
+		}
+		
+		
+		// define call_senders before call to create_buttons()
+		function call_senders() {
+			$.each(senders, function(index, value) { value() });
+		}
+
+
+		create_buttons(id, values, type);
+
+		function update_button_group(values) {
+			if (type == "radio" && values.length > 1) {
+				values = [values[0]];
+			}
+			clear_buttons();
+			$div.find("label").each(function(index, value) {
+				$label = $(this);
+				$input = $label.find("input");
+				var input_val = $input.attr("value");
+				if ($.inArray(input_val, values) >= 0) {
+					$label.addClass("active");
+					$input.attr("checked", true);
+				}
+			});
+			call_senders();
+		}
+		
+		
+		// -----------  add handlers ------------------
+		{% include 'js_button_group_receivers.html' %}
+		
+		// --------------------------------------------

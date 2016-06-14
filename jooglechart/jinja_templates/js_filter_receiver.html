@@ -1,7 +1,9 @@
 		globals.sonar.add_handler(function (data) {
 			if (data.sonar_key == "{{ receiver.key }}") {
-				{%- if receiver.action == "update_selection" -%}			
+				{% if receiver.action == "update_selection" %}			
 				globals.update_category_filter({{ filter._name }}, data.sonar_value);
-				{%- endif -%}
+				{% elif receiver.action == "update_date_range" %}
+				globals.update_daterange_filter({{ filter._name }}, data.sonar_value);				
+				{% endif %}
 			}
 		});

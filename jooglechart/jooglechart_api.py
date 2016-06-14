@@ -110,22 +110,37 @@ class _GoogleFilter(object):
         if kwargs:
             _add_dict_to_dict(self._state, kwargs)
 
-    def add_sender(self, key, on="statechange", type='send_selection'):
+    def add_sender(self, key, on="statechange", type='default'):
+        
+        if type == "default":
+            if self._type == "CategoryFilter":
+                type = "selection"
+            elif self._type == "DateRangeFilter":
+                type = "date_range"
+            elif self._type == "NumberRangeFilter":
+                type = "number_range"
+                
         # possible types:
         #   send date range
         #   send number range
         
         self._senders.append({'on': on, 'key': key, 'type': type})
-                
-    
-    def add_receiver(self, key, action="update_selection"):
         
+    
+    def add_receiver(self, key, action="default"):
+        
+        if action == "default":
+            if self._type == "CategoryFilter":
+                action = "update_selection"
+            elif self._type == "DateRangeFilter":
+                action = "update_date_range"
+            elif self._type == "NumberRangeFilter":
+                action = "update_number_range"
         # possible actions
         #  update date range
         #  update number range
         
         self._receivers.append({'key': key, 'action': action})
-
 
     def _set_render_properties(self):
         raise JoogleChartsException("_set_render_properties not implemented")
@@ -186,6 +201,7 @@ class Filter(_GoogleFilter):
                 self._data_type = "number"
         
     def render(self, force_common=True, freestanding=True):
+        
         
         self._set_render_properties(freestanding)
         context = {}
