@@ -14,7 +14,7 @@
 		function get_selected_values() {
 			var selected_values = [];
 			$div.find("input").each(function(){
-				$this = $(this);
+				var $this = $(this);
 				if ($this.is(":checked")) {
 					selected_values.push($this.attr("value"));
 				}
@@ -36,8 +36,8 @@
 			$div.addClass(btn_group_class).attr('data-toggle', "buttons");
 			for (var i = 0; i < values.length; i++) {
 				var value = values[i];
-				$label = $("<label>");
-				$input = $("<input>");
+				var $label = $("<label>");
+				var $input = $("<input>");
 				$input.attr("type", type).attr("value", value).click(function(event) {
 					if (type == "radio") {  // For radio, need to force uncheck the other inputs.  PITA.
 						$div.find("input").not($(this)).attr("checked", false);
@@ -47,7 +47,6 @@
 				$label.addClass("btn btn-default").html(value).prepend($input).click(function(event) {
 					// event.preventDefault();
 					$(this).find("input").click();
-					console.log("--- calling senders from label click function");
 					call_senders();
 				});
 				$div.append($label);
@@ -68,7 +67,7 @@
 		}
 		
 		function add_clear_button() {
-			$button = $("<button>");
+			var $button = $("<button>");
 			$button.addClass("btn btn-default").html("clear all").{{ bg._append_or_prepend }}To($div)
 			.click(function() {
 				clear_buttons();
@@ -92,8 +91,8 @@
 			}
 			clear_buttons();
 			$div.find("label").each(function(index, value) {
-				$label = $(this);
-				$input = $label.find("input");
+				var $label = $(this);
+				var $input = $label.find("input");
 				var input_val = $input.attr("value");
 				if ($.inArray(input_val, values) >= 0) {
 					$label.addClass("active");

@@ -54,6 +54,22 @@ $(document).ready(function() {
 		filter.setState(filter_state);
 		filter.draw();		
 	}
+	window.globals.update_chart = function(values_arr, data, chartwrapper) {
+		var filtered_rows = [];
+		if (values_arr.length == 0) {
+			filtered_rows = null;
+		}
+		else {
+			for (var i = 0; i < values_arr.length; i++) {
+				var rows = data.getFilteredRows([{column: 0, value: values_arr[i]}]);
+				filtered_rows = $.merge(filtered_rows, rows);
+			}
+		}
+		chartwrapper.setView({
+			rows: filtered_rows
+		});
+		chartwrapper.draw();			
+	}
 	
 
 	/*

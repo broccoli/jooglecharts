@@ -1,4 +1,6 @@
-{% if sender.type == 'send_selection' %}
+		{% for chart in jg.charts %}
+		{% for sender in chart._senders %}
+		{% if sender.type == 'selection' %}
         google.visualization.events.addListener({{ chart.name }}, '{{ sender.on }}', function() {
   			var selection = {{ chart.name }}.getChart().getSelection()[0];
 			if (selection) {
@@ -6,4 +8,6 @@
 				globals.sonar.send('{{ sender.key }}', [selected_category]);
 			}
 		});
-{% endif %}
+		{% endif %}
+		{% endfor %}          
+		{% endfor %}

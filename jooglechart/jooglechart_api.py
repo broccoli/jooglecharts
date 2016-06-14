@@ -454,7 +454,8 @@ class _Chart():
         self.name = None
         self._div_classes = []
         self._senders = []
-
+        self._receivers = []
+ 
         # add any leftover kwargs to options
         if kwargs:
             self.add_chart_options(**kwargs)
@@ -533,6 +534,13 @@ class _Chart():
         
         self._senders.append({'on': on, 'key': key, 'type': type})
 
+    def add_receiver(self, key, action='update_selection'):
+        # possible types:
+        #   send date range
+        #   send number range
+        
+        self._receivers.append({'key': key, 'action': action})
+
     def _set_render_properties(self, num_cols, chart_type=None):
 
         # chart render properties
@@ -591,7 +599,6 @@ class JoogleChart():
         self._num_cols = None
         self._num_rows = None
         self._global_title = None
-        self._has_senders = False
 
         # Dashboard attributes
         self.dashboard_div_id = None
@@ -716,14 +723,24 @@ class JoogleChart():
 
         return copy.deepcopy(self)
 
-    def add_sender(self, key, on="select", type='send_selection'):
+    def add_sender(self, key, on="select", type='selection'):
+        # possible types:
+        #   send date range
+        #   send number range
+        
+        self.charts[0].add_sender(key, on, type)
+#         self._senders.append({'on': on, 'key': key, 'type': type})
+
+
+    def add_receiver(self, key, action='update_selection'):
         # possible types:
         #   send date range
         #   send number range
         
         self._has_senders = True
-        self.charts[0].add_sender(key, on, type)
+        self.charts[0].add_receiver(key, action)
 #         self._senders.append({'on': on, 'key': key, 'type': type})
+
 
     def _set_render_properties(self, chart_type=None):
 
