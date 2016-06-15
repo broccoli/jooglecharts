@@ -54,18 +54,27 @@ def get_joogle_object_counter():
 is_first_joogle = [True]
 def set_common_on_context(context, force_common):
     
-    if force_common:
-        context['common'] = True
-    elif is_first_joogle[0]:
-        is_first_joogle[0] = False
-        context['common'] = True
-    else:
-        context['common'] = False
-
-    if context['common'] == True:
+    # I was loading common template only for the 
+    # first jooglechart, but that causes a problems while
+    # developing in Jupyter.  If the first jooglechart is
+    # rerun, it won't have the common context, and if the output
+    # is saved, a js error occurs on reload and no jooglechart
+    # will run. (The document ready function won't run.)
+    
+    context['common'] = True
         
-        # ISHBOOK-495
-        context['notebook_url'] = _get_notebook_url()
+#     if force_common:
+#         context['common'] = True
+#     elif is_first_joogle[0]:
+#         is_first_joogle[0] = False
+#         context['common'] = True
+#     else:
+#         context['common'] = False
+# 
+#     if context['common'] == True:
+        
+    # ISHBOOK-495
+    context['notebook_url'] = _get_notebook_url()
 
 
 def _add_dict_to_dict(current_options, options_dict):
