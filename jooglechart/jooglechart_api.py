@@ -1,6 +1,26 @@
 # -*- coding: utf-8 -*-
 
 '''
+Sonar todo:
+-- fix daterange filter send/receive
+-- change daterange filter send/receive to range for use by NumberRangeFilter
+-- Investigate button group bug when two button groups
+-- test standalone filters, make unit tests for category, date, number range
+-- make chart range receiver
+-- modify chart receiver to get either first usable category column or "default"
+-- test buttongroup wraparound when there are a lot of buttons
+-- add color option for button color.
+
+styler todo
+-- add indeed_colors=True option
+-- accommodate bottom legend
+-- parameter for right legend space
+
+
+
+'''
+
+'''
 Created on Dec 5, 2015
 
 @author: richd
