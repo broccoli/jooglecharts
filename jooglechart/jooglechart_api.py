@@ -230,7 +230,7 @@ class Filter(_GoogleFilter):
             elif self._type == "NumberRangeFilter":
                 self._data_type = "number"
         
-    def render(self, force_common=True, freestanding=True):
+    def render(self, include_common=True, freestanding=True):
         
         
         self._set_render_properties(freestanding)
@@ -238,14 +238,14 @@ class Filter(_GoogleFilter):
         context['callback_name'] = 'doStuff_' + str(self._num)
         context['filter'] = self
         
-        set_common_on_context(context, force_common)
+        set_common_on_context(context, include_common)
         
         return j2_env.get_template('top_freestanding_filter.html').render(context).encode('utf-8')
 
 
-    def show(self, force_common=False):
+    def show(self, include_common=True):
 
-        display(HTML(self.render(force_common)))
+        display(HTML(self.render(include_common)))
 
 class SeriesFilter(_GoogleFilter):
     
@@ -388,7 +388,7 @@ class SuperCategoryFilter(_GoogleFilter):
         self._div_id = self._name + "_div_id"
         self._filter_names = [name + FILTER_NAME_ADD_ON for name in self._filter_labels]
     
-    def render(self, force_common=True):
+    def render(self, include_common=True):
         
         self._set_render_properties()
         context = {}
@@ -399,14 +399,14 @@ class SuperCategoryFilter(_GoogleFilter):
         # ISHBOOK-495
 #         context['notebook_url'] = _get_notebook_url()
 
-        set_common_on_context(context, force_common)
+        set_common_on_context(context, include_common)
         
         return j2_env.get_template('super_filter_template.html').render(context).encode('utf-8')
 
 
-    def show(self, force_common=False):
+    def show(self, include_common=True):
 
-        display(HTML(self.render(force_common)))
+        display(HTML(self.render(include_common)))
 
 
 
@@ -833,7 +833,7 @@ class JoogleChart():
             self.json = json.dumps(json_decode)
 
 
-    def render(self, chart_type=None, force_common=True):
+    def render(self, chart_type=None, include_common=True):
 
         """
         Render chart code.
@@ -850,12 +850,12 @@ class JoogleChart():
         # ISHBOOK-495
 #         context['notebook_url'] = _get_notebook_url()
         
-        set_common_on_context(context, force_common)
+        set_common_on_context(context, include_common)
         
         return j2_env.get_template('chart_template.html').render(context).encode('utf-8')
 
 
-    def show(self, chart_type=None, force_common=False, **kwargs):
+    def show(self, chart_type=None, include_common=True, **kwargs):
 
         """
         .show creates chart with one-off chart type and style options.
@@ -871,7 +871,7 @@ class JoogleChart():
             chart.add_chart_options(**kwargs)
         else:
             chart = self
-        display(HTML(chart.render(chart_type, force_common)))
+        display(HTML(chart.render(chart_type, include_common)))
 
 
 class ChartRow:
@@ -896,7 +896,7 @@ class ChartRow:
 
 
 
-    def render(self, force_common=True):
+    def render(self, include_common=True):
 
         self.num = get_joogle_object_counter()
 
@@ -910,13 +910,13 @@ class ChartRow:
         # ISHBOOK-495
 #         context['notebook_url'] = _get_notebook_url()
 
-        set_common_on_context(context, force_common)
+        set_common_on_context(context, include_common)
 
         return j2_env.get_template('chartrow_template.html').render(context).encode('utf-8')
 
-    def show(self, force_common=False):
+    def show(self, include_common=False):
 
-        display(HTML(self.render(force_common)))
+        display(HTML(self.render(include_common)))
 
 
 

@@ -68,21 +68,21 @@ class ButtonGroup(object):
         
         self._receivers.append({'key': key})
 
-    def render(self, force_common=True):
+    def render(self, include_common=True):
         
         self._set_render_properties()
         context = {}
         context['callback_name'] = 'doStuff_' + str(self._num)
         context['bg'] = self
         
-        set_common_on_context(context, force_common)
+        set_common_on_context(context, include_common)
         
         return j2_env.get_template('top_button_group.html').render(context).encode('utf-8')
 
 
-    def show(self, force_common=False):
+    def show(self, include_common=True):
 
-        display(HTML(self.render(force_common)))
+        display(HTML(self.render(include_common)))
     
     
 
@@ -138,19 +138,19 @@ class CheckboxGroup(object):
         
         self._receivers.append({'key': key})
 
-    def render(self, force_common=True):
+    def render(self, include_common=True):
         
         self._set_render_properties()
         context = {}
         context['callback_name'] = 'doStuff_' + str(self._num)
         context['cbg'] = self
         
-        set_common_on_context(context, force_common)
+        set_common_on_context(context, include_common)
         
         return j2_env.get_template('top_checkbox_group.html').render(context).encode('utf-8')
 
 
-    def show(self, force_common=False):
+    def show(self, include_common=True):
 
-        display(HTML(self.render(force_common)))
+        display(HTML(self.render(include_common)))
     

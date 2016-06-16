@@ -52,7 +52,7 @@ def get_joogle_object_counter():
     return get_counter(joogle_object_counter)
 
 is_first_joogle = [True]
-def set_common_on_context(context, force_common):
+def set_common_on_context(context, include_common):
     
     # I was loading common template only for the 
     # first jooglechart, but that causes a problems while
@@ -61,7 +61,7 @@ def set_common_on_context(context, force_common):
     # is saved, a js error occurs on reload and no jooglechart
     # will run. (The document ready function won't run.)
     
-    context['common'] = True
+    context['common'] = include_common
         
 #     if force_common:
 #         context['common'] = True
