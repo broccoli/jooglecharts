@@ -14,6 +14,11 @@ Sonar todo:
 -- modify chartrow to accept widgets, text.
 -- test checklist widget for long lists.  Add height handling and scrollbars for long lists?
 -- modify SuperCategoryFilter to use the sonar machinery behind the scenes?
+-- need a way to check if in aquarium for aquarium_hidden.
+-- add titles to button group and checkbox group.
+-- change clear button on
+
+-- a change to commit
 
 
 styler todo
