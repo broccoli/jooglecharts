@@ -8,8 +8,13 @@ Sonar todo:
 -- test standalone filters, make unit tests for category, date, number range
 -- make chart range receiver
 -- modify chart receiver to get either first usable category column or "default"
--- test buttongroup wraparound when there are a lot of buttons
+-- test buttongroup wrap around when there are a lot of buttons
 -- add color option for button color.
+-- add receive for checklist widget
+-- modify chartrow to accept widgets, text.
+-- test checklist widget for long lists.  Add height handling and scrollbars for long lists?
+-- modify SuperCategoryFilter to use the sonar machinery behind the scenes?
+
 
 styler todo
 -- add indeed_colors=True option
