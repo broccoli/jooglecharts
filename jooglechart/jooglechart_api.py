@@ -5,8 +5,8 @@ Sonar todo:
 -- NOT BROKEN.  fix daterange filter send/receive
 -- DONE. change daterange filter send/receive to range for use by NumberRangeFilter
 -- BACKBURNER.  Investigate button group bug when two button groups.  Happens when one bg controls a filter
-  and another controls a chart.  
--- test standalone filters, make unit tests for category, date, number range
+  and another controls a chart.
+-- DONE.  test standalone filters, make unit tests for category, date, number range
 -- make chart range receiver
 -- modify chart receiver to take column
 -- test buttongroup wrap around when there are a lot of buttons
@@ -565,12 +565,12 @@ class _Chart():
         
         self._senders.append({'on': on, 'key': key, 'type': type})
 
-    def add_receiver(self, key, action='update_selection'):
+    def add_receiver(self, key, column, action='update_selection'):
         # possible types:
         #   send date range
         #   send number range
         
-        self._receivers.append({'key': key, 'action': action})
+        self._receivers.append({'key': key, 'action': action, 'column': column})
 
     def _set_render_properties(self, num_cols, chart_type=None):
 
@@ -763,13 +763,13 @@ class JoogleChart():
 #         self._senders.append({'on': on, 'key': key, 'type': type})
 
 
-    def add_receiver(self, key, action='update_selection'):
+    def add_receiver(self, key, column, action='update_selection'):
         # possible types:
         #   send date range
         #   send number range
         
         self._has_senders = True
-        self.charts[0].add_receiver(key, action)
+        self.charts[0].add_receiver(key, column, action)
 #         self._senders.append({'on': on, 'key': key, 'type': type})
 
 

@@ -56,19 +56,27 @@ $(document).ready(function() {
 		filter.setState(filter_state);
 		filter.draw();
 	}
-	window.globals.update_chart = function(values_arr, data, chartwrapper) {
+	window.globals.update_chart = function(values_arr, data, chartwrapper, column) {
 		var filtered_rows = [];
 		if (values_arr.length == 0) {
 			filtered_rows = null;
 		}
 		else {
 			for (var i = 0; i < values_arr.length; i++) {
-				var rows = data.getFilteredRows([{column: 0, value: values_arr[i]}]);
+				var rows = data.getFilteredRows([{column: column, value: values_arr[i]}]);
 				filtered_rows = $.merge(filtered_rows, rows);
 			}
 		}
 		chartwrapper.setView({
 			rows: filtered_rows
+		});
+		chartwrapper.draw();			
+	}
+
+	window.globals.update_chart_range = function(minValue, maxValue, data, chartwrapper, column) {
+		var rows = data.getFilteredRows([{column: column, minValue: minValue, maxValue: maxValue}]);
+		chartwrapper.setView({
+			rows: rows
 		});
 		chartwrapper.draw();			
 	}
