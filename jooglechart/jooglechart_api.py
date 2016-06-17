@@ -4,7 +4,8 @@
 Sonar todo:
 -- NOT BROKEN.  fix daterange filter send/receive
 -- DONE. change daterange filter send/receive to range for use by NumberRangeFilter
--- Investigate button group bug when two button groups
+-- BACKBURNER.  Investigate button group bug when two button groups.  Happens when one bg controls a filter
+  and another controls a chart.  
 -- test standalone filters, make unit tests for category, date, number range
 -- make chart range receiver
 -- modify chart receiver to take column
@@ -203,7 +204,7 @@ class Filter(_GoogleFilter):
         
         self._label = label
 
-    def add_values_series(self, series):
+    def set_series(self, series):
         df = pd.DataFrame(series)
         table = dataframe_to_gviz(df, allow_nulls=True)
         self._json = table.ToJSon()
