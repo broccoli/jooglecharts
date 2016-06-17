@@ -2,12 +2,12 @@
 
 '''
 Sonar todo:
--- fix daterange filter send/receive
--- change daterange filter send/receive to range for use by NumberRangeFilter
+-- NOT BROKEN.  fix daterange filter send/receive
+-- DONE. change daterange filter send/receive to range for use by NumberRangeFilter
 -- Investigate button group bug when two button groups
 -- test standalone filters, make unit tests for category, date, number range
 -- make chart range receiver
--- modify chart receiver to get either first usable category column or "default"
+-- modify chart receiver to take column
 -- test buttongroup wrap around when there are a lot of buttons
 -- add color option for button color.
 -- add receive for checklist widget
@@ -145,10 +145,10 @@ class _GoogleFilter(object):
         if type == "default":
             if self._type == "CategoryFilter":
                 type = "selection"
-            elif self._type == "DateRangeFilter":
-                type = "date_range"
-            elif self._type == "NumberRangeFilter":
-                type = "number_range"
+            elif self._type in ["DateRangeFilter", "NumberRangeFilter"]:
+                type = "range"
+#             elif self._type == "NumberRangeFilter":
+#                 type = "number_range"
                 
         # possible types:
         #   send date range
@@ -162,10 +162,10 @@ class _GoogleFilter(object):
         if action == "default":
             if self._type == "CategoryFilter":
                 action = "update_selection"
-            elif self._type == "DateRangeFilter":
-                action = "update_date_range"
-            elif self._type == "NumberRangeFilter":
-                action = "update_number_range"
+            elif self._type in ["DateRangeFilter", "NumberRangeFilter"]:
+                action = "update_range"
+#             elif self._type == "NumberRangeFilter":
+#                 action = "update_number_range"
         # possible actions
         #  update date range
         #  update number range
@@ -914,7 +914,7 @@ class ChartRow:
 
         return j2_env.get_template('chartrow_template.html').render(context).encode('utf-8')
 
-    def show(self, include_common=False):
+    def show(self, include_common=True):
 
         display(HTML(self.render(include_common)))
 
