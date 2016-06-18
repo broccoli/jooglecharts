@@ -890,6 +890,7 @@ class ChartRow:
 
         self.jcs = jcs
         self.num_jcs = len(self.jcs)
+        self._content_strings = []
 
         if self.num_jcs not in [2, 3, 4]:
             message = "A chart row must have 2-4 charts"
@@ -904,7 +905,8 @@ class ChartRow:
         self.num = get_joogle_object_counter()
 
         for jc in self.jcs:
-            jc._set_render_properties()
+            self._content_strings.append(jc.render(include_common=False))
+#             jc._set_render_properties()
 
         context = {}
         context['chartrow'] = self
@@ -915,7 +917,7 @@ class ChartRow:
 
         set_common_on_context(context, include_common)
 
-        return j2_env.get_template('chartrow_template.html').render(context).encode('utf-8')
+        return j2_env.get_template('top_chartrow.html').render(context).encode('utf-8')
 
     def show(self, include_common=True):
 
