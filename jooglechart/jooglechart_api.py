@@ -10,7 +10,7 @@ Sonar todo:
 -- DONE.  make chart range receiver
 -- DONE.  modify chart receiver to take column
 -- WRAPS AROUND FINE.  test buttongroup wrap around when there are a lot of buttons
--- add color option for button color.
+-- ADD BOLD, NOT COLOR.  add color option for button color.
 -- add receive for checklist widget
 -- modify chartrow to accept widgets, text.
 -- test checklist widget for long lists.  Add height handling and scrollbars for long lists?
