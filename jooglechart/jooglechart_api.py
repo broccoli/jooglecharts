@@ -12,7 +12,7 @@ Sonar todo:
 -- WRAPS AROUND FINE.  test buttongroup wrap around when there are a lot of buttons
 -- ADD BOLD, NOT COLOR.  add color option for button color.
 -- add receive for checklist widget
--- modify chartrow to accept widgets, text.
+-- DONE.  modify chartrow to accept widgets, text.
 -- test checklist widget for long lists.  Add height handling and scrollbars for long lists?
 -- modify SuperCategoryFilter to use the sonar machinery behind the scenes?
 -- need a way to check if in aquarium for aquarium_hidden.
@@ -886,31 +886,35 @@ class ChartRow:
     Pass 2-4 chart objects to the constructor.
     """
 
-    def __init__(self, *jcs):
+    def __init__(self, *objects):
 
-        self.jcs = jcs
-        self.num_jcs = len(self.jcs)
+        self._objects = objects
+#         self._num_objects = len(self._objects)
         self._content_strings = []
 
-        if self.num_jcs not in [2, 3, 4]:
-            message = "A chart row must have 2-4 charts"
+        num_objects = len(self._objects)
+        if num_objects not in [2, 3, 4]:
+            message = "A chart row must have 2-4 objects"
             raise JoogleChartsException(message)
 
-        self.bootstrap_num = 12 / self.num_jcs
+        self.bootstrap_num = 12 / num_objects
 
 
 
     def render(self, include_common=True):
 
-        self.num = get_joogle_object_counter()
+        num = get_joogle_object_counter()
 
-        for jc in self.jcs:
-            self._content_strings.append(jc.render(include_common=False))
+        for obj in self._objects:
+            if isinstance(obj, str):
+                self._content_strings.append(obj)
+            else:
+                self._content_strings.append(obj.render(include_common=False))
 #             jc._set_render_properties()
 
         context = {}
         context['chartrow'] = self
-        context['callback_name'] = 'doStuff_' + str(self.num)
+        context['callback_name'] = 'doStuff_' + str(num)
 
         # ISHBOOK-495
 #         context['notebook_url'] = _get_notebook_url()
