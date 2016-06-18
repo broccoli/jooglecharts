@@ -19,7 +19,7 @@ Sonar todo:
 -- add titles to button group and checkbox group.
 -- create common code widget
 -- text receiver widget
--- change clear button on
+-- change clear button on checkbox group to link (or optional link)
 
 -- a change to commit
 
