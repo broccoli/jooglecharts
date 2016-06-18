@@ -7,9 +7,9 @@ Sonar todo:
 -- BACKBURNER.  Investigate button group bug when two button groups.  Happens when one bg controls a filter
   and another controls a chart.
 -- DONE.  test standalone filters, make unit tests for category, date, number range
--- make chart range receiver
--- modify chart receiver to take column
--- test buttongroup wrap around when there are a lot of buttons
+-- DONE.  make chart range receiver
+-- DONE.  modify chart receiver to take column
+-- WRAPS AROUND FINE.  test buttongroup wrap around when there are a lot of buttons
 -- add color option for button color.
 -- add receive for checklist widget
 -- modify chartrow to accept widgets, text.
@@ -17,6 +17,8 @@ Sonar todo:
 -- modify SuperCategoryFilter to use the sonar machinery behind the scenes?
 -- need a way to check if in aquarium for aquarium_hidden.
 -- add titles to button group and checkbox group.
+-- create common code widget
+-- text receiver widget
 -- change clear button on
 
 -- a change to commit

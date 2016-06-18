@@ -16,7 +16,7 @@ class ButtonGroup(object):
     
     def __init__(self, values, initial_values=None, type="checkbox", 
             clear_button=False, clear_button_position="first",
-            orientation="horizontal"):
+            orientation="horizontal", clear_button_bold=False):
 
         self._values = values
         self._initial_values = initial_values
@@ -24,6 +24,7 @@ class ButtonGroup(object):
         self._clear_button = clear_button
         self._clear_button_position = clear_button_position
         self._orientation = orientation
+        self._clear_button_bold = clear_button_bold
         self._div_id = None
         self._senders = []
         self._receivers = []

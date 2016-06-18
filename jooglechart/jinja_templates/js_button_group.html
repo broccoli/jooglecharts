@@ -69,6 +69,7 @@
 		function add_clear_button() {
 			var $button = $("<button>");
 			$button.addClass("btn btn-default").html("clear all").{{ bg._append_or_prepend }}To($div)
+			{% if bg._clear_button_bold %}.css("font-weight", "bold"){% endif %}
 			.click(function() {
 				clear_buttons();
 				$button.blur();
