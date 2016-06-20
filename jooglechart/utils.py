@@ -13,6 +13,8 @@ from ishbook_495 import _get_notebook_url
 import pandas as pd
 import numpy as np
 
+from IPython.display import display, HTML
+
 from jinja2 import Environment, FileSystemLoader
 from jinja_filters import to_json, format_styles_list, get_classes
 
@@ -61,21 +63,42 @@ def set_common_on_context(context, include_common):
     # is saved, a js error occurs on reload and no jooglechart
     # will run. (The document ready function won't run.)
     
-    context['common'] = include_common
+    if include_common == None:
+        if include_has_been_called[0]:
+            context['common'] = False
+        else:
+            context['common'] = True
+    else:
+        if include_common:
+            context['common'] = True
+        else:
+            context['common'] = False
         
-#     if force_common:
-#         context['common'] = True
-#     elif is_first_joogle[0]:
-#         is_first_joogle[0] = False
-#         context['common'] = True
-#     else:
-#         context['common'] = False
-# 
-#     if context['common'] == True:
         
     # ISHBOOK-495
     context['notebook_url'] = _get_notebook_url()
 
+
+include_has_been_called = [False]
+
+def _render_include():
+    
+    include_has_been_called[0] = True
+    
+    context = {}
+    context['callback_name'] = 'joogle_include'
+    
+    return j2_env.get_template('top_include.html').render(context).encode('utf-8')
+
+def include():
+    
+    # include should be called before rendering any joogle object.  If
+    # a joogle object is rendered first, problems can arise in development
+    # if notebook cells are re-run.  This will cause the first object
+    # to drop the common js code, and there will be a js error the next time
+    # the notebook is open if the output is saved.
+    
+    display(HTML(_render_include()))
 
 def _add_dict_to_dict(current_options, options_dict):
 

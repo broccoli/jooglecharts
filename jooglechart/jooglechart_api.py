@@ -87,7 +87,9 @@ import pandas as pd
 import json
 from IPython.display import display, HTML
 
-from utils import get_joogle_object_counter, set_common_on_context, j2_env, JoogleChartsException, _add_dict_to_dict
+from utils import (get_joogle_object_counter, set_common_on_context, j2_env, JoogleChartsException, _add_dict_to_dict,
+    include, _render_include)
+
 from dataframe_to_gviz import dataframe_to_gviz
 
 import sonar_keys
@@ -95,6 +97,10 @@ import sonar_keys
 
 DEFAULT_CHART_TYPE = "ColumnChart"
 FILTER_NAME_ADD_ON = "__jooglechart_user_filter_name"  # deprecated, for super filter
+
+
+
+
 
 class _GoogleFilter(object):
     
@@ -233,7 +239,7 @@ class Filter(_GoogleFilter):
             elif self._type == "NumberRangeFilter":
                 self._data_type = "number"
         
-    def render(self, include_common=True, freestanding=True):
+    def render(self, include_common=None, freestanding=True):
         
         
         self._set_render_properties(freestanding)
@@ -246,7 +252,7 @@ class Filter(_GoogleFilter):
         return j2_env.get_template('top_freestanding_filter.html').render(context).encode('utf-8')
 
 
-    def show(self, include_common=True):
+    def show(self, include_common=None):
 
         display(HTML(self.render(include_common)))
 
@@ -391,7 +397,7 @@ class SuperCategoryFilter(_GoogleFilter):
         self._div_id = self._name + "_div_id"
         self._filter_names = [name + FILTER_NAME_ADD_ON for name in self._filter_labels]
     
-    def render(self, include_common=True):
+    def render(self, include_common=None):
         
         self._set_render_properties()
         context = {}
@@ -407,7 +413,7 @@ class SuperCategoryFilter(_GoogleFilter):
         return j2_env.get_template('super_filter_template.html').render(context).encode('utf-8')
 
 
-    def show(self, include_common=True):
+    def show(self, include_common=None):
 
         display(HTML(self.render(include_common)))
 
@@ -836,7 +842,7 @@ class JoogleChart():
             self.json = json.dumps(json_decode)
 
 
-    def render(self, chart_type=None, include_common=True):
+    def render(self, chart_type=None, include_common=None):
 
         """
         Render chart code.
@@ -858,7 +864,7 @@ class JoogleChart():
         return j2_env.get_template('chart_template.html').render(context).encode('utf-8')
 
 
-    def show(self, chart_type=None, include_common=True, **kwargs):
+    def show(self, chart_type=None, include_common=None, **kwargs):
 
         """
         .show creates chart with one-off chart type and style options.
@@ -901,7 +907,7 @@ class ChartRow:
 
 
 
-    def render(self, include_common=True):
+    def render(self, include_common=None):
 
         num = get_joogle_object_counter()
 
@@ -923,7 +929,7 @@ class ChartRow:
 
         return j2_env.get_template('top_chartrow.html').render(context).encode('utf-8')
 
-    def show(self, include_common=True):
+    def show(self, include_common=None):
 
         display(HTML(self.render(include_common)))
 
