@@ -154,4 +154,6 @@ class CheckboxGroup(object):
     def show(self, include_common=True):
 
         display(HTML(self.render(include_common)))
+        
+
     
