@@ -2,18 +2,26 @@
 
 '''
 Sonar todo:
--- fix daterange filter send/receive
--- change daterange filter send/receive to range for use by NumberRangeFilter
--- Investigate button group bug when two button groups
--- test standalone filters, make unit tests for category, date, number range
--- make chart range receiver
--- modify chart receiver to get either first usable category column or "default"
--- test buttongroup wrap around when there are a lot of buttons
--- add color option for button color.
+-- NOT BROKEN.  fix daterange filter send/receive
+-- DONE. change daterange filter send/receive to range for use by NumberRangeFilter
+-- BACKBURNER.  Investigate button group bug when two button groups.  Happens when one bg controls a filter
+  and another controls a chart.
+-- DONE.  test standalone filters, make unit tests for category, date, number range
+-- DONE.  make chart range receiver
+-- DONE.  modify chart receiver to take column
+-- WRAPS AROUND FINE.  test buttongroup wrap around when there are a lot of buttons
+-- ADD BOLD, NOT COLOR.  add color option for button color.
 -- add receive for checklist widget
--- modify chartrow to accept widgets, text.
+-- DONE.  modify chartrow to accept widgets, text.
 -- test checklist widget for long lists.  Add height handling and scrollbars for long lists?
 -- modify SuperCategoryFilter to use the sonar machinery behind the scenes?
+-- need a way to check if in aquarium for aquarium_hidden.
+-- add titles to button group and checkbox group.
+-- create common code widget
+-- text receiver widget
+-- change clear button on checkbox group to link (or optional link)
+
+-- making a change for review commit
 
 
 styler todo
@@ -79,7 +87,9 @@ import pandas as pd
 import json
 from IPython.display import display, HTML
 
-from utils import get_joogle_object_counter, set_common_on_context, j2_env, JoogleChartsException, _add_dict_to_dict
+from utils import (get_joogle_object_counter, set_common_on_context, j2_env, JoogleChartsException, _add_dict_to_dict,
+    include, _render_include)
+
 from dataframe_to_gviz import dataframe_to_gviz
 
 import sonar_keys
@@ -87,6 +97,10 @@ import sonar_keys
 
 DEFAULT_CHART_TYPE = "ColumnChart"
 FILTER_NAME_ADD_ON = "__jooglechart_user_filter_name"  # deprecated, for super filter
+
+
+
+
 
 class _GoogleFilter(object):
     
@@ -140,10 +154,10 @@ class _GoogleFilter(object):
         if type == "default":
             if self._type == "CategoryFilter":
                 type = "selection"
-            elif self._type == "DateRangeFilter":
-                type = "date_range"
-            elif self._type == "NumberRangeFilter":
-                type = "number_range"
+            elif self._type in ["DateRangeFilter", "NumberRangeFilter"]:
+                type = "range"
+#             elif self._type == "NumberRangeFilter":
+#                 type = "number_range"
                 
         # possible types:
         #   send date range
@@ -157,10 +171,10 @@ class _GoogleFilter(object):
         if action == "default":
             if self._type == "CategoryFilter":
                 action = "update_selection"
-            elif self._type == "DateRangeFilter":
-                action = "update_date_range"
-            elif self._type == "NumberRangeFilter":
-                action = "update_number_range"
+            elif self._type in ["DateRangeFilter", "NumberRangeFilter"]:
+                action = "update_range"
+#             elif self._type == "NumberRangeFilter":
+#                 action = "update_number_range"
         # possible actions
         #  update date range
         #  update number range
@@ -198,7 +212,7 @@ class Filter(_GoogleFilter):
         
         self._label = label
 
-    def add_values_series(self, series):
+    def set_series(self, series):
         df = pd.DataFrame(series)
         table = dataframe_to_gviz(df, allow_nulls=True)
         self._json = table.ToJSon()
@@ -225,7 +239,7 @@ class Filter(_GoogleFilter):
             elif self._type == "NumberRangeFilter":
                 self._data_type = "number"
         
-    def render(self, force_common=True, freestanding=True):
+    def render(self, include_common=None, freestanding=True):
         
         
         self._set_render_properties(freestanding)
@@ -233,14 +247,14 @@ class Filter(_GoogleFilter):
         context['callback_name'] = 'doStuff_' + str(self._num)
         context['filter'] = self
         
-        set_common_on_context(context, force_common)
+        set_common_on_context(context, include_common)
         
         return j2_env.get_template('top_freestanding_filter.html').render(context).encode('utf-8')
 
 
-    def show(self, force_common=False):
+    def show(self, include_common=None):
 
-        display(HTML(self.render(force_common)))
+        display(HTML(self.render(include_common)))
 
 class SeriesFilter(_GoogleFilter):
     
@@ -383,7 +397,7 @@ class SuperCategoryFilter(_GoogleFilter):
         self._div_id = self._name + "_div_id"
         self._filter_names = [name + FILTER_NAME_ADD_ON for name in self._filter_labels]
     
-    def render(self, force_common=True):
+    def render(self, include_common=None):
         
         self._set_render_properties()
         context = {}
@@ -394,14 +408,14 @@ class SuperCategoryFilter(_GoogleFilter):
         # ISHBOOK-495
 #         context['notebook_url'] = _get_notebook_url()
 
-        set_common_on_context(context, force_common)
+        set_common_on_context(context, include_common)
         
         return j2_env.get_template('super_filter_template.html').render(context).encode('utf-8')
 
 
-    def show(self, force_common=False):
+    def show(self, include_common=None):
 
-        display(HTML(self.render(force_common)))
+        display(HTML(self.render(include_common)))
 
 
 
@@ -559,12 +573,12 @@ class _Chart():
         
         self._senders.append({'on': on, 'key': key, 'type': type})
 
-    def add_receiver(self, key, action='update_selection'):
+    def add_receiver(self, key, column, action='update_selection'):
         # possible types:
         #   send date range
         #   send number range
         
-        self._receivers.append({'key': key, 'action': action})
+        self._receivers.append({'key': key, 'action': action, 'column': column})
 
     def _set_render_properties(self, num_cols, chart_type=None):
 
@@ -757,13 +771,13 @@ class JoogleChart():
 #         self._senders.append({'on': on, 'key': key, 'type': type})
 
 
-    def add_receiver(self, key, action='update_selection'):
+    def add_receiver(self, key, column, action='update_selection'):
         # possible types:
         #   send date range
         #   send number range
         
         self._has_senders = True
-        self.charts[0].add_receiver(key, action)
+        self.charts[0].add_receiver(key, column, action)
 #         self._senders.append({'on': on, 'key': key, 'type': type})
 
 
@@ -828,7 +842,7 @@ class JoogleChart():
             self.json = json.dumps(json_decode)
 
 
-    def render(self, chart_type=None, force_common=True):
+    def render(self, chart_type=None, include_common=None):
 
         """
         Render chart code.
@@ -845,12 +859,12 @@ class JoogleChart():
         # ISHBOOK-495
 #         context['notebook_url'] = _get_notebook_url()
         
-        set_common_on_context(context, force_common)
+        set_common_on_context(context, include_common)
         
         return j2_env.get_template('chart_template.html').render(context).encode('utf-8')
 
 
-    def show(self, chart_type=None, force_common=False, **kwargs):
+    def show(self, chart_type=None, include_common=None, **kwargs):
 
         """
         .show creates chart with one-off chart type and style options.
@@ -866,7 +880,7 @@ class JoogleChart():
             chart.add_chart_options(**kwargs)
         else:
             chart = self
-        display(HTML(chart.render(chart_type, force_common)))
+        display(HTML(chart.render(chart_type, include_common)))
 
 
 class ChartRow:
@@ -878,40 +892,46 @@ class ChartRow:
     Pass 2-4 chart objects to the constructor.
     """
 
-    def __init__(self, *jcs):
+    def __init__(self, *objects):
 
-        self.jcs = jcs
-        self.num_jcs = len(self.jcs)
+        self._objects = objects
+#         self._num_objects = len(self._objects)
+        self._content_strings = []
 
-        if self.num_jcs not in [2, 3, 4]:
-            message = "A chart row must have 2-4 charts"
+        num_objects = len(self._objects)
+        if num_objects not in [2, 3, 4]:
+            message = "A chart row must have 2-4 objects"
             raise JoogleChartsException(message)
 
-        self.bootstrap_num = 12 / self.num_jcs
+        self.bootstrap_num = 12 / num_objects
 
 
 
-    def render(self, force_common=True):
+    def render(self, include_common=None):
 
-        self.num = get_joogle_object_counter()
+        num = get_joogle_object_counter()
 
-        for jc in self.jcs:
-            jc._set_render_properties()
+        for obj in self._objects:
+            if isinstance(obj, str):
+                self._content_strings.append(obj)
+            else:
+                self._content_strings.append(obj.render(include_common=False))
+#             jc._set_render_properties()
 
         context = {}
         context['chartrow'] = self
-        context['callback_name'] = 'doStuff_' + str(self.num)
+        context['callback_name'] = 'doStuff_' + str(num)
 
         # ISHBOOK-495
 #         context['notebook_url'] = _get_notebook_url()
 
-        set_common_on_context(context, force_common)
+        set_common_on_context(context, include_common)
 
-        return j2_env.get_template('chartrow_template.html').render(context).encode('utf-8')
+        return j2_env.get_template('top_chartrow.html').render(context).encode('utf-8')
 
-    def show(self, force_common=False):
+    def show(self, include_common=None):
 
-        display(HTML(self.render(force_common)))
+        display(HTML(self.render(include_common)))
 
 
 

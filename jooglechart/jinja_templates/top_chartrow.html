@@ -1,0 +1,16 @@
+
+{% if common %}
+{% include "common_template.html" %}
+{% endif %}
+
+
+
+<div class="row">
+    {% for string in chartrow._content_strings %}
+    <div class="col-sm-{{ chartrow.bootstrap_num }}">
+		{{ string }}
+    </div>
+    {% endfor %}
+</div>
+
+

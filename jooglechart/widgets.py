@@ -16,7 +16,7 @@ class ButtonGroup(object):
     
     def __init__(self, values, initial_values=None, type="checkbox", 
             clear_button=False, clear_button_position="first",
-            orientation="horizontal"):
+            orientation="horizontal", clear_button_bold=False):
 
         self._values = values
         self._initial_values = initial_values
@@ -24,6 +24,7 @@ class ButtonGroup(object):
         self._clear_button = clear_button
         self._clear_button_position = clear_button_position
         self._orientation = orientation
+        self._clear_button_bold = clear_button_bold
         self._div_id = None
         self._senders = []
         self._receivers = []
@@ -68,21 +69,21 @@ class ButtonGroup(object):
         
         self._receivers.append({'key': key})
 
-    def render(self, force_common=True):
+    def render(self, include_common=True):
         
         self._set_render_properties()
         context = {}
         context['callback_name'] = 'doStuff_' + str(self._num)
         context['bg'] = self
         
-        set_common_on_context(context, force_common)
+        set_common_on_context(context, include_common)
         
         return j2_env.get_template('top_button_group.html').render(context).encode('utf-8')
 
 
-    def show(self, force_common=False):
+    def show(self, include_common=True):
 
-        display(HTML(self.render(force_common)))
+        display(HTML(self.render(include_common)))
     
     
 
@@ -138,19 +139,21 @@ class CheckboxGroup(object):
         
         self._receivers.append({'key': key})
 
-    def render(self, force_common=True):
+    def render(self, include_common=True):
         
         self._set_render_properties()
         context = {}
         context['callback_name'] = 'doStuff_' + str(self._num)
         context['cbg'] = self
         
-        set_common_on_context(context, force_common)
+        set_common_on_context(context, include_common)
         
         return j2_env.get_template('top_checkbox_group.html').render(context).encode('utf-8')
 
 
-    def show(self, force_common=False):
+    def show(self, include_common=True):
 
-        display(HTML(self.render(force_common)))
+        display(HTML(self.render(include_common)))
+        
+
     

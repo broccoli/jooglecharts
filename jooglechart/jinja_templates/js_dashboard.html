@@ -30,11 +30,7 @@
 
 		// Add sonar senders, if any
 		{% for filter in jg.filters %}
-			{% if filter._senders %}
-			{% for sender in filter._senders %}
-			{% include 'js_filter_sender.html' %}
-			{% endfor %}
-			{% endif %}
+			{% include 'js_filter_senders.html' %}
 		{% endfor %}
 
         // Draw the dashboard.
@@ -42,9 +38,5 @@
         
         // Add sonar receivers, if any
         {% for filter in jg.filters %}
-			{% if filter._receivers %}
-			{% for receiver in filter._receivers %}
-			{% include 'js_filter_receiver.html' %}
-			{% endfor %}
-			{% endif %}
+			{% include 'js_filter_receivers.html' %}
         {% endfor %}
