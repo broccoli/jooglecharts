@@ -1,10 +1,10 @@
 {% for receiver in filter._receivers %}
-		globals.sonar.add_handler(function (data) {
+		joogle_globals.sonar.add_handler(function (data) {
 			if (data.sonar_key == "{{ receiver.key }}") {
 				{% if receiver.action == "update_selection" %}			
-				globals.update_category_filter({{ filter._name }}, data.sonar_value);
+				joogle_globals.update_category_filter({{ filter._name }}, data.sonar_value);
 				{% elif receiver.action == "update_range" %}
-				globals.update_range_filter({{ filter._name }}, data.sonar_value);				
+				joogle_globals.update_range_filter({{ filter._name }}, data.sonar_value);				
 				{% endif %}
 			}
 		});

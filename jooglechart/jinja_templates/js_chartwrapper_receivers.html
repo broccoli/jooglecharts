@@ -1,16 +1,16 @@
 		{% for chart in jg.charts %}
 		{% for receiver in chart._receivers %}
 		{% if receiver.action == 'update_selection' %}
-		globals.sonar.add_handler(function(data) {
+		joogle_globals.sonar.add_handler(function(data) {
 			if (data.sonar_key == "{{ receiver.key }}") {
-				globals.update_chart(data.sonar_value, {{ jg.data_name }}, {{ chart.name }}, {{ receiver.column }});				
+				joogle_globals.update_chart(data.sonar_value, {{ jg.data_name }}, {{ chart.name }}, {{ receiver.column }});				
 			}
 		})
 		{% endif %}
 		{% if receiver.action == 'update_range' %}
-		globals.sonar.add_handler(function(data) {
+		joogle_globals.sonar.add_handler(function(data) {
 			if (data.sonar_key == "{{ receiver.key }}") {
-				globals.update_chart_range(data.sonar_value[0], data.sonar_value[1], {{ jg.data_name }}, {{ chart.name }}, {{ receiver.column }});
+				joogle_globals.update_chart_range(data.sonar_value[0], data.sonar_value[1], {{ jg.data_name }}, {{ chart.name }}, {{ receiver.column }});
 			}
 		})
 		{% endif %}
