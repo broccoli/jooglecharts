@@ -2,11 +2,11 @@
         google.visualization.events.addListener({{ filter._name }}, "{{ sender.on }}", function () {
 		{% if sender.type == 'selection' %}
 			var selected_values = {{ filter._name }}.getState().selectedValues;
-			globals.sonar.send("{{ sender.key }}", selected_values);
+			joogle_globals.sonar.send("{{ sender.key }}", selected_values);
 		{% elif sender.type == 'range' %}
 			var low_value = {{ filter._name }}.getState().lowValue;
 			var high_value = {{ filter._name }}.getState().highValue;
-			globals.sonar.send("{{ sender.key }}", [low_value, high_value]);
+			joogle_globals.sonar.send("{{ sender.key }}", [low_value, high_value]);
 		{% endif %}
 		});
 {% endfor %}

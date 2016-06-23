@@ -3,22 +3,23 @@
 
 $(document).ready(function() {
 
-	/* GLOBALS AREA >>>>>>>>>>>>>>>>>>>>>>>>>>>>>> */
+	/* GLOBALS AREA >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> */
 
-	window.addEventListener('message', function(msg) {
-	// listener for sonar message from iframe parent
-		if (msg.data.sonar_key !== undefined && msg.data.sonar_value !== undefined && msg.originId != msg.destinationId) {
-			if (globals.sonar_handler_array !== undefined) {
-				globals.sonar.call_handlers(msg.data);
+	window.addEventListener('message', function(message) {
+		// listener for sonar message from iframe parent
+		if (message.data.msg.sonar_key !== undefined && message.data.msg.sonar_value !== undefined && 
+				message.data.originId !== message.data.destinationId) {
+			if (joogle_globals.sonar.handler_array !== undefined) {
+				joogle_globals.sonar.call_handlers(message.data.msg);
 			}
 		}
 	});
 
 
-	if (typeof window.globals === "undefined") {
-		window.globals = {};
+	if (typeof window.joogle_globals === "undefined") {
+		window.joogle_globals = {};
 	
-		window.globals.sonar = new (function () {
+		window.joogle_globals.sonar = new (function () {
 			// object for holding all sonar pieces
 			this.handler_array = []
 			this.add_handler = function(handler) { this.handler_array.push(handler)};
@@ -27,8 +28,8 @@ $(document).ready(function() {
 				if (window.self !== window.top) {
 					window.parent.postMessage(data, window.location.origin + window.location.pathname);
 				}
-				if (globals.sonar.handler_array !== undefined) {
-					globals.sonar.call_handlers(data);
+				if (joogle_globals.sonar.handler_array !== undefined) {
+					joogle_globals.sonar.call_handlers(data);
 				}
 			}
 			this.call_handlers = function(data) {
@@ -39,14 +40,14 @@ $(document).ready(function() {
 		})();
 	}
 	
-	window.globals.update_category_filter = function(filter, selected_values) {
+	window.joogle_globals.update_category_filter = function(filter, selected_values) {
 		// utility function for updating Google Charts filter		
 		var filter_state = filter.getState();
 		filter_state.selectedValues = selected_values;
 		filter.setState(filter_state);
 		filter.draw();
 	}
-	window.globals.update_range_filter = function(filter, range) {
+	window.joogle_globals.update_range_filter = function(filter, range) {
 		// utility function for updating Google Charts filter		
 		var filter_state = filter.getState();
 		filter_state.lowValue = range[0];
@@ -56,7 +57,7 @@ $(document).ready(function() {
 		filter.setState(filter_state);
 		filter.draw();
 	}
-	window.globals.update_chart = function(values_arr, data, chartwrapper, column) {
+	window.joogle_globals.update_chart = function(values_arr, data, chartwrapper, column) {
 		var filtered_rows = [];
 		if (values_arr.length == 0) {
 			filtered_rows = null;
@@ -73,7 +74,7 @@ $(document).ready(function() {
 		chartwrapper.draw();			
 	}
 
-	window.globals.update_chart_range = function(minValue, maxValue, data, chartwrapper, column) {
+	window.joogle_globals.update_chart_range = function(minValue, maxValue, data, chartwrapper, column) {
 		var rows = data.getFilteredRows([{column: column, minValue: minValue, maxValue: maxValue}]);
 		chartwrapper.setView({
 			rows: rows
@@ -104,7 +105,7 @@ $(document).ready(function() {
 	    google.charts.setOnLoadCallback(callback);
     }
 	
-	window.globals.call_jooglechart_callback = function(callback) {
+	window.joogle_globals.call_jooglechart_callback = function(callback) {
 		if (typeof window.jooglechart_has_been_created === "undefined") {
 			window.jooglechart_has_been_created = true;
 			jQuery.getScript('https://www.gstatic.com/charts/loader.js', function( data, textStatus, jqxhr) {

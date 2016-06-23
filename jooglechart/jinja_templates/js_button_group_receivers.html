@@ -1,5 +1,5 @@
 		{% for receiver in bg._receivers %}
-		globals.sonar.add_handler(function (data) {
+		joogle_globals.sonar.add_handler(function (data) {
 			if (data.sonar_key == "{{ receiver.key }}") {
 				update_button_group(data.sonar_value);
 			}
