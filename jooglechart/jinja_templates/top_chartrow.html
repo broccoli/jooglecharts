@@ -5,12 +5,24 @@
 
 
 
-<div class="row">
+{% if chartrow._flex_width %}
+<div class="joogle_clearfix" id="{{ chartrow._div_id }}">
+    {% for string in chartrow._content_strings %}
+    <div class="joogle_chartrow_column">
+		{{ string }}
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="row" id="{{ chartrow._div_id }}">
     {% for string in chartrow._content_strings %}
     <div class="col-sm-{{ chartrow.bootstrap_num }}">
 		{{ string }}
     </div>
     {% endfor %}
 </div>
+{% endif %}
+
+{% include "css_chartrow.html" %}
 
 
