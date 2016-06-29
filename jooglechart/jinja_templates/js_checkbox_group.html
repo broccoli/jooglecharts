@@ -8,10 +8,9 @@
 		
 		
 		
-		// --------- Add sonar senders, if any ---------
+		// --------- Add checkbox sonar senders, if any ---------
 		{% include 'js_checkbox_group_senders.html' %}
-		
-		// ---------------------------------------------
+		// ------------------------------------------------------
 		// define call_senders before call to create_checkboxes()
 		function call_senders() {
 			$.each(senders, function(index, value) { value() });
@@ -76,3 +75,6 @@
 			return selected_values;
 		}
 
+		// --------- Add checkbox sonar receivers, if any ---------
+		{% include 'js_checkbox_group_receivers.html' %}
+		// ------------------------------------------------------

@@ -1,0 +1,7 @@
+		{% for receiver in cbg._receivers %}
+		joogle_globals.sonar.add_handler(function (data) {
+			if (data.sonar_key == "{{ receiver.key }}") {
+				update_checkboxes(data.sonar_value);
+			}
+		});
+		{% endfor %}

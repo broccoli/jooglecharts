@@ -20,8 +20,9 @@ Sonar todo:
 -- create common code widget
 -- text receiver widget
 -- change clear button on checkbox group to link (or optional link)
--- flexible widths in ChartRow; gutter in ChartRow
+-- DONE.  flexible widths in ChartRow; gutter in ChartRow
 -- ability to add div styles to all widgets and filters
+-- add sender/receiver to SeriesFilter
 
 -- making a change for review commit
 
