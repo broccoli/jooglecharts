@@ -1,0 +1,19 @@
+
+{% if chartrow._flex_width %}
+<style>
+.joogle_clearfix:after {
+    content:" ";
+    display:block;
+    clear:both;
+}
+
+.joogle_chartrow_column {
+	float: left;
+}
+
+#{{ chartrow._div_id }} > div:not(:first-child) {
+	margin-left:{{ chartrow._gutter_width }};
+}
+</style>
+
+{% endif %}

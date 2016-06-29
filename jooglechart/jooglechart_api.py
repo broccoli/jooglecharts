@@ -20,6 +20,8 @@ Sonar todo:
 -- create common code widget
 -- text receiver widget
 -- change clear button on checkbox group to link (or optional link)
+-- flexible widths in ChartRow; gutter in ChartRow
+-- ability to add div styles to all widgets and filters
 
 -- making a change for review commit
 
@@ -891,12 +893,25 @@ class ChartRow:
 
     Pass 2-4 chart objects to the constructor.
     """
+    
+    """
+    Do
+    -- add div id to chartrow div
+    -- add css for gutter for this chartrow div id
+    
+    """
 
-    def __init__(self, *objects):
+    def __init__(self, *objects, **kwargs):
 
         self._objects = objects
-#         self._num_objects = len(self._objects)
         self._content_strings = []
+        self._flex_width = None
+        self._gutter = None
+        self._div_id = None
+        
+        if "flex_width" in kwargs and kwargs['flex_width'] == True:
+            self._flex_width = True
+            self._gutter_width = kwargs.get("gutter_width", "20px");
 
         num_objects = len(self._objects)
         if num_objects not in [2, 3, 4]:
@@ -910,6 +925,7 @@ class ChartRow:
     def render(self, include_common=None):
 
         num = get_joogle_object_counter()
+        self._div_id = "joogle_chartrow_" + str(num)
 
         for obj in self._objects:
             if isinstance(obj, str):
@@ -921,6 +937,7 @@ class ChartRow:
         context = {}
         context['chartrow'] = self
         context['callback_name'] = 'doStuff_' + str(num)
+
 
         # ISHBOOK-495
 #         context['notebook_url'] = _get_notebook_url()
