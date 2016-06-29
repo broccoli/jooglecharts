@@ -155,5 +155,53 @@ class CheckboxGroup(object):
 
         display(HTML(self.render(include_common)))
         
+google_31 = ["#3366cc","#dc3912","#ff9900","#109618","#990099","#0099c6","#dd4477",
+             "#66aa00","#b82e2e","#316395","#994499","#22aa99","#aaaa11","#6633cc",
+             "#e67300","#8b0707","#651067","#329262","#5574a6","#3b3eac","#b77322",
+             "#16d620","#b91383","#f4359e","#9c5935","#a9c413","#2a778d","#668d1c",
+             "#bea413","#0c5922","#743411"]
 
+indeed_20 = []
+
+class TableLegend(object):
     
+    
+    def __init__(self, values, colors="google_31", initial_values=None):
+        
+        self._values = values
+        self._initial_values = initial_values
+        self._receivers = []
+        self._div_id = None
+        
+        if colors == "google_31":
+            self._colors = google_31
+        else:
+            self._colors = colors
+
+    def add_receiver(self, key):
+        
+        # For now we assume the action is updating the legend keys
+        # If things change we can add default param action="update_keys"
+
+        self._receivers.append({'key': key})        
+
+
+    def _set_render_properties(self):
+        
+        self._num = get_joogle_object_counter()
+        self._div_id = "table_legend_" + str(self._num) + "_div_id"
+    
+    def render(self, include_common=True):
+        
+        self._set_render_properties()
+        context = {}
+        context['callback_name'] = 'doStuff_' + str(self._num)
+        context['table_legend'] = self
+        
+        set_common_on_context(context, include_common)
+        
+        return j2_env.get_template('top_table_legend.html').render(context).encode('utf-8')
+    
+    def show(self, include_common=True):
+
+        display(HTML(self.render(include_common)))
