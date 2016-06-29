@@ -1,0 +1,61 @@
+
+
+		var series = {{ table_legend._values|to_json }};
+		var colors = {{ table_legend._colors|to_json }};
+		{% if table_legend._initial_values %}
+		var initial_values = {{ table_legend._initial_values|to_json }};
+		{% endif %}
+		var $table;
+		var $div = $("#{{ table_legend._div_id }}");
+		
+		function get_color_for_series(el) {
+			el_index = series.indexOf(el);
+			return colors[el_index % colors.length];
+		}
+	
+		function add_series_to_legend(el) {
+			var $tr = $("<tr>");
+			var $td1 = $("<td>");
+			var $div = $("<div>");
+			var color = get_color_for_series(el);
+			$div.addClass("color_bar").css("background-color", color);
+			$td1.append($div).appendTo($tr);
+		
+			var $td2 = $("<td>");
+			$td2.html(el).appendTo($tr);
+			
+			$table.append($tr);
+		}
+
+		function update_legend(series_input) {
+			$table.empty();
+			for (var i = 0; i < series.length; i++) {
+				if (series_input.indexOf(series[i]) >= 0) {
+					add_series_to_legend(series[i]);
+				}
+			}
+		}
+		
+		function create_legend() {
+			$table = $("<table>");
+			$div.append($table);
+			if (typeof initial_values !== "undefined") {
+				update_legend(initial_values);				
+			}
+			else {
+				update_legend(series);				
+			}
+		}
+		
+		create_legend();
+		
+		// ----------------- table legend handlers ----------------
+		{% for receiver in table_legend._receivers %}
+		joogle_globals.sonar.add_handler(function (data) {
+			if (data.sonar_key == "{{ receiver.key }}") {
+				update_legend(data.sonar_value);
+			}
+		});
+		{% endfor %}
+		// --------------------------------------------------------
+		
