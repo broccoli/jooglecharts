@@ -11,7 +11,7 @@ Sonar todo:
 -- DONE.  modify chart receiver to take column
 -- WRAPS AROUND FINE.  test buttongroup wrap around when there are a lot of buttons
 -- ADD BOLD, NOT COLOR.  add color option for button color.
--- add receive for checklist widget
+-- DONE. add receive for checklist widget
 -- DONE.  modify chartrow to accept widgets, text.
 -- test checklist widget for long lists.  Add height handling and scrollbars for long lists?
 -- modify SuperCategoryFilter to use the sonar machinery behind the scenes?
@@ -23,7 +23,7 @@ Sonar todo:
 -- DONE.  flexible widths in ChartRow; gutter in ChartRow
 -- ability to add div styles to all widgets and filters
 -- add sender/receiver to SeriesFilter
--- make widgets trigger updates if their selections are updated.
+-- create clear button widget to clear other widgets
 
 -- making a change for review commit
 
@@ -489,9 +489,7 @@ class _Chart():
         self.display_chart_type = None
         self.chart_options = {}
         self.div_styles = {}
-#         self.hide_cols = None
         self.view_cols = None
-#         self.display_cols = None
         self.chart_div_id = None
         self.num = None
         self.name = None

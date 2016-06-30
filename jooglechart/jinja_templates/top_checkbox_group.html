@@ -20,4 +20,9 @@ $(document).ready(function() {
 {% include 'css_checkbox_group_horizontal.html' %}		
 {% endif %}
 		
-<div id="{{ cbg._div_id }}" ></div>
+<div id="{{ cbg._div_id }}" {{ cbg._div_styles|format_styles_list }}></div>
+
+<style>
+
+
+</style>

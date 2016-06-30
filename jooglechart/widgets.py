@@ -4,7 +4,7 @@ Created on Jun 12, 2016
 @author: richd
 '''
 
-from utils import get_joogle_object_counter, set_common_on_context, j2_env
+from utils import get_joogle_object_counter, set_common_on_context, j2_env, _add_dict_to_dict
 
 from IPython.display import display, HTML
 
@@ -102,6 +102,7 @@ class CheckboxGroup(object):
         self._div_id = None
         self._senders = []
         self._receivers = []
+        self._div_styles = {}
     
     def _set_render_properties(self):
         
@@ -121,6 +122,25 @@ class CheckboxGroup(object):
         else:
             self._append_or_prepend = "prepend"
             
+
+    def add_div_styles(self, style_dict = None, **kwargs):
+        """
+        pass styles for the chart div in a dictionary or as keyword arguments
+        """
+
+        if self._div_styles == None:
+            self._div_styles = {}
+
+        if style_dict == None and not kwargs:
+            # user is resetting styles
+
+            self.div_styles = {}
+        else:
+            if style_dict == None:
+                style_dict = {}
+            if kwargs:
+                style_dict.update(kwargs)
+            _add_dict_to_dict(self._div_styles, style_dict)
             
 
     def add_sender(self, key):
