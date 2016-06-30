@@ -28,6 +28,7 @@ class ButtonGroup(object):
         self._div_id = None
         self._senders = []
         self._receivers = []
+        self._div_styles = {}
     
     def _set_render_properties(self):
         
@@ -51,6 +52,25 @@ class ButtonGroup(object):
             self._button_group_class = "btn-group-vertical"
         else:
             self._button_group_class = "btn-group"
+            
+    def add_div_styles(self, style_dict = None, **kwargs):
+        """
+        pass styles for the chart div in a dictionary or as keyword arguments
+        """
+
+        if self._div_styles == None:
+            self._div_styles = {}
+
+        if style_dict == None and not kwargs:
+            # user is resetting styles
+
+            self.div_styles = {}
+        else:
+            if style_dict == None:
+                style_dict = {}
+            if kwargs:
+                style_dict.update(kwargs)
+            _add_dict_to_dict(self._div_styles, style_dict)
             
 
     def add_sender(self, key):

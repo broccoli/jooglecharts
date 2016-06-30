@@ -24,6 +24,8 @@ Sonar todo:
 -- ability to add div styles to all widgets and filters
 -- add sender/receiver to SeriesFilter
 -- create clear button widget to clear other widgets
+    custom text, link or button, button size, button style
+    -- actually can just be a single standalone button.  Just use an empty value to clear.
 
 -- making a change for review commit
 
