@@ -119,6 +119,7 @@ class _GoogleFilter(object):
         self._global_name = False
         self._senders = []
         self._receivers = []
+        self._div_styles = {}
 
     def add_options(self, options = None, **kwargs):
         """
@@ -155,6 +156,26 @@ class _GoogleFilter(object):
         if kwargs:
             _add_dict_to_dict(self._state, kwargs)
 
+    def add_div_styles(self, style_dict = None, **kwargs):
+        """
+        pass styles for the chart div in a dictionary or as keyword arguments
+        """
+
+        if self._div_styles == None:
+            self._div_styles = {}
+
+        if style_dict == None and not kwargs:
+            # user is resetting styles
+
+            self.div_styles = {}
+        else:
+            if style_dict == None:
+                style_dict = {}
+            if kwargs:
+                style_dict.update(kwargs)
+            _add_dict_to_dict(self._div_styles, style_dict)
+            
+
     def add_sender(self, key, on="statechange", type='default'):
         
         if type == "default":
@@ -165,10 +186,6 @@ class _GoogleFilter(object):
 #             elif self._type == "NumberRangeFilter":
 #                 type = "number_range"
                 
-        # possible types:
-        #   send date range
-        #   send number range
-        
         self._senders.append({'on': on, 'key': key, 'type': type})
         
     
