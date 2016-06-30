@@ -23,6 +23,7 @@ Sonar todo:
 -- DONE.  flexible widths in ChartRow; gutter in ChartRow
 -- ability to add div styles to all widgets and filters
 -- add sender/receiver to SeriesFilter
+-- make widgets trigger updates if their selections are updated.
 
 -- making a change for review commit
 

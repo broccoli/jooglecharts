@@ -27,10 +27,11 @@
 		}
 		
 		function create_checkboxes() {
-			$main_div.addClass("checkbox");
+			//$main_div.addClass("checkbox");
 			for (var i = 0; i < values.length; i++) {
 				var value = values[i];
 				var $div = $("<div>");
+				$div.addClass("checkbox");
 				var $label = $("<label>");
 				var $input = $("<input>");
 				$input.attr("type", "checkbox").attr("value", value).click(function(event) {
@@ -78,3 +79,4 @@
 		// --------- Add checkbox sonar receivers, if any ---------
 		{% include 'js_checkbox_group_receivers.html' %}
 		// ------------------------------------------------------
+		

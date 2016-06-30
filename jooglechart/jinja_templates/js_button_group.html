@@ -22,9 +22,8 @@
 			return selected_values;
 		}
 
-		// --------- Add sonar senders, if any ---------
+		// --------- Add buttongroup sonar senders, if any ---------
 		{% include 'js_button_group_senders.html' %}
-		
 		// ---------------------------------------------
 
 		/*
@@ -97,14 +96,13 @@
 				var input_val = $input.attr("value");
 				if ($.inArray(input_val, values) >= 0) {
 					$label.addClass("active");
-					$input.attr("checked", true);
+					$input.prop("checked", true);
 				}
 			});
 			call_senders();
 		}
 		
 		
-		// -----------  add handlers ------------------
+		// -----------  add buttongroup sonar handlers ------------------
 		{% include 'js_button_group_receivers.html' %}
-		
 		// --------------------------------------------
