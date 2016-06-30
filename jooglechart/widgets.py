@@ -16,7 +16,7 @@ class ButtonGroup(object):
     
     def __init__(self, values, initial_values=None, type="checkbox", 
             clear_button=False, clear_button_position="first",
-            orientation="horizontal", clear_button_bold=False):
+            orientation="horizontal", clear_button_bold=False, title=None):
 
         self._values = values
         self._initial_values = initial_values
@@ -29,6 +29,7 @@ class ButtonGroup(object):
         self._senders = []
         self._receivers = []
         self._div_styles = {}
+        self._title = title
     
     def _set_render_properties(self):
         

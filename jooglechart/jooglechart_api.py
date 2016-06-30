@@ -13,7 +13,7 @@ Sonar todo:
 -- ADD BOLD, NOT COLOR.  add color option for button color.
 -- DONE. add receive for checklist widget
 -- DONE.  modify chartrow to accept widgets, text.
--- test checklist widget for long lists.  Add height handling and scrollbars for long lists?
+-- DONE.  test checklist widget for long lists.  Add height handling and scrollbars for long lists?
 -- modify SuperCategoryFilter to use the sonar machinery behind the scenes?
 -- need a way to check if in aquarium for aquarium_hidden.
 -- add titles to button group and checkbox group.
@@ -22,11 +22,11 @@ Sonar todo:
 -- change clear button on checkbox group to link (or optional link)
 -- DONE.  flexible widths in ChartRow; gutter in ChartRow
 -- ability to add div styles to all widgets and filters
--- add sender/receiver to SeriesFilter
+-- DONE. add sender/receiver to SeriesFilter
 -- create clear button widget to clear other widgets
     custom text, link or button, button size, button style
     -- actually can just be a single standalone button.  Just use an empty value to clear.
-
+-- handle dash in div styles (convert underscore to dash in jinja filter)
 -- making a change for review commit
 
 

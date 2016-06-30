@@ -8,6 +8,9 @@
 		{% if bg._initial_values %}
 		var initial_values = {{ bg._initial_values|to_json }};
 		{% endif %}
+		{% if bg._title %}
+		var title = "{{ bg._title }}";
+		{% endif %}
 		var type = "{{ bg._type }}";
 		var btn_group_class = '{{ bg._button_group_class }}';
 
@@ -50,11 +53,12 @@
 				});
 				$div.append($label);
 			}
-			
-			if (add_clear) { add_clear_button(); }
-			
+			if (add_clear) { add_clear_button(); }			
 			if (typeof initial_values != "undefined") {
 				update_button_group(initial_values);
+			}
+			if (typeof title !== "undefined") {
+				add_title(title);
 			}
 		}
 		
@@ -74,6 +78,12 @@
 				$button.blur();
 				call_senders();
 			});
+		}
+		
+		function add_title() {
+			var title_styles = {'font-weight': 'bold', 'outline': 'none', 'cursor': 'default'};
+			var $title_div = $("<div>");
+			$title_div.css(title_styles).addClass("btn").text(title).prependTo($div);
 		}
 		
 		
