@@ -15,15 +15,11 @@ $(document).ready(function() {
 		}
 	});
 
-	console.log("{{ is_first_joogle }}");
 	{% if refresh_globals %}
-		console.log("-- refresh globals");
 		window.joogle_globals = null;
 	{% endif %}
 
-	console.log(typeof window.joogle_globals === "undefined" || window.joogle_globals === null);
 	if (typeof window.joogle_globals === "undefined" || window.joogle_globals === null) {
-		console.log("-- creating globals");
 		window.joogle_globals = {};
 	
 		window.joogle_globals.sonar = new (function () {

@@ -94,8 +94,6 @@
 
 		function update_button_group(values) {
 			//$div = $("#{{ bg._div_id }}");
-			console.log("----- $div");
-			console.log($("#" + id));
 			if (type == "radio" && values.length > 1) {
 				values = [values[0]];
 			}
@@ -121,4 +119,3 @@
 		// ---------------------------------------------
 		create_buttons(id, values, type);
 		
-		console.log("handlers: " + joogle_globals.sonar.handler_array.length);
