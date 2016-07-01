@@ -1,0 +1,32 @@
+		var style = "{{ button._style }}";
+		var id = "{{ button._div_id }}";
+		var $div = $("#" + id);
+		var text = "{{ button._text }}";
+		var value = "{{ button._value }}"
+		var senders = [];
+		
+		function create_button() {
+			$a = $("<a>");
+			if (style == "button") {
+				$a.addClass("btn btn-default");
+			}
+			$a.text(text).appendTo($div).click(function() {
+				call_senders();
+			});			
+		}
+		
+		function call_senders() {
+			$.each(senders, function(index, value) { value() });
+		}		
+
+		senders.push(function() {
+			joogle_globals.sonar.send("WWW", [value]);
+		})
+
+		joogle_globals.sonar.add_handler(function (data) {
+			if (data.sonar_key == "WWW") {
+				console.log(data);
+			}
+		});
+    
+		create_button();

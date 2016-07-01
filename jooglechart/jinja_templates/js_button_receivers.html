@@ -1,7 +1,7 @@
 		{% for receiver in bg._receivers %}
 		joogle_globals.sonar.add_handler(function (data) {
 			if (data.sonar_key == "{{ receiver.key }}") {
-				update_button_group(data.sonar_value);
+				//update_button_group(data.sonar_value);
 			}
 		});
 		{% endfor %}

@@ -204,6 +204,80 @@ google_31 = ["#3366cc","#dc3912","#ff9900","#109618","#990099","#0099c6","#dd447
 
 indeed_20 = []
 
+
+class Button(object):
+
+    def __init__(self, value, text, style="button"):
+
+        self._value = value
+        self._style = style
+        self._text = text
+        self._div_id = None
+        self._senders = []
+        self._receivers = []
+        self._div_styles = {}
+    
+    def _set_render_properties(self):
+        
+        self._num = get_joogle_object_counter()
+        self._div_id = "joogle_button_" + str(self._num) + "_div_id"
+                
+        if self._style != "link":
+            self._style = 'button'
+                        
+
+    def add_div_styles(self, style_dict = None, **kwargs):
+        """
+        pass styles for the chart div in a dictionary or as keyword arguments
+        """
+
+        if self._div_styles == None:
+            self._div_styles = {}
+
+        if style_dict == None and not kwargs:
+            # user is resetting styles
+
+            self.div_styles = {}
+        else:
+            if style_dict == None:
+                style_dict = {}
+            if kwargs:
+                style_dict.update(kwargs)
+            _add_dict_to_dict(self._div_styles, style_dict)
+            
+
+    def add_sender(self, key):
+        
+        # For now, we assume the on event is click and the type of data sent
+        # is the array of selections.  If that needs to change in the future,
+        # add params on="click" and type="selection"
+        
+        self._senders.append({'key': key})
+        
+    
+    def add_receiver(self, key):        
+        
+        # For now, we assume the action is updating selections.
+        # If that needs to change, add param action="update_selections"
+        
+        self._receivers.append({'key': key})
+
+    def render(self, include_common=True):
+        
+        self._set_render_properties()
+        context = {}
+        context['callback_name'] = 'doStuff_' + str(self._num)
+        context['button'] = self
+        
+        set_common_on_context(context, include_common)
+        
+        return j2_env.get_template('top_button.html').render(context).encode('utf-8')
+
+
+    def show(self, include_common=True):
+
+        display(HTML(self.render(include_common)))
+
 class TableLegend(object):
     
     

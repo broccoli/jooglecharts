@@ -17,11 +17,11 @@ Sonar todo:
 -- modify SuperCategoryFilter to use the sonar machinery behind the scenes?
 -- need a way to check if in aquarium for aquarium_hidden.
 -- DONE. add titles to button group and checkbox group.
--- create common code widget
+-- DONE.  create common code widget
 -- text receiver widget
 -- change clear button on checkbox group to link (or optional link)
 -- DONE.  flexible widths in ChartRow; gutter in ChartRow
--- ability to add div styles to all widgets and filters
+-- DONE.  ability to add div styles to all widgets and filters
 -- DONE. add sender/receiver to SeriesFilter
 -- create clear button widget to clear other widgets
     custom text, link or button, button size, button style
@@ -951,6 +951,8 @@ class ChartRow:
         context['chartrow'] = self
         context['callback_name'] = 'doStuff_' + str(num)
 
+        # call common context method before rendering all child
+        # objects
         set_common_on_context(context, include_common)
 
         for obj in self._objects:
