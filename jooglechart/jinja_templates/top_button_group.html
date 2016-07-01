@@ -6,7 +6,6 @@
 
 $(document).ready(function() {
 	{% include 'js_library_loading.html' %}
-});
 
     function {{ callback_name }}() {
     
@@ -14,6 +13,7 @@ $(document).ready(function() {
 
     
     }
+});
 </script>
 
 <div id="{{ bg._div_id }}" {{ bg._div_styles|format_styles_list }}></div>

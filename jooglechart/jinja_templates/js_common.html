@@ -15,13 +15,19 @@ $(document).ready(function() {
 		}
 	});
 
+	console.log("{{ is_first_joogle }}");
+	{% if is_first_joogle %}
+	console.log("-- is first joogle");
+	window.joogle_globals = null;
+	{% endif %}
 
+	console.log(typeof window.joogle_globals === "undefined");
 	if (typeof window.joogle_globals === "undefined") {
 		window.joogle_globals = {};
 	
 		window.joogle_globals.sonar = new (function () {
 			// object for holding all sonar pieces
-			this.handler_array = []
+			this.handler_array = [];
 			this.add_handler = function(handler) { this.handler_array.push(handler)};
 			this.send = function(key, value) {
 				var data = { sonar_key: key, sonar_value: value };
@@ -33,7 +39,8 @@ $(document).ready(function() {
 				}
 			}
 			this.call_handlers = function(data) {
-				for (i = 0; i < this.handler_array.length; i++) {
+				console.log("----- calling all handlers: " + this.handler_array.length);
+				for (var i = 0; i < this.handler_array.length; i++) {
 					this.handler_array[i](data);
 				}
 			}

@@ -63,6 +63,7 @@ def set_common_on_context(context, include_common):
     # is saved, a js error occurs on reload and no jooglechart
     # will run. (The document ready function won't run.)
     
+    print 'first: ', is_first_joogle
     if include_common == None:
         if include_has_been_called[0]:
             context['common'] = False
@@ -74,6 +75,9 @@ def set_common_on_context(context, include_common):
         else:
             context['common'] = False
         
+    if is_first_joogle[0] == True:
+        context['is_first_joogle'] = True
+        is_first_joogle[0] = False
         
     # ISHBOOK-495
     context['notebook_url'] = _get_notebook_url()

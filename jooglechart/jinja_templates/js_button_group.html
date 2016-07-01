@@ -15,6 +15,7 @@
 		var btn_group_class = '{{ bg._button_group_class }}';
 
 		function get_selected_values() {
+			//$div = $("#{{ bg._div_id }}");
 			var selected_values = [];
 			$div.find("input").each(function(){
 				var $this = $(this);
@@ -25,9 +26,6 @@
 			return selected_values;
 		}
 
-		// --------- Add buttongroup sonar senders, if any ---------
-		{% include 'js_button_group_senders.html' %}
-		// ---------------------------------------------
 
 		/*
 			To get the inputs clicked properly, I had to put the click on event on the
@@ -93,14 +91,16 @@
 		}
 
 
-		create_buttons(id, values, type);
 
 		function update_button_group(values) {
+			//$div = $("#{{ bg._div_id }}");
+			console.log("----- $div");
+			console.log($("#" + id));
 			if (type == "radio" && values.length > 1) {
 				values = [values[0]];
 			}
 			clear_buttons();
-			$div.find("label").each(function(index, value) {
+			$("#" + id).find("label").each(function(index, value) {
 				var $label = $(this);
 				var $input = $label.find("input");
 				var input_val = $input.attr("value");
@@ -116,3 +116,9 @@
 		// -----------  add buttongroup sonar handlers ------------------
 		{% include 'js_button_group_receivers.html' %}
 		// --------------------------------------------
+		// --------- Add buttongroup sonar senders, if any ---------
+		{% include 'js_button_group_senders.html' %}
+		// ---------------------------------------------
+		create_buttons(id, values, type);
+		
+		console.log("handlers: " + joogle_globals.sonar.handler_array.length);

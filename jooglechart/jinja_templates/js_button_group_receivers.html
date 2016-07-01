@@ -1,6 +1,8 @@
 		{% for receiver in bg._receivers %}
 		joogle_globals.sonar.add_handler(function (data) {
+			console.log("-- handler for {{ bg._div_id }}");
 			if (data.sonar_key == "{{ receiver.key }}") {
+				console.log("-handler conditional for {{ bg._div_id }}");		
 				update_button_group(data.sonar_value);
 			}
 		});
