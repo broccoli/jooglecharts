@@ -76,8 +76,13 @@ def set_common_on_context(context, include_common):
             context['common'] = False
         
     if is_first_joogle[0] == True:
-        context['is_first_joogle'] = True
+        context['refresh_globals'] = True
         is_first_joogle[0] = False
+
+
+    # I want to refresh the globals if either the first joogle object is run
+    # or the include is run.
+    
         
     # ISHBOOK-495
     context['notebook_url'] = _get_notebook_url()
@@ -91,6 +96,7 @@ def _render_include():
     
     context = {}
     context['callback_name'] = 'joogle_include'
+    set_common_on_context(context, include_common=True)
     
     return j2_env.get_template('top_include.html').render(context).encode('utf-8')
 

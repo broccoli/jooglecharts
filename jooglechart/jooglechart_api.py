@@ -16,7 +16,7 @@ Sonar todo:
 -- DONE.  test checklist widget for long lists.  Add height handling and scrollbars for long lists?
 -- modify SuperCategoryFilter to use the sonar machinery behind the scenes?
 -- need a way to check if in aquarium for aquarium_hidden.
--- add titles to button group and checkbox group.
+-- DONE. add titles to button group and checkbox group.
 -- create common code widget
 -- text receiver widget
 -- change clear button on checkbox group to link (or optional link)
@@ -27,7 +27,6 @@ Sonar todo:
     custom text, link or button, button size, button style
     -- actually can just be a single standalone button.  Just use an empty value to clear.
 -- handle dash in div styles (convert underscore to dash in jinja filter)
--- making a change for review commit
 
 
 styler todo
@@ -946,22 +945,23 @@ class ChartRow:
         num = get_joogle_object_counter()
         self._div_id = "joogle_chartrow_" + str(num)
 
-        for obj in self._objects:
-            if isinstance(obj, str):
-                self._content_strings.append(obj)
-            else:
-                self._content_strings.append(obj.render(include_common=False))
 #             jc._set_render_properties()
 
         context = {}
         context['chartrow'] = self
         context['callback_name'] = 'doStuff_' + str(num)
 
+        set_common_on_context(context, include_common)
+
+        for obj in self._objects:
+            if isinstance(obj, str):
+                self._content_strings.append(obj)
+            else:
+                self._content_strings.append(obj.render(include_common=False))
 
         # ISHBOOK-495
 #         context['notebook_url'] = _get_notebook_url()
 
-        set_common_on_context(context, include_common)
 
         return j2_env.get_template('top_chartrow.html').render(context).encode('utf-8')
 
