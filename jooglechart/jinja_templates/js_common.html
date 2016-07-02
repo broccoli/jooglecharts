@@ -36,7 +36,6 @@ $(document).ready(function() {
 				}
 			}
 			this.call_handlers = function(data) {
-				console.log("----- calling all handlers: " + this.handler_array.length);
 				for (var i = 0; i < this.handler_array.length; i++) {
 					this.handler_array[i](data);
 				}

@@ -99,7 +99,11 @@
 
 
 		function update_button_group(values) {
-			//$div = $("#{{ bg._div_id }}");
+
+			console.log($div.attr('id'));
+			console.log(document.getElementById(id));
+			console.log(document.body.contains($div.get(0)));
+			
 			if (type == "radio" && values.length > 1) {
 				values = [values[0]];
 			}

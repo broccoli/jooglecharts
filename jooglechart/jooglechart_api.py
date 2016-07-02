@@ -23,11 +23,13 @@ Sonar todo:
 -- DONE.  flexible widths in ChartRow; gutter in ChartRow
 -- DONE.  ability to add div styles to all widgets and filters
 -- DONE. add sender/receiver to SeriesFilter
+-- change include name to joogle_include
 -- create clear button widget to clear other widgets
     custom text, link or button, button size, button style
     -- actually can just be a single standalone button.  Just use an empty value to clear.
 -- handle dash in div styles (convert underscore to dash in jinja filter)
-
+-- chart with select freezes up when you click on legend.
+-- fix chart with select when you have a filter on it.
 
 styler todo
 -- add indeed_colors=True option
