@@ -15,13 +15,15 @@
 		var btn_group_class = '{{ bg._button_group_class }}';
 
 		function get_selected_values() {
-			//$div = $("#{{ bg._div_id }}");
 			var selected_values = [];
-			$div.find("input").each(function(){
-				var $this = $(this);
-				if ($this.is(":checked")) {
-					selected_values.push($this.attr("value"));
-				}
+			//$div.find("input").each(function(){
+			//	var $this = $(this);
+			//	if ($this.is(":checked")) {
+			//		selected_values.push($this.attr("value"));
+			//	}
+			//});
+			$div.find("input:checked").each(function(){
+				selected_values.push(this.value);
 			});
 			return selected_values;
 		}
@@ -46,7 +48,8 @@
 				})
 				$label.addClass("btn btn-default").html(value).prepend($input).click(function(event) {
 					// event.preventDefault();
-					$(this).find("input").click();
+					this.childNodes[0].click(); // get child input and click					
+					//$(this).find("input").click();
 					call_senders();
 				});
 				$div.append($label);
@@ -87,7 +90,10 @@
 		
 		// define call_senders before call to create_buttons()
 		function call_senders() {
-			$.each(senders, function(index, value) { value() });
+			for (var i = 0; i < senders.length; i++) {
+				senders[i]();
+			}
+			//$.each(senders, function(index, value) { value() });
 		}
 
 
@@ -98,14 +104,23 @@
 				values = [values[0]];
 			}
 			clear_buttons();
-			$("#" + id).find("label").each(function(index, value) {
-				var $label = $(this);
-				var $input = $label.find("input");
-				var input_val = $input.attr("value");
+			//$("#" + id).find("label").each(function(index, value) {
+			$div.find("label").each(function(index, value) {
+				var label = this;
+				var input = label.childNodes[0];
+				var input_val = input.value;
 				if ($.inArray(input_val, values) >= 0) {
-					$label.addClass("active");
-					$input.prop("checked", true);
+					label.className += " active";
+					input.checked = true;
 				}
+
+				//var $label = $(this);
+				//var $input = $label.find("input");
+				//var input_val = $input.attr("value");
+				//if ($.inArray(input_val, values) >= 0) {
+				//	label.className += " active";
+				//	$input.prop("checked", true);
+				//}
 			});
 			call_senders();
 		}
