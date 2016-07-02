@@ -16,12 +16,6 @@
 
 		function get_selected_values() {
 			var selected_values = [];
-			//$div.find("input").each(function(){
-			//	var $this = $(this);
-			//	if ($this.is(":checked")) {
-			//		selected_values.push($this.attr("value"));
-			//	}
-			//});
 			$div.find("input:checked").each(function(){
 				selected_values.push(this.value);
 			});
@@ -100,10 +94,6 @@
 
 		function update_button_group(values) {
 
-			console.log($div.attr('id'));
-			console.log(document.getElementById(id));
-			console.log(document.body.contains($div.get(0)));
-			
 			if (type == "radio" && values.length > 1) {
 				values = [values[0]];
 			}
