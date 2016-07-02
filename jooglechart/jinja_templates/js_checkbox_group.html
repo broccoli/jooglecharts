@@ -1,6 +1,7 @@
 		var senders = [];
 		var values = {{ cbg._values }};
-		var $main_div = $("#{{ cbg._div_id }}");
+		var id = "{{ cbg._div_id }}";
+		var $main_div = $("#" + id);
 		var add_clear = {{ cbg._clear_button }};
 		{% if cbg._initial_values %}
 		var initial_values = {{ cbg._initial_values|to_json }};
