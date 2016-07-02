@@ -1,6 +1,7 @@
 		var style = "{{ button._style }}";
 		var id = "{{ button._div_id }}";
 		var $div = $("#" + id);
+		var $a;
 		var text = "{{ button._text }}";
 		var value = "{{ button._value }}"
 		var senders = [];
@@ -23,10 +24,11 @@
 			joogle_globals.sonar.send("WWW", [value]);
 		})
 
-		joogle_globals.sonar.add_handler(function (data) {
-			if (data.sonar_key == "WWW") {
-				console.log(data);
-			}
-		});
+		// -----------  add button sonar handlers ------------------
+		{% include 'js_button_group_receivers.html' %}
+		// ---------------------------------------------------------
+		// --------- Add button sonar senders, if any --------------
+		{% include 'js_button_senders.html' %}
+		// ---------------------------------------------------------
     
 		create_button();
