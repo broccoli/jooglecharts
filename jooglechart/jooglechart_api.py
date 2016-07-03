@@ -24,13 +24,15 @@ Sonar todo:
 -- DONE.  ability to add div styles to all widgets and filters
 -- DONE. add sender/receiver to SeriesFilter
 -- DONE.  change include name to joogle_include
+-- Change update chart to include view cols
+-- add update choices to filter handlers.  Must take binding column index.
 -- create clear button widget to clear other widgets
     custom text, link or button, button size, button style
     -- actually can just be a single standalone button.  Just use an empty value to clear.
 -- handle dash in div styles (convert underscore to dash in jinja filter)
 -- chart with select freezes up when you click on legend.
 -- fix chart with select when you have a filter on it.
--- in filter recievers, check if div is in dom.
+-- DONE.  in filter receivers, check if div is in dom.
 -- Try pseudo filter binding.  Try adding whole dataframe and specifying column index.  Then try
 updating that with a receiver.
 

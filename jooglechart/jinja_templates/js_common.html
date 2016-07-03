@@ -61,16 +61,7 @@ $(document).ready(function() {
 		filter.draw();
 	}
 	window.joogle_globals.update_chart = function(values_arr, data, chartwrapper, column) {
-		var filtered_rows = [];
-		if (values_arr.length == 0) {
-			filtered_rows = null;
-		}
-		else {
-			for (var i = 0; i < values_arr.length; i++) {
-				var rows = data.getFilteredRows([{column: column, value: values_arr[i]}]);
-				filtered_rows = $.merge(filtered_rows, rows);
-			}
-		}
+		var filtered_rows = joogle_globals.get_rows_for_column_selections(column, values_arr, data);
 		chartwrapper.setView({
 			rows: filtered_rows
 		});
@@ -85,6 +76,19 @@ $(document).ready(function() {
 		chartwrapper.draw();			
 	}
 	
+	window.joogle_globals.get_rows_for_column_selections = function(column, selections, datatable) {
+		var rows_total = [];
+		if (selections.length == 0) {
+			rows_total = null;
+		}
+		else {
+			for (var i = 0; i < selections.length; i++) {
+				var rows = datatable.getFilteredRows([{column: parseInt(column), value: selections[i]}]);
+				rows_total = $.merge(rows_total, rows);
+			}
+		}
+		return rows_total;		
+	}
 
 	/*
 		The google.load function can only be called once per page.  On the first
