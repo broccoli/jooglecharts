@@ -35,6 +35,7 @@ Sonar todo:
 -- DONE.  in filter receivers, check if div is in dom.
 -- Try pseudo filter binding.  Try adding whole dataframe and specifying column index.  Then try
 updating that with a receiver.
+-- Add view_cols to update chart range.
 
 styler todo
 -- add indeed_colors=True option
@@ -195,20 +196,24 @@ class _GoogleFilter(object):
         self._senders.append({'on': on, 'key': key, 'type': type})
         
     
-    def add_receiver(self, key, action="default"):
-        
+    def add_receiver(self, key, action="default", *args, **kwargs):
+
+        rec_dict = {}
         if action == "default":
             if self._type == "CategoryFilter":
                 action = "update_selection"
             elif self._type in ["DateRangeFilter", "NumberRangeFilter"]:
                 action = "update_range"
-#             elif self._type == "NumberRangeFilter":
-#                 action = "update_number_range"
-        # possible actions
-        #  update date range
-        #  update number range
         
-        self._receivers.append({'key': key, 'action': action})
+        if action == "update_binding_selection":
+            if "bound_column" in kwargs:
+                rec_dict['bound_column'] = kwargs['bound_column']
+            else:
+                raise JoogleChartsException("A bound_column must be passed for update_binding_selection")
+        rec_dict['key'] = key
+        rec_dict['action'] = action
+        
+        self._receivers.append(rec_dict)
 
     def _set_render_properties(self):
         raise JoogleChartsException("_set_render_properties not implemented")
@@ -228,6 +233,7 @@ class Filter(_GoogleFilter):
         self._json = None
         self._data_type = None
         self._data = kwargs.get('data')
+        self._filter_column_index = None
         
         if 'data' in kwargs:
             self._data = kwargs['data']
@@ -276,7 +282,10 @@ class Filter(_GoogleFilter):
         
         # get data type, but only used for freestanding filters
         
-#         if freestanding:
+        if freestanding and not "filterColumnIndex" in self._options:
+            raise JoogleChartsException("Standalone filter must have filterColumnIndex")
+        else:
+            self._filter_column_index = self._options['filterColumnIndex']
 #             self.add_options(filterColumnIndex=0)
 #             if self._type == "CategoryFilter":
 #                 self._data_type = "string"

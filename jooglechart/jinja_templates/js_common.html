@@ -60,6 +60,26 @@ $(document).ready(function() {
 		filter.setState(filter_state);
 		filter.draw();
 	}
+	window.joogle_globals.update_filter_binding_selection = function(selected_values, data, filter, column) {
+		// Method for filtering controlWrapper's dataTable and redrawing.  Used for filter sonar receiver.
+		
+		var filtered_rows = [];
+		if (selected_values.length == 0) {
+			filtered_rows = null;
+		}
+		else {
+			for (var i = 0; i < selected_values.length; i++) {
+				var rows = data.getFilteredRows([{column: column, value: selected_values[i]}]);
+				filtered_rows = $.merge(filtered_rows, rows);
+			}
+		}
+		// undocumented setView method on control wrappers
+		filter.setView({
+			rows: filtered_rows
+		});
+
+		filter.draw();
+	}
 	window.joogle_globals.update_chart = function(values_arr, data, chartwrapper, column, view_cols) {
 		var filtered_rows = joogle_globals.get_rows_for_column_selections(column, values_arr, data);
 		chartwrapper.setView({

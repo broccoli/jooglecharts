@@ -4,7 +4,10 @@
 				{% if receiver.action == "update_selection" %}			
 				joogle_globals.update_category_filter({{ filter._name }}, data.sonar_value);
 				{% elif receiver.action == "update_range" %}
-				joogle_globals.update_range_filter({{ filter._name }}, data.sonar_value);				
+				joogle_globals.update_range_filter({{ filter._name }}, data.sonar_value);
+				{% elif receiver.action == "update_binding_selection" %}
+				binding_selections[{{ receiver.bound_column }}] = data.sonar_value;
+				joogle_globals.update_filter_binding_selection(data.sonar_value, datatable, {{ filter._name }}, {{ receiver.bound_column }});
 				{% endif %}
 			}
 		});
