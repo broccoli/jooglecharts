@@ -1,6 +1,6 @@
 
 		{% if filter._json %}
-		var data = new google.visualization.DataTable({{ filter._json }});
+		var datatable = new google.visualization.DataTable({{ filter._json }});
 		{% else %}
         var data = new google.visualization.DataTable();
         data.addColumn('{{ filter._data_type }}', 'choices');

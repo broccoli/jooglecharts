@@ -220,11 +220,23 @@ class Filter(_GoogleFilter):
     By default binds the data.  But can bind another filter.
     """
 
-    def __init__(self, type):
+    def __init__(self, type, *args, **kwargs):
         super(Filter, self).__init__(type)
         self._label = None
         self._json = None
         self._data_type = None
+        self._data = kwargs.get('data')
+        
+        if 'data' in kwargs:
+            self._data = kwargs['data']
+            if not (isinstance(self._data, pd.Series) or isinstance(self._data, pd.DataFrame)):
+                raise JoogleChartsException("Filter data must be Series or DataFrame")
+            if isinstance(self._data, pd.Series):
+                df = pd.DataFrame(self._data)
+            else:
+                df = self._data
+            table = dataframe_to_gviz(df, allow_nulls=True)
+            self._json = table.ToJSon()
 
     def bind_filter(self, bind_target):
         self._bind_target = bind_target
@@ -239,10 +251,15 @@ class Filter(_GoogleFilter):
         
         self._label = label
 
-    def set_series(self, series):
-        df = pd.DataFrame(series)
-        table = dataframe_to_gviz(df, allow_nulls=True)
-        self._json = table.ToJSon()
+#     def set_data(self, data):
+#         if not (isinstance(data, pd.Series) or isinstance(data, pd.DataFrame)):
+#             raise JoogleChartsException("Filter data must be Series or DataFrame")
+#         if isinstance(data, pd.Series):
+#             df = pd.DataFrame(data)
+#         else:
+#             df = data
+#         table = dataframe_to_gviz(df, allow_nulls=True)
+#         self._json = table.ToJSon()
         
 
     def _set_render_properties(self, freestanding=False):
@@ -257,14 +274,14 @@ class Filter(_GoogleFilter):
         
         # get data type, but only used for freestanding filters
         
-        if freestanding:
-            self.add_options(filterColumnIndex=0)
-            if self._type == "CategoryFilter":
-                self._data_type = "string"
-            elif self._type == "DateRangeFilter":
-                self._data_type = "date"
-            elif self._type == "NumberRangeFilter":
-                self._data_type = "number"
+#         if freestanding:
+#             self.add_options(filterColumnIndex=0)
+#             if self._type == "CategoryFilter":
+#                 self._data_type = "string"
+#             elif self._type == "DateRangeFilter":
+#                 self._data_type = "date"
+#             elif self._type == "NumberRangeFilter":
+#                 self._data_type = "number"
         
     def render(self, include_common=None, freestanding=True):
         
