@@ -2,6 +2,13 @@
         google.visualization.events.addListener({{ filter._name }}, "{{ sender.on }}", function () {
 		{% if sender.type == 'selection' %}
 			var selected_values = {{ filter._name }}.getState().selectedValues;
+			// if the selectedValues is empty, then defer to the binding selections.
+			// So the chart downstream will still have selections if the binding filter has
+			// a selection.
+			if (selected_values.length == 0) {
+				selected_values = get_binding_selections();
+			}
+			joogle_globals.sonar.send("BBB", selected_values);
 			joogle_globals.sonar.send("{{ sender.key }}", selected_values);
 		{% elif sender.type == 'range' %}
 			var low_value = {{ filter._name }}.getState().lowValue;
