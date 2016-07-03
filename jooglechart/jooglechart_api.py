@@ -23,7 +23,7 @@ Sonar todo:
 -- DONE.  flexible widths in ChartRow; gutter in ChartRow
 -- DONE.  ability to add div styles to all widgets and filters
 -- DONE. add sender/receiver to SeriesFilter
--- change joogle_include name to joogle_include
+-- DONE.  change include name to joogle_include
 -- create clear button widget to clear other widgets
     custom text, link or button, button size, button style
     -- actually can just be a single standalone button.  Just use an empty value to clear.
@@ -31,6 +31,8 @@ Sonar todo:
 -- chart with select freezes up when you click on legend.
 -- fix chart with select when you have a filter on it.
 -- in filter recievers, check if div is in dom.
+-- Try pseudo filter binding.  Try adding whole dataframe and specifying column index.  Then try
+updating that with a receiver.
 
 styler todo
 -- add indeed_colors=True option
@@ -661,6 +663,7 @@ class JoogleChart():
         self._num_cols = None
         self._num_rows = None
         self._global_title = None
+#         self._filter_layout = "auto"
 
         # Dashboard attributes
         self.dashboard_div_id = None

@@ -205,6 +205,15 @@ google_31 = ["#3366cc","#dc3912","#ff9900","#109618","#990099","#0099c6","#dd447
 indeed_20 = []
 
 
+class TextReceiver(object):
+    
+    def __init__(self, text, key, pretext="", array_style="parens"):
+        self._text = text
+        self._pretext = ""
+        self._key = key
+        self._array_style = array_style
+
+
 class Button(object):
 
     def __init__(self, value, text, style="button"):
