@@ -20,12 +20,8 @@
 			$.each(senders, function(index, value) { value() });
 		}		
 
-		senders.push(function() {
-			joogle_globals.sonar.send("WWW", [value]);
-		})
-
 		// -----------  add button sonar handlers ------------------
-		{% include 'js_button_group_receivers.html' %}
+		{% include 'js_button_receivers.html' %}
 		// ---------------------------------------------------------
 		// --------- Add button sonar senders, if any --------------
 		{% include 'js_button_senders.html' %}

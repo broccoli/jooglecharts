@@ -1,4 +1,4 @@
-		{% for receiver in bg._receivers %}
+		{% for receiver in button._receivers %}
 		joogle_globals.sonar.add_handler(function (data) {
 			if (data.sonar_key == "{{ receiver.key }}") {
 				$a.click();
