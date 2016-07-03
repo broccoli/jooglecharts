@@ -9,7 +9,7 @@
 		var {{ filter._name }} = new google.visualization.ControlWrapper({
 			'controlType': '{{ filter._type }}',
 			'containerId': '{{ filter._div_id }}',
-			'dataTable': data,
+			'dataTable': datatable,
 			'options': {{ filter._options|default("{}")|to_json }},
 			'state': {{ filter._state|default("{}")|to_json }}
 		});
