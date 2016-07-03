@@ -3,7 +3,7 @@
 		{% if receiver.action == 'update_selection' %}
 		joogle_globals.sonar.add_handler(function(data) {
 			if (data.sonar_key == "{{ receiver.key }}" && document.getElementById("{{ chart.chart_div_id }}") !== null) {
-				joogle_globals.update_chart(data.sonar_value, {{ jg.data_name }}, {{ chart.name }}, {{ receiver.column }});				
+				joogle_globals.update_chart(data.sonar_value, {{ jg.data_name }}, {{ chart.name }}, {{ receiver.column }}, {{ chart.view_cols|to_json }});				
 			}
 		})
 		{% endif %}

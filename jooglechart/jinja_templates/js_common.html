@@ -60,10 +60,11 @@ $(document).ready(function() {
 		filter.setState(filter_state);
 		filter.draw();
 	}
-	window.joogle_globals.update_chart = function(values_arr, data, chartwrapper, column) {
+	window.joogle_globals.update_chart = function(values_arr, data, chartwrapper, column, view_cols) {
 		var filtered_rows = joogle_globals.get_rows_for_column_selections(column, values_arr, data);
 		chartwrapper.setView({
-			rows: filtered_rows
+			rows: filtered_rows,
+			columns: view_cols
 		});
 		chartwrapper.draw();			
 	}
