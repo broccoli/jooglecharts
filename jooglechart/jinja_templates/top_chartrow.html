@@ -5,10 +5,10 @@
 
 
 
-{% if chartrow._flex_width %}
-<div class="joogle_clearfix" id="{{ chartrow._div_id }} {{ chartrow._div_styles|format_styles_list }}">
+{% if chartrow._flex_width or chartrow._style_widths %}
+<div class="joogle_clearfix" id="{{ chartrow._div_id }}" {{ chartrow._div_styles|format_styles_list }}>
     {% for string in chartrow._content_strings %}
-    <div class="joogle_chartrow_column">
+    <div class="joogle_chartrow_column" {{ chartrow._style_widths[loop.index0] }}>
 		{{ string }}
     </div>
     {% endfor %}

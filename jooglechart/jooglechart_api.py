@@ -949,9 +949,21 @@ class ChartRow:
     """
     
     """
-    Do
-    -- add div id to chartrow div
-    -- add css for gutter for this chartrow div id
+    There should be four ChartRow sizing modes:
+        -- bootstrap
+            -- evenly proportioned, but fixed width and responsive
+        -- free
+            no width setting
+        -- weighted
+            percent widths
+        -- exact (add?)
+            px, em, etc.
+            integers will be assumed to be pixels
+            The width of the total shouldn't be set
+        
+    maybe have a setting for inner padding or gutter.  But the padding must
+    be incorporated into the widths of the modes.  Padding + width must fit the
+    overall width.
     
     """
 
@@ -963,10 +975,19 @@ class ChartRow:
         self._gutter = None
         self._div_id = None
         self._div_styles = None
+        self._weights = []
+#         self._pct_widths = []
+        self._style_widths = []
         
         if "flex_width" in kwargs and kwargs['flex_width'] == True:
             self._flex_width = True
             self._gutter_width = kwargs.get("gutter_width", "20px");
+            
+        self._weights = kwargs.pop("weights", [])
+        
+        if self._weights and len(self._weights) != len(objects):
+            message = "Numbers of objects and weights in a ChartRow must be the same."
+            raise JoogleChartsException(message)
 
         num_objects = len(self._objects)
         if num_objects not in [2, 3, 4]:
@@ -974,8 +995,16 @@ class ChartRow:
             raise JoogleChartsException(message)
 
         self.bootstrap_num = 12 / num_objects
-
-
+        
+        
+        # calculate pct_widths
+        weight_sum = sum(self._weights)
+        for weight in self._weights:
+            pct = (float(weight) / weight_sum) * 100
+            pct = round(pct, 2)
+            style_width = 'style="width:{}%"'.format(pct)
+            self._style_widths.append(style_width)
+            
     def add_div_styles(self, style_dict = None, **kwargs):
         """
         pass styles for the chart div in a dictionary or as keyword arguments
