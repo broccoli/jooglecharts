@@ -6,7 +6,7 @@
 
 
 {% if chartrow._flex_width %}
-<div class="joogle_clearfix" id="{{ chartrow._div_id }}">
+<div class="joogle_clearfix" id="{{ chartrow._div_id }} {{ chartrow._div_styles|format_styles_list }}">
     {% for string in chartrow._content_strings %}
     <div class="joogle_chartrow_column">
 		{{ string }}
@@ -14,7 +14,7 @@
     {% endfor %}
 </div>
 {% else %}
-<div class="row" id="{{ chartrow._div_id }}">
+<div class="row" id="{{ chartrow._div_id }}" {{ chartrow._div_styles|format_styles_list }}>
     {% for string in chartrow._content_strings %}
     <div class="col-sm-{{ chartrow.bootstrap_num }}">
 		{{ string }}

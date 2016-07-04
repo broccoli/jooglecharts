@@ -962,6 +962,7 @@ class ChartRow:
         self._flex_width = None
         self._gutter = None
         self._div_id = None
+        self._div_styles = None
         
         if "flex_width" in kwargs and kwargs['flex_width'] == True:
             self._flex_width = True
@@ -975,6 +976,24 @@ class ChartRow:
         self.bootstrap_num = 12 / num_objects
 
 
+    def add_div_styles(self, style_dict = None, **kwargs):
+        """
+        pass styles for the chart div in a dictionary or as keyword arguments
+        """
+
+        if self._div_styles == None:
+            self._div_styles = {}
+
+        if style_dict == None and not kwargs:
+            # user is resetting styles
+
+            self.div_styles = {}
+        else:
+            if style_dict == None:
+                style_dict = {}
+            if kwargs:
+                style_dict.update(kwargs)
+            _add_dict_to_dict(self._div_styles, style_dict)
 
     def render(self, include_common=None):
 
