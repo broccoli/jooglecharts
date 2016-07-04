@@ -26,15 +26,16 @@ Sonar todo:
 -- DONE.  change include name to joogle_include
 -- DONE. Change update chart to include view cols
 -- DONE.  add update binding selection choices to filter handlers.  Must take binding column index.
--- create clear button widget to clear other widgets
+-- DONE.  create clear button widget to clear other widgets
     custom text, link or button, button size, button style
-    -- actually can just be a single standalone button.  Just use an empty value to clear.
 -- handle dash in div styles (convert underscore to dash in jinja filter)
 -- chart with select freezes up when you click on legend.
 -- fix chart with select when you have a filter on it.
+-- SeriesFilter listeners and senders
 -- DONE.  in filter receivers, check if div is in dom.
 -- Add view_cols to update chart range.
 -- Add update binding range to filter handlers. Must take bound column index.
+-- Try setting initial values on stand alone filters
 
 styler todo
 -- add indeed_colors=True option
@@ -239,6 +240,8 @@ class Filter(_GoogleFilter):
             if not (isinstance(self._data, pd.Series) or isinstance(self._data, pd.DataFrame)):
                 raise JoogleChartsException("Filter data must be Series or DataFrame")
             if isinstance(self._data, pd.Series):
+                if self._data.name == None:
+                    self._data.name = "choices"
                 df = pd.DataFrame(self._data)
             else:
                 df = self._data

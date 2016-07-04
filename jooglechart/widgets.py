@@ -4,7 +4,7 @@ Created on Jun 12, 2016
 @author: richd
 '''
 
-from utils import get_joogle_object_counter, set_common_on_context, j2_env, _add_dict_to_dict
+from utils import get_joogle_object_counter, set_common_on_context, j2_env, _add_dict_to_dict, JoogleChartsException
 
 from IPython.display import display, HTML
 
@@ -214,18 +214,41 @@ class TextReceiver(object):
         self._array_style = array_style
 
 
+def is_string(obj):
+    try:
+        dummy = unicode(obj)
+        return True
+        # string
+    except:
+        return False
+
 class Button(object):
 
     def __init__(self, value, text, style="button"):
 
-        self._value = value
+        self._value = None
         self._style = style
         self._text = text
         self._div_id = None
         self._senders = []
         self._receivers = []
         self._div_styles = {}
+        
+        # check if value is a string
+        if is_string(value):
+            value = value.strip()
+            if len(value) == 0:
+                value = []
+            else:
+                value = [value]
+        elif value == None:
+            value = []
+        elif isinstance(value, list):
+            pass
+        else:
+            raise JoogleChartsException("Button value must be string, list or None")
     
+        self._value = value
     def _set_render_properties(self):
         
         self._num = get_joogle_object_counter()
