@@ -965,6 +965,16 @@ class ChartRow:
     be incorporated into the widths of the modes.  Padding + width must fit the
     overall width.
     
+    Maybe have inner_pad just be an integer.  It will be pct or px depending on mode?
+
+    Add border box.  I think with border box, I can have inner padding be either
+    pct or px.
+    
+    Might want to change from 100% width to 99% width for weighted to make sure that
+    fractional pixels rounding up doesn't throw off the layout.
+    
+    Setting for responsiveness breakpoint?
+    
     """
 
     def __init__(self, *objects, **kwargs):
