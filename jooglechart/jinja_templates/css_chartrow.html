@@ -1,5 +1,12 @@
 
-{% if chartrow._flex_width or chartrow._style_widths %}
+{% if chartrow._mode == "bootstrap" and chartrow._padding %}
+<style>
+#{{ chartrow._div_id }} > div {
+	padding-left: {{ chartrow._padding }};
+	padding-right: {{ chartrow._padding }};
+}
+</style>
+{% else %}
 <style>
 .joogle_clearfix:after {
     content:" ";
@@ -7,13 +14,14 @@
     clear:both;
 }
 
-.joogle_chartrow_column {
+#{{ chartrow._div_id }} > .joogle_chartrow_column {
+	box-sizing: border-box;
 	float: left;
+	{% if chartrow._padding %}
+	padding-left: {{ chartrow._padding }};
+	padding-right: {{ chartrow._padding }};
+	{% endif %}
 }
 
-#{{ chartrow._div_id }} > div:not(:first-child) {
-	margin-left:{{ chartrow._gutter_width }};
-}
 </style>
-
 {% endif %}

@@ -1,22 +1,19 @@
-
 {% if common %}
 {% include "common_template.html" %}
 {% endif %}
 
-
-
-{% if chartrow._flex_width or chartrow._style_widths %}
-<div class="joogle_clearfix" id="{{ chartrow._div_id }}" {{ chartrow._div_styles|format_styles_list }}>
+{% if chartrow._mode == "bootstrap" %}
+<div class="row" id="{{ chartrow._div_id }}" {{ chartrow._div_styles|format_styles_list }}>
     {% for string in chartrow._content_strings %}
-    <div class="joogle_chartrow_column" {{ chartrow._style_widths[loop.index0] }}>
+    <div class="col-sm-{{ chartrow.bootstrap_num }}">
 		{{ string }}
     </div>
     {% endfor %}
 </div>
 {% else %}
-<div class="row" id="{{ chartrow._div_id }}" {{ chartrow._div_styles|format_styles_list }}>
+<div class="joogle_clearfix" id="{{ chartrow._div_id }}" {{ chartrow._div_styles|format_styles_list }}>
     {% for string in chartrow._content_strings %}
-    <div class="col-sm-{{ chartrow.bootstrap_num }}">
+    <div class="joogle_chartrow_column" {{ chartrow._style_widths[loop.index0] }}>
 		{{ string }}
     </div>
     {% endfor %}

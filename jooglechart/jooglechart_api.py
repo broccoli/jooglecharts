@@ -36,6 +36,10 @@ Sonar todo:
 -- Add view_cols to update chart range.
 -- Add update binding range to filter handlers. Must take bound column index.
 -- Try setting initial values on stand alone filters
+-- Add modes to chartrow. Breakpoint parameter.
+-- Add aggregation option to joogechart?  Does an aggregation on a column.
+-- Figure out how to initialize charts and widgets that communicate with each other.
+-- Create a detail chart demo using the bound column receiver.
 
 styler todo
 -- add indeed_colors=True option
@@ -937,7 +941,20 @@ class JoogleChart():
         else:
             chart = self
         display(HTML(chart.render(chart_type, include_common)))
-
+        
+def _get_style_widths_from_weights(weights):
+    
+    # use less than 100 in case the computed widths in pixels are fractional and get rounded up,
+    # potentially exceeding 100 total.
+    TOTAL_WIDTH = 99
+    weight_sum = sum(weights)
+    style_widths = []
+    for weight in weights:
+        pct = (float(weight) / weight_sum) * TOTAL_WIDTH
+        pct = round(pct, 2)
+        style_width = 'style="width:{}%"'.format(pct)
+        style_widths.append(style_width)
+    return style_widths
 
 class ChartRow:
 
@@ -980,40 +997,64 @@ class ChartRow:
     def __init__(self, *objects, **kwargs):
 
         self._objects = objects
+        self.bootstrap_num = None
         self._content_strings = []
-        self._flex_width = None
-        self._gutter = None
+#         self._flex_width = None
+#         self._gutter = None
         self._div_id = None
         self._div_styles = None
         self._weights = []
-#         self._pct_widths = []
+        self._widths = []
         self._style_widths = []
+        self._padding = None
         
-        if "flex_width" in kwargs and kwargs['flex_width'] == True:
-            self._flex_width = True
-            self._gutter_width = kwargs.get("gutter_width", "20px");
+#         if "flex_width" in kwargs and kwargs['flex_width'] == True:
+#             self._flex_width = True
+#             self._gutter_width = kwargs.get("gutter_width", "20px");
+
+        self._mode = kwargs.pop("mode", "bootstrap")
+        if self._mode not in ['bootstrap', 'free', 'weighted', 'fixed']:
+            message = "ChartRow mode must be bootstrap, free, weighted, or fixed."
+            raise JoogleChartsException(message)
+        
+        self._padding = kwargs.pop("padding", None)
+        if self._padding:
+            self._padding = str(int(self._padding)) + "px"
             
         self._weights = kwargs.pop("weights", [])
-        
-        if self._weights and len(self._weights) != len(objects):
-            message = "Numbers of objects and weights in a ChartRow must be the same."
-            raise JoogleChartsException(message)
+        if self._mode == "weighted":
+            if not self._weights:
+                message = "If using weighted mode, pass a list of weights to apply"
+                raise JoogleChartsException(message)
+            elif len(self._weights) != len(objects):
+                message = "Numbers of objects and weights in a ChartRow must be the same."
+                raise JoogleChartsException(message)
+            else:
+                self._style_widths = _get_style_widths_from_weights(self._weights)
 
-        num_objects = len(self._objects)
-        if num_objects not in [2, 3, 4]:
-            message = "A chart row must have 2-4 objects"
-            raise JoogleChartsException(message)
+        widths = kwargs.pop("widths", [])        
+        if self._mode == "fixed":
+            if not widths:
+                message = "If using fixed mode, pass a list of widths to apply"
+                raise JoogleChartsException(message)
+            for width in widths:
+                try:
+                    w = int(width)
+                    w = str(w) + "px"
+#                     self._widths.append(int(width))
+                except:
+                    w = width
+                self._style_widths.append('style="width:{}"'.format(w))
 
-        self.bootstrap_num = 12 / num_objects
+        if self._mode == "bootstrap":
+            num_objects = len(self._objects)
+            if num_objects not in [2, 3, 4]:
+                message = "If using bootstrap mode, there can be 2-4 objects"
+                raise JoogleChartsException(message)
+
+            self.bootstrap_num = 12 / num_objects
         
         
-        # calculate pct_widths
-        weight_sum = sum(self._weights)
-        for weight in self._weights:
-            pct = (float(weight) / weight_sum) * 100
-            pct = round(pct, 2)
-            style_width = 'style="width:{}%"'.format(pct)
-            self._style_widths.append(style_width)
             
     def add_div_styles(self, style_dict = None, **kwargs):
         """
