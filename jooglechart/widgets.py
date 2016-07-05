@@ -207,12 +207,32 @@ indeed_20 = []
 
 class TextReceiver(object):
     
-    def __init__(self, text, key, pretext="", array_style="parens"):
+    def __init__(self, key, text, array_style="parens", pretext=None, default=""):
         self._text = text
-        self._pretext = ""
+        self._pretext = pretext
         self._key = key
         self._array_style = array_style
+        self._default = default
 
+        if array_style not in ['parens', 'brackets', 'colloquial']:
+            message = "TextReceiver array_style must be colloquial, parens, or brackets"
+            raise JoogleChartsException(message)
+
+        if self._pretext == None:
+            self._pretext = text.replace(default)
+
+
+    def render(self):
+        
+        context = {}
+        context['text_receiver'] = self
+        
+        return j2_env.get_template('top_text_receiver.html').render(context).encode('utf-8')
+
+
+    def show(self):
+
+        display(HTML(self.render()))
 
 def is_string(obj):
     try:

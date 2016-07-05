@@ -40,9 +40,61 @@ $(document).ready(function() {
 					this.handler_array[i](data);
 				}
 			}
+			this.call_text_receivers = function (data) {
+				$(".text_receiver").each(function() {
+					var receiver = this;
+					var key = receiver.dataset.key;
+					var array_style = receiver.dataset.arraystyle;
+					var sub_text = data.sonar_value;
+					var default_text = receiver.dataset.default;
+					if (typeof default_text === "undefined") {
+						default_text = "";
+					}
+					var clear_text = receiver.dataset.clear_text;
+					if (sub_text.constructor !== Array) {
+						sub_text = $.trim(sub_text);
+						if (sub_text.length == 0) {
+							sub_text = default_text;
+						}
+						sub_text = [sub_text];
+					} else if (sub_text.length === 0) {
+						sub_text = [default_text];
+					}
+					sub_text = globals.format_array_for_text_receiver(sub_text, array_style);
+					if (key == data.sonar_key) {
+						var template = receiver.dataset.text;
+						template = template.replace("{}", sub_text);
+						receiver.innerHTML = template;
+					}
+				})
+			}
 		})();
 	}
 	
+	window.joogle_globals.format_array_for_text_receiver = function(arr, array_style) {
+		console.log(array_style)
+		if (array_style === "colloquial") {
+			if (arr.length === 1) { return arr[0]; }
+			var front = "";
+			var back = "";
+			var back_arr = arr.slice(arr.length - 2, arr.length);
+			back = back_arr[0] + " and " + back_arr[1];
+			if (arr.length > 2) {
+				var front_arr = arr.slice(0, arr.length - 1);
+				for (var i = 0; i < front_arr.length; i++) {
+					front += front_arr[i] + ", ";
+				}
+			}
+			return front + back;
+		}
+		else if (array_style === "parens") {
+			return "(" + arr.join(", ") + ")";
+		}
+		else if (array_style === "brackets") {
+			return "[" + arr.join(", ") + "]";
+		}
+	}
+
 	window.joogle_globals.update_category_filter = function(filter, selected_values) {
 		// utility function for updating Google Charts filter		
 		var filter_state = filter.getState();

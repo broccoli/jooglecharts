@@ -28,7 +28,6 @@ Sonar todo:
 -- DONE.  add update binding selection choices to filter handlers.  Must take binding column index.
 -- DONE.  create clear button widget to clear other widgets
     custom text, link or button, button size, button style
--- handle dash in div styles (convert underscore to dash in jinja filter)
 -- chart with select freezes up when you click on legend.
 -- fix chart with select when you have a filter on it.
 -- SeriesFilter listeners and senders
@@ -36,7 +35,8 @@ Sonar todo:
 -- Add view_cols to update chart range.
 -- Add update binding range to filter handlers. Must take bound column index.
 -- Try setting initial values on stand alone filters
--- Add modes to chartrow. Breakpoint parameter.
+-- DONE. Add modes to chartrow.
+-- Add Breakpoint parameter and @media max-height setting.
 -- Add aggregation option to joogechart?  Does an aggregation on a column.
 -- Figure out how to initialize charts and widgets that communicate with each other.
 -- Create a detail chart demo using the bound column receiver.
