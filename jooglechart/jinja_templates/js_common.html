@@ -39,12 +39,13 @@ $(document).ready(function() {
 				for (var i = 0; i < this.handler_array.length; i++) {
 					this.handler_array[i](data);
 				}
+				this.call_text_receivers(data);
 			}
 			this.call_text_receivers = function (data) {
-				$(".text_receiver").each(function() {
+				$(".joogle_text_receiver").each(function() {
 					var receiver = this;
 					var key = receiver.dataset.key;
-					var array_style = receiver.dataset.arraystyle;
+					var list_style = receiver.dataset.liststyle;
 					var sub_text = data.sonar_value;
 					var default_text = receiver.dataset.default;
 					if (typeof default_text === "undefined") {
@@ -60,9 +61,9 @@ $(document).ready(function() {
 					} else if (sub_text.length === 0) {
 						sub_text = [default_text];
 					}
-					sub_text = globals.format_array_for_text_receiver(sub_text, array_style);
+					sub_text = joogle_globals.format_list_for_text_receiver(sub_text, list_style);
 					if (key == data.sonar_key) {
-						var template = receiver.dataset.text;
+						var template = receiver.dataset.template;
 						template = template.replace("{}", sub_text);
 						receiver.innerHTML = template;
 					}
@@ -71,9 +72,8 @@ $(document).ready(function() {
 		})();
 	}
 	
-	window.joogle_globals.format_array_for_text_receiver = function(arr, array_style) {
-		console.log(array_style)
-		if (array_style === "colloquial") {
+	window.joogle_globals.format_list_for_text_receiver = function(arr, list_style) {
+		if (list_style === "colloquial") {
 			if (arr.length === 1) { return arr[0]; }
 			var front = "";
 			var back = "";
@@ -87,10 +87,10 @@ $(document).ready(function() {
 			}
 			return front + back;
 		}
-		else if (array_style === "parens") {
+		else if (list_style === "parens") {
 			return "(" + arr.join(", ") + ")";
 		}
-		else if (array_style === "brackets") {
+		else if (list_style === "brackets") {
 			return "[" + arr.join(", ") + "]";
 		}
 	}

@@ -207,25 +207,28 @@ indeed_20 = []
 
 class TextReceiver(object):
     
-    def __init__(self, key, text, array_style="parens", pretext=None, default=""):
-        self._text = text
+    def __init__(self, key, template, list_style="parens", pretext=None, default=""):
+        self._template = template
         self._pretext = pretext
         self._key = key
-        self._array_style = array_style
+        self._list_style = list_style
         self._default = default
 
-        if array_style not in ['parens', 'brackets', 'colloquial']:
-            message = "TextReceiver array_style must be colloquial, parens, or brackets"
+        if list_style not in ['parens', 'brackets', 'colloquial']:
+            message = "TextReceiver list_style must be colloquial, parens, or brackets"
             raise JoogleChartsException(message)
 
         if self._pretext == None:
-            self._pretext = text.replace(default)
+            self._pretext = template.replace('{}', default)
 
 
-    def render(self):
+    def render(self, include_common=None):
+        
+        # Not doing anything with include_common.  Just need to have it in the signature
+        # so it can be called by Box and RowChart.
         
         context = {}
-        context['text_receiver'] = self
+        context['tr'] = self
         
         return j2_env.get_template('top_text_receiver.html').render(context).encode('utf-8')
 
@@ -236,7 +239,7 @@ class TextReceiver(object):
 
 def is_string(obj):
     try:
-        dummy = unicode(obj)
+        dummy = obj.lower()
         return True
         # string
     except:
