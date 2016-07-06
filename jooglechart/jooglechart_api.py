@@ -37,9 +37,10 @@ Sonar todo:
 -- Try setting initial values on stand alone filters
 -- DONE. Add modes to chartrow.
 -- Add Breakpoint parameter and @media max-height setting.
--- Add aggregation option to joogechart?  Does an aggregation on a column.
+-- Add aggregation option to jooglechart?  Does an aggregation on a column.
 -- Figure out how to initialize charts and widgets that communicate with each other.
--- Create a detail chart demo using the bound column receiver.
+-- Create a detail chart demo using update selection.
+-- Custom legend.
 
 styler todo
 -- add indeed_colors=True option
