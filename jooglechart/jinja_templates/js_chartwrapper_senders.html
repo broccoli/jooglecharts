@@ -3,7 +3,7 @@
 		{% if sender.type == 'selection' %}
         google.visualization.events.addListener({{ chart.name }}, '{{ sender.on }}', function() {
   			var selection = {{ chart.name }}.getChart().getSelection()[0];
-			if (selection) {
+			if (typeof selection !== "undefined" && selection.row !== null) {
 				var selected_category = {{ jg.data_name }}.getValue(selection.row, 0);
 				joogle_globals.sonar.send('{{ sender.key }}', [selected_category]);
 			}

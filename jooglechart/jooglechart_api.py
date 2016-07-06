@@ -18,7 +18,7 @@ Sonar todo:
 -- need a way to check if in aquarium for aquarium_hidden.
 -- DONE. add titles to button group and checkbox group.
 -- DONE.  create common code widget
--- text receiver widget
+-- text receiver widget. Much of it done, but don't know how to handle initial values, if initial values are lists for example.
 -- change clear button on checkbox group to link (or optional link)
 -- DONE.  flexible widths in ChartRow; gutter in ChartRow
 -- DONE.  ability to add div styles to all widgets and filters
@@ -27,7 +27,6 @@ Sonar todo:
 -- DONE. Change update chart to include view cols
 -- DONE.  add update binding selection choices to filter handlers.  Must take binding column index.
 -- DONE.  create clear button widget to clear other widgets
-    custom text, link or button, button size, button style
 -- chart with select freezes up when you click on legend.
 -- fix chart with select when you have a filter on it.
 -- SeriesFilter listeners and senders
