@@ -27,7 +27,7 @@ Sonar todo:
 -- DONE. Change update chart to include view cols
 -- DONE.  add update binding selection choices to filter handlers.  Must take binding column index.
 -- DONE.  create clear button widget to clear other widgets
--- chart with select freezes up when you click on legend.
+-- DONE.  chart with select freezes up when you click on legend.
 -- fix chart with select when you have a filter on it.
 -- SeriesFilter listeners and senders
 -- DONE.  in filter receivers, check if div is in dom.

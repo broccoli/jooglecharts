@@ -3,8 +3,9 @@
 		{% if sender.type == 'selection' %}
         google.visualization.events.addListener({{ chart.name }}, '{{ sender.on }}', function() {
   			var selection = {{ chart.name }}.getChart().getSelection()[0];
+			var true_selection_row =  {{ chart.name }}.getDataTable().getTableRowIndex(selection.row);			
 			if (typeof selection !== "undefined" && selection.row !== null) {
-				var selected_category = {{ jg.data_name }}.getValue(selection.row, 0);
+				var selected_category = {{ jg.data_name }}.getValue(true_selection_row, 0);
 				joogle_globals.sonar.send('{{ sender.key }}', [selected_category]);
 			}
 		});
