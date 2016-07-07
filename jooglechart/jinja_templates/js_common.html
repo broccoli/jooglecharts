@@ -48,6 +48,20 @@ $(document).ready(function() {
 				}
 				else { return null};
 			}
+			this.add_one_time_ready_poller = function(key, func, vis) {
+				/*
+					Check if a sonar msg was sent before chart was ready, and run function.
+					Can happen if a sender has been initialized with a value.
+				*/
+				google.visualization.events.addOneTimeListener(vis, "ready", function() {
+					console.log("---- in one time listener function");
+					var result = joogle_globals.sonar.poll_message_map(key);
+					console.log(result);
+					if (result !== null) {
+						func({"sonar_key": key, "sonar_value": result});
+					}
+				});
+			}
 			this.call_text_receivers = function (data) {
 				$(".joogle_text_receiver").each(function() {
 					var receiver = this;

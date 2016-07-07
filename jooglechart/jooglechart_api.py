@@ -33,11 +33,12 @@ Sonar todo:
 -- DONE.  in filter receivers, check if div is in dom.
 -- Add view_cols to update chart range.
 -- Add update binding range to filter handlers. Must take bound column index.
--- Try setting initial values on stand alone filters
+-- DONE.  Try setting initial values on stand alone filters
 -- DONE. Add modes to chartrow.
 -- Add Breakpoint parameter and @media max-height setting.
 -- Add aggregation option to jooglechart?  Does an aggregation on a column.
--- Figure out how to initialize charts and widgets that communicate with each other.
+-- DONE.  Figure out how to initialize charts and widgets that communicate with each other.
+-- Add message polling to receivers for buttons, button group, checkbox group.
 -- Create a detail chart demo using update selection.
 -- Custom legend.
 -- For chart sender, need to take data column of value to send.  The click gives you the row.  But you
