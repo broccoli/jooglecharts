@@ -25,6 +25,7 @@ $(document).ready(function() {
 		window.joogle_globals.sonar = new (function () {
 			// object for holding all sonar pieces
 			this.handler_array = [];
+			this.message_map = {};
 			this.add_handler = function(handler) { this.handler_array.push(handler)};
 			this.send = function(key, value) {
 				var data = { sonar_key: key, sonar_value: value };
@@ -40,6 +41,12 @@ $(document).ready(function() {
 					this.handler_array[i](data);
 				}
 				this.call_text_receivers(data);
+			}
+			this.poll_message_map = function(key) {
+				if (key in this.message_map) {
+					return this.message_map[key];
+				}
+				else { return null};
 			}
 			this.call_text_receivers = function (data) {
 				$(".joogle_text_receiver").each(function() {

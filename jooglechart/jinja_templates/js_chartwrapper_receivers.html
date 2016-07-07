@@ -1,11 +1,33 @@
+		function add_one_time_ready_poller(key, func, chart) {
+			/*
+				Check if a sonar msg was sent before chart was ready, and run function.
+				Can happen if a sender has been initialized with a value.
+			*/
+			google.visualization.events.addOneTimeListener(chart, "ready", function() {
+				var result = joogle_globals.sonar.poll_message_map(key);
+				if (result !== null) {
+					func({"sonar_key": key, "sonar_value": result});
+				}
+			});
+		}
+
 		{% for chart in jg.charts %}
 		{% for receiver in chart._receivers %}
 		{% if receiver.action == 'update_selection' %}
-		joogle_globals.sonar.add_handler(function(data) {
-			if (data.sonar_key == "{{ receiver.key }}" && document.getElementById("{{ chart.chart_div_id }}") !== null) {
-				joogle_globals.update_chart(data.sonar_value, {{ jg.data_name }}, {{ chart.name }}, {{ receiver.column }}, {{ chart.view_cols|to_json }});				
+		(function(key, chart, datatable, chart_div_id, col, view_cols) {
+			var func = function(data) {
+				if (data.sonar_key === key && document.getElementById(chart_div_id) !== null) {
+					joogle_globals.update_chart(data.sonar_value, datatable, chart, col, view_cols);
+				}
 			}
-		})
+			joogle_globals.sonar.add_handler(func);
+			add_one_time_ready_poller(key, func, chart);
+		})("{{ receiver.key }}", {{ chart.name }}, {{ jg.data_name }}, "{{ chart.chart_div_id }}", {{ receiver.column }}, {{ chart.view_cols|to_json }});
+{#		joogle_globals.sonar.add_handler(function(data) {#}
+{#			if (data.sonar_key == "{{ receiver.key }}" && document.getElementById("{{ chart.chart_div_id }}") !== null) {#}
+{#				joogle_globals.update_chart(data.sonar_value, {{ jg.data_name }}, {{ chart.name }}, {{ receiver.column }}, {{ chart.view_cols|to_json }});				#}
+{#			}#}
+{#		})#}
 		{% endif %}
 		{% if receiver.action == 'update_range' %}
 		joogle_globals.sonar.add_handler(function(data) {

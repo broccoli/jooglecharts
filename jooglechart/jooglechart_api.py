@@ -42,6 +42,8 @@ Sonar todo:
 -- Custom legend.
 -- For chart sender, need to take data column of value to send.  The click gives you the row.  But you
   have to choose the column.  All my test cases are column 0 and have 0 hard coded.  But it could be different.
+-- Add update_series receiver for a series filter.
+-- Create get_visible_columns method for charts so that you can create a series filter.
 
 styler todo
 -- add indeed_colors=True option
