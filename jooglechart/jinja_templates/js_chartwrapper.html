@@ -1,6 +1,4 @@
         // Create ChartWrapper
-{# If columns have been specified to be hidden, add a view that #}
-{# only shows the other columns. #}
 	{% for chart in jg.charts %}
         var {{ chart.name }} = new google.visualization.ChartWrapper({      
             "containerId": "{{ chart.chart_div_id }}",

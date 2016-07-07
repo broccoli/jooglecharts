@@ -28,7 +28,7 @@ Sonar todo:
 -- DONE.  add update binding selection choices to filter handlers.  Must take binding column index.
 -- DONE.  create clear button widget to clear other widgets
 -- DONE.  chart with select freezes up when you click on legend.
--- fix chart with select when you have a filter on it.
+-- DONE.  fix chart with select when you have a filter on it.
 -- SeriesFilter listeners and senders
 -- DONE.  in filter receivers, check if div is in dom.
 -- Add view_cols to update chart range.
@@ -40,6 +40,8 @@ Sonar todo:
 -- Figure out how to initialize charts and widgets that communicate with each other.
 -- Create a detail chart demo using update selection.
 -- Custom legend.
+-- For chart sender, need to take data column of value to send.  The click gives you the row.  But you
+  have to choose the column.  All my test cases are column 0 and have 0 hard coded.  But it could be different.
 
 styler todo
 -- add indeed_colors=True option
