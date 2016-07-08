@@ -1,0 +1,8 @@
+		// add senders before before creating checkboxes
+		{% for sender in bg._senders %}
+        google.visualization.events.addListener(buttons, 'select', function() {
+  			var selection = buttons.get_selected_values();
+			joogle_globals.sonar.send('{{ sender.key }}', selection);
+		});
+		{% endfor %}
+		

@@ -28,6 +28,7 @@ $(document).ready(function() {
 			this.message_map = {};
 			this.add_handler = function(handler) { this.handler_array.push(handler)};
 			this.send = function(key, value) {
+				this.message_map[key] = value;
 				var data = { sonar_key: key, sonar_value: value };
 				if (window.self !== window.top) {
 					window.parent.postMessage(data, window.location.origin + window.location.pathname);
@@ -54,9 +55,7 @@ $(document).ready(function() {
 					Can happen if a sender has been initialized with a value.
 				*/
 				google.visualization.events.addOneTimeListener(vis, "ready", function() {
-					console.log("---- in one time listener function");
 					var result = joogle_globals.sonar.poll_message_map(key);
-					console.log(result);
 					if (result !== null) {
 						func({"sonar_key": key, "sonar_value": result});
 					}
@@ -217,6 +216,8 @@ $(document).ready(function() {
 		}
 	}
 	
+{% include "js_button_group_prototype.html" %}
+
 	/* <<<<<<<<<<<<<<<<<<<<<<<<<<<<< GLOBALS AREA */
 
 });

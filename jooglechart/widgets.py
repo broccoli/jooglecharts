@@ -44,10 +44,10 @@ class ButtonGroup(object):
         else:
             self._clear_button = 'false'
             
-        if self._clear_button_position == "last":
-            self._append_or_prepend = "append"
-        else:
-            self._append_or_prepend = "prepend"
+#         if self._clear_button_position == "last":
+#             self._append_or_prepend = "append"
+#         else:
+#             self._append_or_prepend = "prepend"
             
         if self._orientation == "vertical":
             self._button_group_class = "btn-group-vertical"
