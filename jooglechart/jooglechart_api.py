@@ -43,7 +43,9 @@ Sonar todo:
 -- Custom legend.
 -- For chart sender, need to take data column of value to send.  The click gives you the row.  But you
   have to choose the column.  All my test cases are column 0 and have 0 hard coded.  But it could be different.
--- Add update_series receiver for a series filter.
+-- Add update_series receiver on charts for a series filter.
+-- Add message polling to filter receivers.
+-- Add DOM checking to filter receivers.
 -- Create get_visible_columns method for charts so that you can create a series filter.
 
 styler todo
@@ -136,6 +138,7 @@ class _GoogleFilter(object):
         self._senders = []
         self._receivers = []
         self._div_styles = {}
+        self._has_selected_values = False
 
     def add_options(self, options = None, **kwargs):
         """
@@ -199,9 +202,8 @@ class _GoogleFilter(object):
                 type = "selection"
             elif self._type in ["DateRangeFilter", "NumberRangeFilter"]:
                 type = "range"
-#             elif self._type == "NumberRangeFilter":
-#                 type = "number_range"
-                
+
+                        
         self._senders.append({'on': on, 'key': key, 'type': type})
         
     
@@ -304,6 +306,10 @@ class Filter(_GoogleFilter):
 #                 self._data_type = "date"
 #             elif self._type == "NumberRangeFilter":
 #                 self._data_type = "number"
+
+        # get has_selected_values to see if a one time ready listener is needed.
+        self._has_selected_values = 'selectedValues' in self._state
+        
         
     def render(self, include_common=None, freestanding=True):
         

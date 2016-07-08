@@ -8,13 +8,34 @@
 			if (selected_values.length == 0) {
 				selected_values = get_binding_selections();
 			}
-			joogle_globals.sonar.send("BBB", selected_values);
 			joogle_globals.sonar.send("{{ sender.key }}", selected_values);
+			
 		{% elif sender.type == 'range' %}
 			var low_value = {{ filter._name }}.getState().lowValue;
 			var high_value = {{ filter._name }}.getState().highValue;
 			joogle_globals.sonar.send("{{ sender.key }}", [low_value, high_value]);
 		{% endif %}
-		});
+		});		
+
+		{% if sender.on == 'statechange' and filter._has_selected_values %}
+		// Add a one time listener to broadcast the initialized values.
+        google.visualization.events.addOneTimeListener({{ filter._name }}, "ready", function () {
+		{% if sender.type == 'selection' %}
+			var selected_values = {{ filter._name }}.getState().selectedValues;
+			// if the selectedValues is empty, then defer to the binding selections.
+			// So the chart downstream will still have selections if the binding filter has
+			// a selection.
+			if (selected_values.length == 0) {
+				selected_values = get_binding_selections();
+			}
+			joogle_globals.sonar.send("{{ sender.key }}", selected_values);
+			
+		{% elif sender.type == 'range' %}
+			var low_value = {{ filter._name }}.getState().lowValue;
+			var high_value = {{ filter._name }}.getState().highValue;
+			joogle_globals.sonar.send("{{ sender.key }}", [low_value, high_value]);
+		{% endif %}
+		});		
+		{% endif %}
 {% endfor %}
 		

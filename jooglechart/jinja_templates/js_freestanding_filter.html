@@ -34,10 +34,12 @@
 			return binding_values;
 		}
 
-		// Add sonar senders, if any
+		// ------------ Add filter senders, if any ---------------
 		{% include 'js_filter_senders.html' %}
+		// ------------------------------------------------------
 
-        // Add sonar receivers, if any
+		// ------------ Add filter receiver, if any ---------------
 		{% include 'js_filter_receivers.html' %}
+		// ------------------------------------------------------
         
 		{{ filter._name }}.draw();
