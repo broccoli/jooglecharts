@@ -1,8 +1,0 @@
-		// add senders before before creating checkboxes
-		{% for sender in bg._senders %}
-		senders.push(function() {
-			var selected_values = get_selected_values();
-			joogle_globals.sonar.send("{{ sender.key }}", selected_values);
-		})
-		{% endfor %}
-		
