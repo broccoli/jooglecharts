@@ -382,36 +382,7 @@ class SeriesFilter(_GoogleFilter):
                 if chart.view_cols != view_cols:
                     message = "For SeriesFilter, all charts must have the same view cols"
                     raise JoogleChartsException(message)
-        
-        
-#         try:
-#             columns = jooglechart._dataframe.columns.values.tolist()
-#         except:
-#             # TODO: data is in a 2d array
-#             columns = jooglechart._2d_array[0]
-#              
-#         # get a list of series column indices.
-#         # if view_cols is set, that will be our initial series index list
-#         # if not, take the indexes for all the columns
-#         if view_cols:
-#             series_indexes = view_cols[:]
-#         else:
-#             series_indexes = range(jooglechart._num_cols)
-#  
-#         # remove role cols from series indexes
-#         if jooglechart.roles:
-#             role_cols = [role[0] for role in jooglechart.roles]
-#             for col in role_cols:
-#                 if col in series_indexes:
-#                     series_indexes.remove(col)
-#          
-#         # remove the category column -- first remaining series column
-#         series_indexes.pop(0)
-#  
-#         # get the series names
-#         series_names = [columns[ix] for ix in series_indexes]
-#         series_names = jooglechart.get_viewable_series()
-        
+                
         series_indexes, series_names = jooglechart._get_viewable_series_indexes_and_names()
 
         # make data frame of series names to use for series filter DataTable        
