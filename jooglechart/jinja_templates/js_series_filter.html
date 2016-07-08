@@ -90,6 +90,11 @@
 	            {{ chart.name }}.draw();
 	            {% endfor %}
             {% endif %}
+            
+            {% for sender in jg._series_filter._senders %}
+            joogle_globals.sonar.send("{{ sender.key }}", selectedValues);
+            {% endfor %}
+			
 			
 		}
 		
