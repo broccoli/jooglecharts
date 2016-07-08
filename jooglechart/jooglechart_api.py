@@ -44,9 +44,10 @@ Sonar todo:
 -- For chart sender, need to take data column of value to send.  The click gives you the row.  But you
   have to choose the column.  All my test cases are column 0 and have 0 hard coded.  But it could be different.
 -- Add update_series receiver on charts for a series filter.
--- Add message polling to filter receivers.
--- Add DOM checking to filter receivers.
+-- DONE.  Add message polling to filter receivers.
+-- DONE.  Add DOM checking to filter receivers.
 -- Create get_visible_columns method for charts so that you can create a series filter.
+-- Create unit tests for connected filters/widgets that have initial values.
 
 styler todo
 -- add indeed_colors=True option
@@ -383,32 +384,35 @@ class SeriesFilter(_GoogleFilter):
                     raise JoogleChartsException(message)
         
         
-        try:
-            columns = jooglechart._dataframe.columns.values.tolist()
-        except:
-            # TODO: data is in a 2d array
-            columns = jooglechart._2d_array[0]
-            
-        # get a list of series column indices.
-        # if view_cols is set, that will be our initial series index list
-        # if not, take the indexes for all the columns
-        if view_cols:
-            series_indexes = view_cols[:]
-        else:
-            series_indexes = range(jooglechart._num_cols)
-
-        # remove role cols from series indexes
-        if jooglechart.roles:
-            role_cols = [role[0] for role in jooglechart.roles]
-            for col in role_cols:
-                if col in series_indexes:
-                    series_indexes.remove(col)
+#         try:
+#             columns = jooglechart._dataframe.columns.values.tolist()
+#         except:
+#             # TODO: data is in a 2d array
+#             columns = jooglechart._2d_array[0]
+#              
+#         # get a list of series column indices.
+#         # if view_cols is set, that will be our initial series index list
+#         # if not, take the indexes for all the columns
+#         if view_cols:
+#             series_indexes = view_cols[:]
+#         else:
+#             series_indexes = range(jooglechart._num_cols)
+#  
+#         # remove role cols from series indexes
+#         if jooglechart.roles:
+#             role_cols = [role[0] for role in jooglechart.roles]
+#             for col in role_cols:
+#                 if col in series_indexes:
+#                     series_indexes.remove(col)
+#          
+#         # remove the category column -- first remaining series column
+#         series_indexes.pop(0)
+#  
+#         # get the series names
+#         series_names = [columns[ix] for ix in series_indexes]
+#         series_names = jooglechart.get_viewable_series()
         
-        # remove the category column -- first remaining series column
-        series_indexes.pop(0)
-
-        # get the series names
-        series_names = [columns[ix] for ix in series_indexes]
+        series_indexes, series_names = jooglechart._get_viewable_series_indexes_and_names()
 
         # make data frame of series names to use for series filter DataTable        
         df = pd.DataFrame({'columns': series_names})
@@ -477,9 +481,6 @@ class SuperCategoryFilter(_GoogleFilter):
         context['super_filter'] = self
         context['super_filter_type'] = 'category'
     
-        # ISHBOOK-495
-#         context['notebook_url'] = _get_notebook_url()
-
         set_common_on_context(context, include_common)
         
         return j2_env.get_template('super_filter_template.html').render(context).encode('utf-8')
@@ -564,6 +565,8 @@ class _Chart():
         self._div_classes = []
         self._senders = []
         self._receivers = []
+        self._jooglechart = None
+
  
         # add any leftover kwargs to options
         if kwargs:
@@ -650,6 +653,51 @@ class _Chart():
         
         self._receivers.append({'key': key, 'action': action, 'column': column})
 
+    
+#     def get_viewable_series(self):
+#         series_names = [columns[ix] for ix in series_indexes]
+#         return series_names
+
+
+    def _get_viewable_series_indexes_and_names(self):
+        
+        # get the columns that are not roll columns and are not excluded from set_view_cols
+        # this list will exclude the first category column.  For charts that 
+        # use the standard data model.
+
+        jooglechart = self._jooglechart
+        try:
+            columns = jooglechart._dataframe.columns.values.tolist()
+        except:
+            # TODO: data is in a 2d array
+            columns = jooglechart._2d_array[0]
+            
+        # get a list of series column indices.
+        # if view_cols is set, that will be our initial series index list
+        # if not, take the indexes for all the columns
+        view_cols = jooglechart.charts[0].view_cols
+        if view_cols:
+            series_indexes = view_cols[:]
+        else:
+            series_indexes = range(jooglechart._num_cols)
+
+        # remove role cols from series indexes
+        if jooglechart.roles:
+            role_cols = [role[0] for role in jooglechart.roles]
+            for col in role_cols:
+                if col in series_indexes:
+                    series_indexes.remove(col)
+        
+        # remove the category column -- first remaining series column
+        series_indexes.pop(0)
+ 
+        # get the series names
+        series_names = [columns[ix] for ix in series_indexes]
+         # get the series names
+        
+        return series_indexes, series_names
+    
+
     def _set_render_properties(self, num_cols, chart_type=None):
 
         # chart render properties
@@ -716,7 +764,8 @@ class JoogleChart():
         # Chart attributes
         chart_type = kwargs.pop('chart_type', DEFAULT_CHART_TYPE)
 
-        self.charts.append(_Chart(chart_type))
+#         self.charts.append(_Chart(chart_type))
+        self._add_chart(_Chart(chart_type))
 
         # add any leftover kwargs to options
         if kwargs:
@@ -768,6 +817,16 @@ class JoogleChart():
     def set_chart_type(self, chart_type):
 
         self.charts[0].chart_type = chart_type
+
+
+    
+    def _get_viewable_series_indexes_and_names(self):
+# 
+        return self.charts[0]._get_viewable_series_indexes_and_names()
+    
+    def get_viewable_series(self):
+        # return the series names only.  Can be used to make a stand alone series filter
+        return self.charts[0]._get_viewable_series_indexes_and_names()[1]
 
     def add_formatter(self, formatter, options=None, cols=None, source_cols=None, pattern=None, dest_col=None):
 
@@ -827,6 +886,7 @@ class JoogleChart():
         self._global_title = title
 
     def _add_chart(self, chart):
+        chart._jooglechart = self
         self.charts.append(chart)
 
     def copy(self):
