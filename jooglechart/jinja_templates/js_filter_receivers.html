@@ -31,17 +31,5 @@
 			joogle_globals.sonar.add_one_time_ready_poller(key, func, filter);
 		})("{{ receiver.key }}", {{ filter._name }}, "{{ filter._div_id }}", datatable, {{ receiver.bound_column }});
 		{% endif %}
-{#		joogle_globals.sonar.add_handler(function (data) {#}
-{#			if (data.sonar_key == "{{ receiver.key }}") {#}
-{#				{% if receiver.action == "update_selection" %}			#}
-{#				joogle_globals.update_category_filter({{ filter._name }}, data.sonar_value);#}
-{#				{% elif receiver.action == "update_range" %}#}
-{#				joogle_globals.update_range_filter({{ filter._name }}, data.sonar_value);#}
-{#				{% elif receiver.action == "update_binding_selection" %}#}
-{#				binding_selections[{{ receiver.bound_column }}] = data.sonar_value;#}
-{#				joogle_globals.update_filter_binding_selection(data.sonar_value, datatable, {{ filter._name }}, {{ receiver.bound_column }});#}
-{#				{% endif %}#}
-{#			}#}
-{#		});#}
 {% endfor %}
 		

@@ -91,7 +91,7 @@
 	            {% endfor %}
             {% endif %}
             
-            /* -------------- Add series filter senders --------------- */
+            /* ----------- Add SeriesFilter senders, if any ----------- */
             // for series filter, just send whenever update is called
             // update is called on both ready and statechange.
             {% for sender in jg._series_filter._senders %}
@@ -101,6 +101,11 @@
 			
 		}
 		
+		// ----------- Add SeriesFilter senders, if any ------------
+		{% set filter = jg._series_filter %}
+		{% include 'js_filter_receivers.html' %}
+		// ---------------------------------------------------------
+
 		/*
 			including both ready and statechange listeners as hack. The statechange event won't fire
 			for the SuperCategoryFilter but the ready event will.

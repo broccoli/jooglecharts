@@ -28,15 +28,19 @@
 				{% endif %}
 			{% endfor %}
 
-		// Add sonar senders, if any
+		// ------------- Add filter sonar senders, if any ----------
 		{% for filter in jg.filters %}
 			{% include 'js_filter_senders.html' %}
 		{% endfor %}
+		// ---------------------------------------------------------
+
+		// ----------- Add filter sonar receivers, if any ----------
+        {% for filter in jg.filters %}
+			{% include 'js_filter_receivers.html' %}
+        {% endfor %}
+		// ---------------------------------------------------------
 
         // Draw the dashboard.
         {{ jg.dashboard_name }}.draw({{ jg.data_name }});
         
-        // Add sonar receivers, if any
-        {% for filter in jg.filters %}
-			{% include 'js_filter_receivers.html' %}
-        {% endfor %}
+        

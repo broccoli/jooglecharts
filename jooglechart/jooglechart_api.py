@@ -29,7 +29,7 @@ Sonar todo:
 -- DONE.  create clear button widget to clear other widgets
 -- DONE.  chart with select freezes up when you click on legend.
 -- DONE.  fix chart with select when you have a filter on it.
--- SeriesFilter listeners and senders
+-- SeriesFilter receivers and senders
 -- DONE.  in filter receivers, check if div is in dom.
 -- Add view_cols to update chart range.
 -- Add update binding range to filter handlers. Must take bound column index.
@@ -47,7 +47,8 @@ Sonar todo:
 -- DONE.  Add message polling to filter receivers.
 -- DONE.  Add DOM checking to filter receivers.
 -- Create get_visible_columns method for charts so that you can create a series filter.
--- Create unit tests for connected filters/widgets that have initial values.
+-- Create unit tests for connected filters/widgets that have initial values. Filter > Filter > Chart chain.
+
 
 styler todo
 -- add indeed_colors=True option
@@ -344,7 +345,7 @@ class SeriesFilter(_GoogleFilter):
     """
     
     def __init__(self):
-        super(SeriesFilter, self).__init__(None)
+        super(SeriesFilter, self).__init__("CategoryFilter")
 #         Filter.__init__(self, None)
         self.add_options(ui_label = "Columns")
         self.add_options(filterColumnIndex = 0)
