@@ -24,8 +24,6 @@
 	      state: {{ jg._series_filter._state|default("{}")|to_json }}
 	    });
 
-	    {{ jg._series_filter._name }}.draw();
-
 		// pass an array of the series' columns in the orignal datatable from python
 		// series cols are the viewable, non-role, non-category cols
 		var series_cols = {{ jg._series_filter._series_indexes|to_json }};
@@ -101,10 +99,12 @@
 			
 		}
 		
-		// ----------- Add SeriesFilter senders, if any ------------
+		// ----------- Add SeriesFilter receivers, if any ------------
 		{% set filter = jg._series_filter %}
 		{% include 'js_filter_receivers.html' %}
 		// ---------------------------------------------------------
+
+	    {{ jg._series_filter._name }}.draw();
 
 		/*
 			including both ready and statechange listeners as hack. The statechange event won't fire
