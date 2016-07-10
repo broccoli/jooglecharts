@@ -41,6 +41,8 @@ Sonar todo:
 -- Add message polling to receivers for buttons, button group, checkbox group.
 -- Create a detail chart demo using update selection.
 -- Custom legend.
+-- Filter receiver doesn't work when sending/receiving empty selection.
+-- Change name of acion for chart select?  Need to specify column?
 -- For chart sender, need to take data column of value to send.  The click gives you the row.  But you
   have to choose the column.  All my test cases are column 0 and have 0 hard coded.  But it could be different.
 -- Add update_series receiver on charts for a series filter.

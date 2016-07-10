@@ -1,3 +1,6 @@
+{# Need to set binding_selections and datatable values outside this file.  In a dashboard, we need to create #}
+{# binding_selections for each filter.  (In a freestanding filter there will be only one.) #}
+
 {% for sender in filter._senders %}
         google.visualization.events.addListener({{ filter._name }}, "{{ sender.on }}", function () {
 		{% if sender.type == 'selection' %}
@@ -6,7 +9,7 @@
 			// So the chart downstream will still have selections if the binding filter has
 			// a selection.
 			if (selected_values.length == 0) {
-				selected_values = get_binding_selections();
+				selected_values = joogle_globals.get_binding_selections({{ binding_selections }}, {{ datatable }});
 			}
 			joogle_globals.sonar.send("{{ sender.key }}", selected_values);
 			
@@ -26,7 +29,7 @@
 			// So the chart downstream will still have selections if the binding filter has
 			// a selection.
 			if (selected_values.length == 0) {
-				selected_values = get_binding_selections();
+				selected_values = joogle_globals.get_binding_selections({{ binding_selections }}, {{ datatable }});
 			}
 			joogle_globals.sonar.send("{{ sender.key }}", selected_values);
 			

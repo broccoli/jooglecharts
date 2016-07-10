@@ -183,6 +183,24 @@ $(document).ready(function() {
 		return rows_total;		
 	}
 
+	window.joogle_globals.get_binding_selections = function(binding_selections, datatable) {
+		// A filter's column can be bound by another sender (a filter, typically).
+		// Need to get the filtering values for the bound column if it had received a filtering messsage.
+		var binding_rows = [];
+		var binding_values = [];
+		for (var column in binding_selections) {
+			if (binding_selections[column].length > 0) {
+				var rows = joogle_globals.get_rows_for_column_selections(column, binding_selections[column], datatable);
+				$.merge(binding_rows, rows);
+			}
+		}			
+		// now we've got the binding rows, get the values in the right column
+		for (var ix in binding_rows) {
+			binding_values.push(datatable.getValue(binding_rows[ix], 0));
+		}
+		return binding_values;
+	}
+
 	/*
 		The google.load function can only be called once per page.  On the first
 		jooglechart, load the api and call loader with a callback.  For

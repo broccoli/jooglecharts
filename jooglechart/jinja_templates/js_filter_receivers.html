@@ -23,13 +23,13 @@
 		(function(key, filter, div_id, datatable, bound_column) {
 			var func = function(data) {
 				if (data.sonar_key === key && document.getElementById(div_id) !== null) {
-					binding_selections[{{ receiver.bound_column }}] = data.sonar_value;
-					joogle_globals.update_filter_binding_selection(data.sonar_value, datatable, {{ filter._name }}, {{ receiver.bound_column }});
+					{{ binding_selections }}[bound_column] = data.sonar_value;
+					joogle_globals.update_filter_binding_selection(data.sonar_value, datatable, filter, bound_column);
 				}
 			}
 			joogle_globals.sonar.add_handler(func);
 			joogle_globals.sonar.add_one_time_ready_poller(key, func, filter);
-		})("{{ receiver.key }}", {{ filter._name }}, "{{ filter._div_id }}", datatable, {{ receiver.bound_column }});
+		})("{{ receiver.key }}", {{ filter._name }}, "{{ filter._div_id }}", {{ datatable }}, {{ receiver.bound_column }});
 		{% endif %}
 {% endfor %}
 		
