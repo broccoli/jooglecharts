@@ -39,6 +39,7 @@ Sonar todo:
 -- DONE.  Add view_cols to update chart range.
 -- DONE.  Change name of chart receiver actions.  filter_values, filter_range, filter_columns
 -- DONE.  Change name of action for chart select?  DONE.  and type for sender. 
+-- DONE. Specify column for chart sender selection.  Need to specify column?  Yes I do.
 
 -- modify SuperCategoryFilter to use the sonar machinery behind the scenes?
 -- need a way to check if in aquarium for aquarium_hidden.
@@ -50,7 +51,6 @@ Sonar todo:
 -- Create a detail chart demo using update selection.
 -- Custom legend.
 -- Add wrapping divs on all box items.
--- *** Specify column for chart sender section.  Need to specify column?  Yes I do.
 -- *** For chart sender, need to take data column of value to send.  The click gives you the row.  But you
   have to choose the column.  All my test cases are column 0 and have 0 hard coded.  But it could be different.
 -- bug:  ButtonGroup send to ButtonGroup receive doesn't show selected buttons.
@@ -628,12 +628,12 @@ class _Chart():
             cols = [cols]
         self.view_cols = cols
 
-    def add_sender(self, key, on="select", type='send_selection'):
+    def add_sender(self, key, column, on="select", type='send_selection'):
         # possible types:
         #   send date range
         #   send number range
         
-        self._senders.append({'on': on, 'key': key, 'type': type})
+        self._senders.append({'on': on, 'key': key, 'type': type, 'column': column})
 
     def add_receiver(self, key, column, action='filter_values'):
         # possible types:
@@ -882,12 +882,12 @@ class JoogleChart():
 
         return copy.deepcopy(self)
 
-    def add_sender(self, key, on="select", type='selection'):
+    def add_sender(self, key, column, on="select", type='selection'):
         # possible types:
         #   send date range
         #   send number range
         
-        self.charts[0].add_sender(key, on, type)
+        self.charts[0].add_sender(key, column, on, type)
 #         self._senders.append({'on': on, 'key': key, 'type': type})
 
 
