@@ -51,8 +51,6 @@ Sonar todo:
 -- Create a detail chart demo using update selection.
 -- Custom legend.
 -- Add wrapping divs on all box items.
--- *** For chart sender, need to take data column of value to send.  The click gives you the row.  But you
-  have to choose the column.  All my test cases are column 0 and have 0 hard coded.  But it could be different.
 -- bug:  ButtonGroup send to ButtonGroup receive doesn't show selected buttons.
 -- *** make column not required for chart receiver (for filter_columns). make required for certain actions.
 -- Create unit tests for connected filters/widgets that have initial values.
