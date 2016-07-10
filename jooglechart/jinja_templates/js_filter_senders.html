@@ -4,7 +4,7 @@
 {% for sender in filter._senders %}
 		{% include "js_flush_message_map.html" %}
         google.visualization.events.addListener({{ filter._name }}, "{{ sender.on }}", function () {
-		{% if sender.type == 'selection' %}
+		{% if sender.type == 'values' %}
 			var selected_values = {{ filter._name }}.getState().selectedValues;
 {#			var selected_values = {{ filter._name }}.getState().selectedValues;#}
 			// if the selectedValues is empty, then defer to the binding selections.

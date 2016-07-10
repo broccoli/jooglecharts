@@ -37,6 +37,7 @@ Sonar todo:
 -- DONE.  Add DOM checking to filter receivers.
 -- DONE.  Create get_visible_columns method for charts so that you can create a series filter.
 -- DONE.  Add view_cols to update chart range.
+-- DONE.  Change name of chart receiver actions.  filter_values, filter_range, filter_columns
 
 -- modify SuperCategoryFilter to use the sonar machinery behind the scenes?
 -- need a way to check if in aquarium for aquarium_hidden.
@@ -47,10 +48,9 @@ Sonar todo:
 -- Create javascript classes for button, checkbox group widget (allows message polling).
 -- Create a detail chart demo using update selection.
 -- Custom legend.
--- Change name of action for chart select?  
+-- Change name of action for chart select?  and type for sender. 
 -- Add wrapping divs on all box items.
 -- *** Specify column for chart sender section.  Need to specify column?  Yes I do.
--- *** Change name of chart receiver actions.  filter_values, filter_range, filter_columns
 -- *** For chart sender, need to take data column of value to send.  The click gives you the row.  But you
   have to choose the column.  All my test cases are column 0 and have 0 hard coded.  But it could be different.
 -- bug:  ButtonGroup send to ButtonGroup receive doesn't show selected buttons.
@@ -218,7 +218,7 @@ class _GoogleFilter(object):
         
         if type == "default":
             if self._type == "CategoryFilter":
-                type = "selection"
+                type = "values"
             elif self._type in ["DateRangeFilter", "NumberRangeFilter"]:
                 type = "range"
 
