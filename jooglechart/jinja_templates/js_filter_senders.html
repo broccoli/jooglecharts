@@ -2,9 +2,11 @@
 {# binding_selections for each filter.  (In a freestanding filter there will be only one.) #}
 
 {% for sender in filter._senders %}
+		{% include "js_flush_message_map.html" %}
         google.visualization.events.addListener({{ filter._name }}, "{{ sender.on }}", function () {
 		{% if sender.type == 'selection' %}
 			var selected_values = {{ filter._name }}.getState().selectedValues;
+{#			var selected_values = {{ filter._name }}.getState().selectedValues;#}
 			// if the selectedValues is empty, then defer to the binding selections.
 			// So the chart downstream will still have selections if the binding filter has
 			// a selection.

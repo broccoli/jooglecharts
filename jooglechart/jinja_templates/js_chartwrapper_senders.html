@@ -1,5 +1,6 @@
 		{% for chart in jg.charts %}
 		{% for sender in chart._senders %}
+		{% include "js_flush_message_map.html" %}
 		{% if sender.type == 'selection' %}
         google.visualization.events.addListener({{ chart.name }}, '{{ sender.on }}', function() {
   			var selection = {{ chart.name }}.getChart().getSelection()[0];

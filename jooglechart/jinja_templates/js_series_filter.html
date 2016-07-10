@@ -70,6 +70,7 @@
             // for series filter, just send whenever update is called
             // update is called on both ready and statechange.
             {% for sender in jg._series_filter._senders %}
+			{% include "js_flush_message_map.html" %}
             joogle_globals.sonar.send("{{ sender.key }}", selected_values);
             {% endfor %}
 			/* -------------------------------------------------------- */			
