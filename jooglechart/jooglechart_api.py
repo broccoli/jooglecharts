@@ -38,6 +38,7 @@ Sonar todo:
 -- DONE.  Create get_visible_columns method for charts so that you can create a series filter.
 -- DONE.  Add view_cols to update chart range.
 -- DONE.  Change name of chart receiver actions.  filter_values, filter_range, filter_columns
+-- DONE.  Change name of action for chart select?  DONE.  and type for sender. 
 
 -- modify SuperCategoryFilter to use the sonar machinery behind the scenes?
 -- need a way to check if in aquarium for aquarium_hidden.
@@ -48,7 +49,6 @@ Sonar todo:
 -- Create javascript classes for button, checkbox group widget (allows message polling).
 -- Create a detail chart demo using update selection.
 -- Custom legend.
--- Change name of action for chart select?  and type for sender. 
 -- Add wrapping divs on all box items.
 -- *** Specify column for chart sender section.  Need to specify column?  Yes I do.
 -- *** For chart sender, need to take data column of value to send.  The click gives you the row.  But you
@@ -231,11 +231,11 @@ class _GoogleFilter(object):
         rec_dict = {}
         if action == "default":
             if self._type == "CategoryFilter":
-                action = "update_selection"
+                action = "update_values"
             elif self._type in ["DateRangeFilter", "NumberRangeFilter"]:
                 action = "update_range"
         
-        if action == "update_binding_selection":
+        if action == "update_binding_values":
             if "bound_column" in kwargs:
                 rec_dict['bound_column'] = kwargs['bound_column']
             else:

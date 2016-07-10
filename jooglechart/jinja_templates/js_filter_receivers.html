@@ -1,5 +1,5 @@
 {% for receiver in filter._receivers %}
-		{% if receiver.action == "update_selection" %}			
+		{% if receiver.action == "update_values" %}			
 		(function(key, filter, div_id) {
 			var func = function(data) {
 				if (data.sonar_key === key && document.getElementById(div_id) !== null) {
@@ -19,7 +19,7 @@
 			joogle_globals.sonar.add_handler(func);
 			joogle_globals.sonar.add_one_time_ready_poller(key, func, filter);
 		})("{{ receiver.key }}", {{ filter._name }}, "{{ filter._div_id }}");
-		{% elif receiver.action == "update_binding_selection" %}
+		{% elif receiver.action == "update_binding_values" %}
 		(function(key, filter, div_id, datatable, bound_column) {
 			var func = function(data) {
 				if (data.sonar_key === key && document.getElementById(div_id) !== null) {
