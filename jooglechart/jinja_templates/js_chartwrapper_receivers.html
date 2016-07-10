@@ -23,5 +23,23 @@
 			joogle_globals.sonar.add_one_time_ready_poller(key, func, chart);
 		})("{{ receiver.key }}", {{ chart.name }}, {{ jg.data_name }}, "{{ chart.chart_div_id }}", {{ receiver.column }});
 		{% endif %}
+		{% if receiver.action == 'filter_columns' %}
+		(function(key, chart, datatable, chart_div_id, col, view_cols) {
+			var series_cols = joogle_globals.get_viewable_columns(chart);
+			function update_chart_callback(view, series) {
+				chart.setDataTable(view);
+				chart.setOption('series', series);
+		        chart.draw();						
+			}
+			var func = function(data) {
+				if (data.sonar_key === key && document.getElementById(chart_div_id) !== null) {
+					// joogle_globals.update_chart(data.sonar_value, datatable, chart, col, view_cols);
+					window.joogle_globals.draw_chart_filtered_columns(datatable, series_cols, data.sonar_value, update_chart_callback);
+				}
+			}
+			joogle_globals.sonar.add_handler(func);
+			joogle_globals.sonar.add_one_time_ready_poller(key, func, chart);
+		})("{{ receiver.key }}", {{ chart.name }}, {{ jg.data_name }}, "{{ chart.chart_div_id }}");
+		{% endif %}
 		{% endfor %}          
 		{% endfor %}

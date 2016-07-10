@@ -201,6 +201,66 @@ $(document).ready(function() {
 		return binding_values;
 	}
 
+	window.joogle_globals.draw_chart_filtered_columns = function(datatable, viewable_columns, selected_columns, callback) {
+		// an object of series properties will be passed to the chart wrapper for setting color
+	    var series = {};
+		
+		// initialize the array of dataTable column indices, e.g, [0, 1, 2, etc.]
+	    var columns = [];
+	    for (var i = 0; i < datatable.getNumberOfColumns(); i++) {
+	        columns.push(i);
+	    }
+		
+		// Loop through series cols
+		for (var i = 0; i < viewable_columns.length; i++) {
+			series[i] = {}	// initialize series object
+			var ix = viewable_columns[i]	// get series column index in the original data table
+							
+			// check if series has been selected
+			var test_val = datatable.getColumnLabel(ix);
+			if ($.inArray(test_val, selected_columns) >= 0) {
+				// if the series is selected, just pass the normal column
+				// and get the default color
+				columns[ix] = ix;
+				series[i].color = null;
+			} else {
+				// create a column object that returns null, hiding the series on the chart
+                columns[ix] = {
+                    label: datatable.getColumnLabel(ix),
+                    type: datatable.getColumnType(ix),
+                    calc: function () {
+                        return null;
+                    }
+                };
+				
+				// gray out the series color for the legend
+				series[i].color = '#CCCCCC';
+			}	
+		}
+        var view = new google.visualization.DataView(datatable);
+        view.setColumns(columns);
+		
+		callback(view, series);
+	}
+
+	window.joogle_globals.get_viewable_columns = function(chart) {
+		var datatable = chart.getDataTable();
+		var view_cols = chart.getOption('view.columns', []);
+		if (view_cols.length === 0) {
+			var num_cols = datatable.getNumberOfColumns();
+			for (var i = 0; i < num_cols; i++){
+				view_cols.push(0);
+			}
+		}
+		var non_role_cols = [];
+		for (var i = 0; i < view_cols.length; i++) {
+			var role = datatable.getColumnRole(i);
+			if (role === "") { non_role_cols.push(i); }
+		}
+		non_role_cols.shift()
+		return non_role_cols;
+	}
+
 	/*
 		The google.load function can only be called once per page.  On the first
 		jooglechart, load the api and call loader with a callback.  For
