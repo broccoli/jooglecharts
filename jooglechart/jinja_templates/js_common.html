@@ -161,10 +161,11 @@ $(document).ready(function() {
 		chartwrapper.draw();			
 	}
 
-	window.joogle_globals.update_chart_range = function(minValue, maxValue, data, chartwrapper, column) {
-		var rows = data.getFilteredRows([{column: column, minValue: minValue, maxValue: maxValue}]);
+	window.joogle_globals.update_chart_range = function(minValue, maxValue, data, chartwrapper, column, view_cols) {
+		var filtered_rows = data.getFilteredRows([{column: column, minValue: minValue, maxValue: maxValue}]);
 		chartwrapper.setView({
-			rows: rows
+			rows: filtered_rows,
+			columns: view_cols
 		});
 		chartwrapper.draw();			
 	}

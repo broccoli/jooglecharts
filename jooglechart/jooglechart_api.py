@@ -14,12 +14,8 @@ Sonar todo:
 -- DONE. add receive for checklist widget
 -- DONE.  modify chartrow to accept widgets, text.
 -- DONE.  test checklist widget for long lists.  Add height handling and scrollbars for long lists?
--- modify SuperCategoryFilter to use the sonar machinery behind the scenes?
--- need a way to check if in aquarium for aquarium_hidden.
 -- DONE. add titles to button group and checkbox group.
 -- DONE.  create common code widget
--- text receiver widget. Much of it done, but don't know how to handle initial values, if initial values are lists for example.
--- change clear button on checkbox group to link (or optional link)
 -- DONE.  flexible widths in ChartRow; gutter in ChartRow
 -- DONE.  ability to add div styles to all widgets and filters
 -- DONE. add sender/receiver to SeriesFilter
@@ -31,35 +27,44 @@ Sonar todo:
 -- DONE.  fix chart with select when you have a filter on it.
 -- DONE.  SeriesFilter receivers and senders
 -- DONE.  in filter receivers, check if div is in dom.
--- Add view_cols to update chart range.
--- Add update binding range to filter handlers. Must take bound column index.
 -- DONE.  Try setting initial values on stand alone filters
 -- DONE. Add modes to chartrow.
--- Add Breakpoint parameter and @media max-height setting.
--- Add aggregation option to jooglechart?  Does an aggregation on a column.
+-- NOT SONAR.  BACKBURNER. Add aggregation option to jooglechart?  Does an aggregation on a column.
 -- DONE.  Figure out how to initialize charts and widgets that communicate with each other.
--- Add message polling to receivers for buttons, button group, checkbox group.
--- Create a detail chart demo using update selection.
--- Custom legend.
 -- DONE.  Filter receiver doesn't work when sending/receiving empty selection.
--- Change name of action for chart select?  
--- Specify column for chart sender section.  Need to specify column?  Yes I do.
--- Change name of chart receiver actions.  filter_values, filter_range, filter_columns
--- For chart sender, need to take data column of value to send.  The click gives you the row.  But you
-  have to choose the column.  All my test cases are column 0 and have 0 hard coded.  But it could be different.
 -- DONE.  Add update_series receiver on charts for a series filter.
 -- DONE.  Add message polling to filter receivers.
 -- DONE.  Add DOM checking to filter receivers.
+-- DONE.  Create get_visible_columns method for charts so that you can create a series filter.
+-- DONE.  Add view_cols to update chart range.
+
+-- modify SuperCategoryFilter to use the sonar machinery behind the scenes?
+-- need a way to check if in aquarium for aquarium_hidden.
+-- text receiver widget. Much of it done, but don't know how to handle initial values, if initial values are lists for example.
+-- change clear button on checkbox group to link (or optional link)
+-- *** Add update binding range to filter handlers. Must take bound column index.
+-- Add Breakpoint parameter and @media max-height setting.
+-- Create javascript classes for button, checkbox group widget (allows message polling).
+-- Create a detail chart demo using update selection.
+-- Custom legend.
+-- Change name of action for chart select?  
+-- Add wrapping divs on all box items.
+-- *** Specify column for chart sender section.  Need to specify column?  Yes I do.
+-- *** Change name of chart receiver actions.  filter_values, filter_range, filter_columns
+-- *** For chart sender, need to take data column of value to send.  The click gives you the row.  But you
+  have to choose the column.  All my test cases are column 0 and have 0 hard coded.  But it could be different.
 -- bug:  ButtonGroup send to ButtonGroup receive doesn't show selected buttons.
--- make column not required for chart receiver (for filter_columns). make required for certain actions.
--- Create get_visible_columns method for charts so that you can create a series filter.
+-- *** make column not required for chart receiver (for filter_columns). make required for certain actions.
 -- Create unit tests for connected filters/widgets that have initial values.
+-- *** Break supercategory filter if you put senders or receivers on it.
+-- change python viewable columns code for Series Filter.  Keep the names. Don't need in template.
+-- unit test
     Standalone Filter > standalone Filter > Chart
     filter/chart > filter/chart > chart
-    button group > button group > chart
-    checks > checks > chart
-    button > button > chart
     filter > chart > chart
+
+
+
 
 
 styler todo
@@ -630,7 +635,7 @@ class _Chart():
         
         self._senders.append({'on': on, 'key': key, 'type': type})
 
-    def add_receiver(self, key, column, action='update_selection'):
+    def add_receiver(self, key, column, action='filter_values'):
         # possible types:
         #   send date range
         #   send number range
