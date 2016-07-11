@@ -39,6 +39,17 @@
 			joogle_globals.sonar.add_handler(func);
 			joogle_globals.sonar.add_one_time_ready_poller(key, func, chart);
 		})("{{ receiver.key }}", {{ chart.name }}, {{ jg.data_name }}, "{{ chart.chart_div_id }}");
+		{% if receiver.action == 'focus_columns' %}
+		(function(key, chart, chart_div_id, col) {
+			var func = function(data) {
+				if (data.sonar_key === key && document.getElementById(chart_div_id) !== null) {
+					// need to get the column index from name
+				    chart.getChart().setSelection([{column: 1}]);
+				    google.visualization.events.trigger(chart, 'select', {});
+				}
+			}
+			joogle_globals.sonar.add_handler(func);
+		})("{{ receiver.key }}", {{ chart.name }}, "{{ chart.chart_div_id }}");
 		{% endif %}
 		{% endfor %}          
 		{% endfor %}

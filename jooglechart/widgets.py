@@ -391,15 +391,22 @@ class Box(object):
 
         display(HTML(self.render(include_common)))
 
-class TableLegend(object):
+class Legend(object):
     
     
-    def __init__(self, values, colors="google_31", initial_values=None):
+    def __init__(self, values, colors="google_31", initial_values=None, inline=False,
+                 key_style="block"):
         
         self._values = values
         self._initial_values = initial_values
+        self._key_style = key_style
         self._receivers = []
         self._div_id = None
+        
+        if inline:
+            self._display = "inline"
+        else:
+            self._display = "inherit"
         
         if colors == "google_31":
             self._colors = google_31
@@ -417,18 +424,18 @@ class TableLegend(object):
     def _set_render_properties(self):
         
         self._num = get_joogle_object_counter()
-        self._div_id = "table_legend_" + str(self._num) + "_div_id"
+        self._div_id = "joogle_legend_" + str(self._num) + "_div_id"
     
     def render(self, include_common=True):
         
         self._set_render_properties()
         context = {}
         context['callback_name'] = 'doStuff_' + str(self._num)
-        context['table_legend'] = self
+        context['legend'] = self
         
         set_common_on_context(context, include_common)
         
-        return j2_env.get_template('top_table_legend.html').render(context).encode('utf-8')
+        return j2_env.get_template('top_legend.html').render(context).encode('utf-8')
     
     def show(self, include_common=True):
 
