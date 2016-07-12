@@ -2,10 +2,10 @@
 		(function(key, button_group, div_id) {
 			var func = function(data) {
 				if (data.sonar_key === key && document.getElementById(div_id) !== null) {
-					button_group.update_button_group(data.sonar_value);
+					legend.update_button_group(data.sonar_value);
 				}
 			}
 			joogle_globals.sonar.add_handler(func);
-			joogle_globals.sonar.add_one_time_ready_poller(key, func, button_group);
-		})("{{ receiver.key }}", buttons, "{{ bg._div_id }}");
+			joogle_globals.sonar.add_one_time_ready_poller(key, func, legend);
+		})("{{ receiver.key }}", legend, "{{ legend._div_id }}");
 		{% endfor %}

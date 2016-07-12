@@ -333,6 +333,15 @@ class Button(object):
 
         display(HTML(self.render(include_common)))
 
+def replace_underscores_with_dashes(d):
+    
+    new_dict = {}
+    
+    for key in d:
+        new_key = key.replace('_', '-')
+        new_dict[new_key] = d[key]
+    return new_dict
+
 
 class Box(object):
     
@@ -361,6 +370,7 @@ class Box(object):
             if style_dict == None:
                 style_dict = {}
             if kwargs:
+                kwargs = replace_underscores_with_dashes(kwargs)
                 style_dict.update(kwargs)
             _add_dict_to_dict(self._div_styles, style_dict)
 
@@ -400,6 +410,7 @@ class Legend(object):
         self._values = values
         self._initial_values = initial_values
         self._key_style = key_style
+        self._senders = []
         self._receivers = []
         self._div_id = None
         
@@ -412,6 +423,14 @@ class Legend(object):
             self._colors = google_31
         else:
             self._colors = colors
+
+    def add_sender(self, key):
+        
+        # For now, we assume the on event is click and the type of data sent
+        # is the array of selections.  If that needs to change in the future,
+        # add params on="click" and type="selection"
+        
+        self._senders.append({'key': key})
 
     def add_receiver(self, key):
         

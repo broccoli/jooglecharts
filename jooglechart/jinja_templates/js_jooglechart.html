@@ -8,9 +8,9 @@
       {% include 'js_dashboard.html' %}
         
         {% else %}
-          {% for chart in jg.charts %}
-          {{ chart.name }}.draw();
-          {% endfor %}
+        {% for chart in jg.charts %}
+        {{ chart.name }}.draw();
+        {% endfor %}
         {% endif %}
 
 		// -------------- Add chartwrapper senders, if any -------------

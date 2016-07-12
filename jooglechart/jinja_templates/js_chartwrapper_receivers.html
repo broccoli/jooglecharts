@@ -23,6 +23,7 @@
 		})("{{ receiver.key }}", {{ chart.name }}, {{ jg.data_name }}, "{{ chart.chart_div_id }}", {{ receiver.column }}, {{ chart.view_cols|to_json }});
 		{% endif %}
 		{% if receiver.action == 'filter_columns' %}
+		// handler to filter columns
 		(function(key, chart, datatable, chart_div_id, col, view_cols) {
 			var series_cols = joogle_globals.get_viewable_columns(chart);
 			function update_chart_callback(view, series) {
@@ -39,12 +40,26 @@
 			joogle_globals.sonar.add_handler(func);
 			joogle_globals.sonar.add_one_time_ready_poller(key, func, chart);
 		})("{{ receiver.key }}", {{ chart.name }}, {{ jg.data_name }}, "{{ chart.chart_div_id }}");
-		{% if receiver.action == 'focus_columns' %}
+		{% endif %}
+		{% if receiver.action == 'focus_column' %}
 		(function(key, chart, chart_div_id, col) {
+			// handler to focus chart series for a label name (from legend, say)
+			// just using the click effect.  Don't know how to get mouseover effect.
+			var label_index_map = joogle_globals.get_label_index_map(chart);
+			var hold_column_label;
 			var func = function(data) {
 				if (data.sonar_key === key && document.getElementById(chart_div_id) !== null) {
-					// need to get the column index from name
-				    chart.getChart().setSelection([{column: 1}]);
+					var column;
+					// if the same label is repeated, unfocus
+					if (hold_column_label === data.sonar_value[0]) {
+						hold_column_label = null;
+						column = null;
+					}
+					else {
+						hold_column_label = data.sonar_value[0];
+						column = label_index_map[data.sonar_value[0]];
+					}
+				    chart.getChart().setSelection([{column: column}]);
 				    google.visualization.events.trigger(chart, 'select', {});
 				}
 			}

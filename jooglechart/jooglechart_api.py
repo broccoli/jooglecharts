@@ -50,12 +50,16 @@ Sonar todo:
 -- Create javascript classes for button, checkbox group widget (allows message polling).
 -- Create a detail chart demo using update selection.
 -- Custom legend.
--- Add wrapping divs on all box items.
+-- ****** SeriesFilter doesn't work if you put a receiver on the chart.
+-- *** Add wrapping divs on all box items.
 -- bug:  ButtonGroup send to ButtonGroup receive doesn't show selected buttons.
 -- *** make column not required for chart receiver (for filter_columns). make required for certain actions.
 -- Create unit tests for connected filters/widgets that have initial values.
 -- *** Break supercategory filter if you put senders or receivers on it.
 -- change python viewable columns code for Series Filter.  Keep the names. Don't need in template.
+-- Checkbox Group -- change type to radio=True/False?
+-- add_div_styles take underscore for hyphen.
+-- create Sender widget?  Sender just sends a value on load. (Can be used for testing.)
 -- unit test
     Standalone Filter > standalone Filter > Chart
     filter/chart > filter/chart > chart
@@ -633,10 +637,14 @@ class _Chart():
         
         self._senders.append({'on': on, 'key': key, 'type': type, 'column': column})
 
-    def add_receiver(self, key, column, action='filter_values'):
-        # possible types:
-        #   send date range
-        #   send number range
+    def add_receiver(self, key, *args, **kwargs):
+        
+        action = kwargs.pop('action', 'filter_values')
+        
+        column = kwargs.pop('column', None)
+        
+        if action == 'filter_values' and column is None:
+            message = "A column must be specified the chart receiver for filter_values"
         
         self._receivers.append({'key': key, 'action': action, 'column': column})
 
@@ -889,13 +897,13 @@ class JoogleChart():
 #         self._senders.append({'on': on, 'key': key, 'type': type})
 
 
-    def add_receiver(self, key, column, action='update_selection'):
+    def add_receiver(self, key, *args, **kwargs):
         # possible types:
         #   send date range
         #   send number range
         
         self._has_senders = True
-        self.charts[0].add_receiver(key, column, action)
+        self.charts[0].add_receiver(key, **kwargs)
 #         self._senders.append({'on': on, 'key': key, 'type': type})
 
 
