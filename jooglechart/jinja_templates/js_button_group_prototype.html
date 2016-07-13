@@ -14,6 +14,7 @@
 			this.$buttons_div;
 			this.title = options.title;
 			this.initial_values = options.initial_values;
+			this.clear_button_bold = options.clear_button_bold;
 		}
 	
 		window.joogle_globals.ButtonGroup.prototype.get_selected_values = function() {
@@ -33,6 +34,10 @@
 				thisButtonGroup.call_senders();
 				google.visualization.events.trigger(thisButtonGroup, 'ready');
 			});
+			if (this.clear_button_bold) {
+				console.log("---- in clear button bold");
+				$button.css('font-weight', 'bold');
+			}
 			if (this.clear_button_position === "last") {
 				$button.appendTo(this.$buttons_div);
 			}

@@ -62,6 +62,7 @@ Sonar todo:
 -- change ButtonGroup parameter:  radio=True/False
 -- make button to reset filter range for demo
 -- clear_button_bold not working on ButtonGroup?
+-- change ChartRow padding to accept integer or string
 -- create Sender widget?  Sender just sends a value on load. (Can be used for testing.)
 -- unit test
     Standalone Filter > standalone Filter > Chart
@@ -646,8 +647,9 @@ class _Chart():
         
         column = kwargs.pop('column', None)
         
-        if action == 'filter_values' and column is None:
-            message = "A column must be specified the chart receiver for filter_values"
+        if action in ['filter_values', 'filter_range'] and column is None:
+            message = "A column must be specified the chart receiver for filter_values or filter_range"
+            raise JoogleChartsException(message)
         
         self._receivers.append({'key': key, 'action': action, 'column': column})
 
