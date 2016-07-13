@@ -415,7 +415,7 @@ class Legend(object):
         self._div_id = None
         
         if inline:
-            self._display = "inline"
+            self._display = "inline-block"
         else:
             self._display = "inherit"
         
