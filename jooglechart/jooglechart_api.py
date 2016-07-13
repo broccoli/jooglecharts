@@ -59,6 +59,9 @@ Sonar todo:
 -- change python viewable columns code for Series Filter.  Keep the names. Don't need in template.
 -- Checkbox Group -- change type to radio=True/False?
 -- add_div_styles take underscore for hyphen.
+-- change ButtonGroup parameter:  radio=True/False
+-- make button to reset filter range for demo
+-- clear_button_bold not working on ButtonGroup?
 -- create Sender widget?  Sender just sends a value on load. (Can be used for testing.)
 -- unit test
     Standalone Filter > standalone Filter > Chart

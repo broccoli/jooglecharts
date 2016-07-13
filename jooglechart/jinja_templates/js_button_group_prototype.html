@@ -113,7 +113,7 @@
 				$buttons_div.append($label);
 			}
 			if (this.add_clear) { this.add_clear_button(); }			
-			if (typeof this.initial_values !== "undefined" || this.initial_values !== null) {
+			if (typeof this.initial_values !== "undefined" && this.initial_values !== null) {
 				this.update_button_group_no_ready(this.initial_values);
 			}
 			if (typeof this.title !== "undefined" && this.title !== null) {
