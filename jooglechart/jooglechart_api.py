@@ -64,6 +64,7 @@ Sonar todo:
 -- clear_button_bold not working on ButtonGroup?
 -- change ChartRow padding to accept integer or string
 -- create Sender widget?  Sender just sends a value on load. (Can be used for testing.)
+-- Add check for message.data.msg is defined in window event listener.
 -- unit test
     Standalone Filter > standalone Filter > Chart
     filter/chart > filter/chart > chart
