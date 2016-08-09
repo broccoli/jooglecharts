@@ -1,4 +1,6 @@
+{% if common %}
 {% include "common_template.html" %}
+{% endif %}
 
 <script type="text/javascript">
 
@@ -6,9 +8,16 @@ $(document).ready(function() {
 	{% include 'js_library_loading.html' %}
 });
 
+
+
     function {{ callback_name }}() {
-    	// empty function
-    }
     
+    	{% include 'js_table_legend.html' %}    	
+
+    
+    }
 </script>
 
+{% include 'css_table_legend.html' %}
+
+<div id="{{ table_legend._div_id }}" ></div>

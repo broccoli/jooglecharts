@@ -11,20 +11,36 @@ Sonar todo:
 -- DONE.  modify chart receiver to take column
 -- WRAPS AROUND FINE.  test buttongroup wrap around when there are a lot of buttons
 -- ADD BOLD, NOT COLOR.  add color option for button color.
--- add receive for checklist widget
+-- DONE. add receive for checklist widget
 -- DONE.  modify chartrow to accept widgets, text.
--- test checklist widget for long lists.  Add height handling and scrollbars for long lists?
+-- DONE.  test checklist widget for long lists.  Add height handling and scrollbars for long lists?
 -- modify SuperCategoryFilter to use the sonar machinery behind the scenes?
 -- need a way to check if in aquarium for aquarium_hidden.
--- add titles to button group and checkbox group.
--- create common code widget
+-- DONE. add titles to button group and checkbox group.
+-- DONE.  create common code widget
 -- text receiver widget
 -- change clear button on checkbox group to link (or optional link)
--- flexible widths in ChartRow; gutter in ChartRow
--- ability to add div styles to all widgets and filters
-
--- making a change for review commit
-
+-- DONE.  flexible widths in ChartRow; gutter in ChartRow
+-- DONE.  ability to add div styles to all widgets and filters
+-- DONE. add sender/receiver to SeriesFilter
+-- DONE.  change include name to joogle_include
+-- DONE. Change update chart to include view cols
+-- DONE.  add update binding selection choices to filter handlers.  Must take binding column index.
+-- DONE.  create clear button widget to clear other widgets
+    custom text, link or button, button size, button style
+-- chart with select freezes up when you click on legend.
+-- fix chart with select when you have a filter on it.
+-- SeriesFilter listeners and senders
+-- DONE.  in filter receivers, check if div is in dom.
+-- Add view_cols to update chart range.
+-- Add update binding range to filter handlers. Must take bound column index.
+-- Try setting initial values on stand alone filters
+-- DONE. Add modes to chartrow.
+-- Add Breakpoint parameter and @media max-height setting.
+-- Add aggregation option to jooglechart?  Does an aggregation on a column.
+-- Figure out how to initialize charts and widgets that communicate with each other.
+-- Create a detail chart demo using update selection.
+-- Custom legend.
 
 styler todo
 -- add indeed_colors=True option
@@ -90,7 +106,7 @@ import json
 from IPython.display import display, HTML
 
 from utils import (get_joogle_object_counter, set_common_on_context, j2_env, JoogleChartsException, _add_dict_to_dict,
-    include, _render_include)
+    joogle_include, _render_joogle_include)
 
 from dataframe_to_gviz import dataframe_to_gviz
 
@@ -115,6 +131,7 @@ class _GoogleFilter(object):
         self._global_name = False
         self._senders = []
         self._receivers = []
+        self._div_styles = {}
 
     def add_options(self, options = None, **kwargs):
         """
@@ -151,6 +168,26 @@ class _GoogleFilter(object):
         if kwargs:
             _add_dict_to_dict(self._state, kwargs)
 
+    def add_div_styles(self, style_dict = None, **kwargs):
+        """
+        pass styles for the chart div in a dictionary or as keyword arguments
+        """
+
+        if self._div_styles == None:
+            self._div_styles = {}
+
+        if style_dict == None and not kwargs:
+            # user is resetting styles
+
+            self.div_styles = {}
+        else:
+            if style_dict == None:
+                style_dict = {}
+            if kwargs:
+                style_dict.update(kwargs)
+            _add_dict_to_dict(self._div_styles, style_dict)
+            
+
     def add_sender(self, key, on="statechange", type='default'):
         
         if type == "default":
@@ -161,27 +198,27 @@ class _GoogleFilter(object):
 #             elif self._type == "NumberRangeFilter":
 #                 type = "number_range"
                 
-        # possible types:
-        #   send date range
-        #   send number range
-        
         self._senders.append({'on': on, 'key': key, 'type': type})
         
     
-    def add_receiver(self, key, action="default"):
-        
+    def add_receiver(self, key, action="default", *args, **kwargs):
+
+        rec_dict = {}
         if action == "default":
             if self._type == "CategoryFilter":
                 action = "update_selection"
             elif self._type in ["DateRangeFilter", "NumberRangeFilter"]:
                 action = "update_range"
-#             elif self._type == "NumberRangeFilter":
-#                 action = "update_number_range"
-        # possible actions
-        #  update date range
-        #  update number range
         
-        self._receivers.append({'key': key, 'action': action})
+        if action == "update_binding_selection":
+            if "bound_column" in kwargs:
+                rec_dict['bound_column'] = kwargs['bound_column']
+            else:
+                raise JoogleChartsException("A bound_column must be passed for update_binding_selection")
+        rec_dict['key'] = key
+        rec_dict['action'] = action
+        
+        self._receivers.append(rec_dict)
 
     def _set_render_properties(self):
         raise JoogleChartsException("_set_render_properties not implemented")
@@ -195,11 +232,26 @@ class Filter(_GoogleFilter):
     By default binds the data.  But can bind another filter.
     """
 
-    def __init__(self, type):
+    def __init__(self, type, *args, **kwargs):
         super(Filter, self).__init__(type)
         self._label = None
         self._json = None
         self._data_type = None
+        self._data = kwargs.get('data')
+        self._filter_column_index = None
+        
+        if 'data' in kwargs:
+            self._data = kwargs['data']
+            if not (isinstance(self._data, pd.Series) or isinstance(self._data, pd.DataFrame)):
+                raise JoogleChartsException("Filter data must be Series or DataFrame")
+            if isinstance(self._data, pd.Series):
+                if self._data.name == None:
+                    self._data.name = "choices"
+                df = pd.DataFrame(self._data)
+            else:
+                df = self._data
+            table = dataframe_to_gviz(df, allow_nulls=True)
+            self._json = table.ToJSon()
 
     def bind_filter(self, bind_target):
         self._bind_target = bind_target
@@ -214,10 +266,15 @@ class Filter(_GoogleFilter):
         
         self._label = label
 
-    def set_series(self, series):
-        df = pd.DataFrame(series)
-        table = dataframe_to_gviz(df, allow_nulls=True)
-        self._json = table.ToJSon()
+#     def set_data(self, data):
+#         if not (isinstance(data, pd.Series) or isinstance(data, pd.DataFrame)):
+#             raise JoogleChartsException("Filter data must be Series or DataFrame")
+#         if isinstance(data, pd.Series):
+#             df = pd.DataFrame(data)
+#         else:
+#             df = data
+#         table = dataframe_to_gviz(df, allow_nulls=True)
+#         self._json = table.ToJSon()
         
 
     def _set_render_properties(self, freestanding=False):
@@ -232,14 +289,17 @@ class Filter(_GoogleFilter):
         
         # get data type, but only used for freestanding filters
         
-        if freestanding:
-            self.add_options(filterColumnIndex=0)
-            if self._type == "CategoryFilter":
-                self._data_type = "string"
-            elif self._type == "DateRangeFilter":
-                self._data_type = "date"
-            elif self._type == "NumberRangeFilter":
-                self._data_type = "number"
+        if freestanding and not "filterColumnIndex" in self._options:
+            raise JoogleChartsException("Standalone filter must have filterColumnIndex")
+        else:
+            self._filter_column_index = self._options['filterColumnIndex']
+#             self.add_options(filterColumnIndex=0)
+#             if self._type == "CategoryFilter":
+#                 self._data_type = "string"
+#             elif self._type == "DateRangeFilter":
+#                 self._data_type = "date"
+#             elif self._type == "NumberRangeFilter":
+#                 self._data_type = "number"
         
     def render(self, include_common=None, freestanding=True):
         
@@ -487,9 +547,7 @@ class _Chart():
         self.display_chart_type = None
         self.chart_options = {}
         self.div_styles = {}
-#         self.hide_cols = None
         self.view_cols = None
-#         self.display_cols = None
         self.chart_div_id = None
         self.num = None
         self.name = None
@@ -640,6 +698,7 @@ class JoogleChart():
         self._num_cols = None
         self._num_rows = None
         self._global_title = None
+#         self._filter_layout = "auto"
 
         # Dashboard attributes
         self.dashboard_div_id = None
@@ -883,7 +942,20 @@ class JoogleChart():
         else:
             chart = self
         display(HTML(chart.render(chart_type, include_common)))
-
+        
+def _get_style_widths_from_weights(weights):
+    
+    # use less than 100 in case the computed widths in pixels are fractional and get rounded up,
+    # potentially exceeding 100 total.
+    TOTAL_WIDTH = 99
+    weight_sum = sum(weights)
+    style_widths = []
+    for weight in weights:
+        pct = (float(weight) / weight_sum) * TOTAL_WIDTH
+        pct = round(pct, 2)
+        style_width = 'style="width:{}%"'.format(pct)
+        style_widths.append(style_width)
+    return style_widths
 
 class ChartRow:
 
@@ -895,54 +967,139 @@ class ChartRow:
     """
     
     """
-    Do
-    -- add div id to chartrow div
-    -- add css for gutter for this chartrow div id
+    There should be four ChartRow sizing modes:
+        -- bootstrap
+            -- evenly proportioned, but fixed width and responsive
+        -- free
+            no width setting
+        -- weighted
+            percent widths
+        -- exact (add?)
+            px, em, etc.
+            integers will be assumed to be pixels
+            The width of the total shouldn't be set
+        
+    maybe have a setting for inner padding or gutter.  But the padding must
+    be incorporated into the widths of the modes.  Padding + width must fit the
+    overall width.
+    
+    Maybe have inner_pad just be an integer.  It will be pct or px depending on mode?
+
+    Add border box.  I think with border box, I can have inner padding be either
+    pct or px.
+    
+    Might want to change from 100% width to 99% width for weighted to make sure that
+    fractional pixels rounding up doesn't throw off the layout.
+    
+    Setting for responsiveness breakpoint?
     
     """
 
     def __init__(self, *objects, **kwargs):
 
         self._objects = objects
+        self.bootstrap_num = None
         self._content_strings = []
-        self._flex_width = None
-        self._gutter = None
+#         self._flex_width = None
+#         self._gutter = None
         self._div_id = None
+        self._div_styles = None
+        self._weights = []
+        self._widths = []
+        self._style_widths = []
+        self._padding = None
         
-        if "flex_width" in kwargs and kwargs['flex_width'] == True:
-            self._flex_width = True
-            self._gutter_width = kwargs.get("gutter_width", "20px");
+#         if "flex_width" in kwargs and kwargs['flex_width'] == True:
+#             self._flex_width = True
+#             self._gutter_width = kwargs.get("gutter_width", "20px");
 
-        num_objects = len(self._objects)
-        if num_objects not in [2, 3, 4]:
-            message = "A chart row must have 2-4 objects"
+        self._mode = kwargs.pop("mode", "bootstrap")
+        if self._mode not in ['bootstrap', 'free', 'weighted', 'fixed']:
+            message = "ChartRow mode must be bootstrap, free, weighted, or fixed."
             raise JoogleChartsException(message)
+        
+        self._padding = kwargs.pop("padding", None)
+        if self._padding:
+            self._padding = str(int(self._padding)) + "px"
+            
+        self._weights = kwargs.pop("weights", [])
+        if self._mode == "weighted":
+            if not self._weights:
+                message = "If using weighted mode, pass a list of weights to apply"
+                raise JoogleChartsException(message)
+            elif len(self._weights) != len(objects):
+                message = "Numbers of objects and weights in a ChartRow must be the same."
+                raise JoogleChartsException(message)
+            else:
+                self._style_widths = _get_style_widths_from_weights(self._weights)
 
-        self.bootstrap_num = 12 / num_objects
+        widths = kwargs.pop("widths", [])        
+        if self._mode == "fixed":
+            if not widths:
+                message = "If using fixed mode, pass a list of widths to apply"
+                raise JoogleChartsException(message)
+            for width in widths:
+                try:
+                    w = int(width)
+                    w = str(w) + "px"
+#                     self._widths.append(int(width))
+                except:
+                    w = width
+                self._style_widths.append('style="width:{}"'.format(w))
 
+        if self._mode == "bootstrap":
+            num_objects = len(self._objects)
+            if num_objects not in [2, 3, 4]:
+                message = "If using bootstrap mode, there can be 2-4 objects"
+                raise JoogleChartsException(message)
 
+            self.bootstrap_num = 12 / num_objects
+        
+        
+            
+    def add_div_styles(self, style_dict = None, **kwargs):
+        """
+        pass styles for the chart div in a dictionary or as keyword arguments
+        """
+
+        if self._div_styles == None:
+            self._div_styles = {}
+
+        if style_dict == None and not kwargs:
+            # user is resetting styles
+
+            self.div_styles = {}
+        else:
+            if style_dict == None:
+                style_dict = {}
+            if kwargs:
+                style_dict.update(kwargs)
+            _add_dict_to_dict(self._div_styles, style_dict)
 
     def render(self, include_common=None):
 
         num = get_joogle_object_counter()
         self._div_id = "joogle_chartrow_" + str(num)
 
-        for obj in self._objects:
-            if isinstance(obj, str):
-                self._content_strings.append(obj)
-            else:
-                self._content_strings.append(obj.render(include_common=False))
 #             jc._set_render_properties()
 
         context = {}
         context['chartrow'] = self
         context['callback_name'] = 'doStuff_' + str(num)
 
+        # call common context method before rendering all child
+        # objects
+        set_common_on_context(context, include_common)
+
+        for obj in self._objects:
+            if isinstance(obj, str):
+                self._content_strings.append(obj)
+            else:
+                self._content_strings.append(obj.render(include_common=False))
 
         # ISHBOOK-495
 #         context['notebook_url'] = _get_notebook_url()
 
-        set_common_on_context(context, include_common)
 
         return j2_env.get_template('top_chartrow.html').render(context).encode('utf-8')
 

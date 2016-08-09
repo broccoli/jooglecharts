@@ -1,19 +1,20 @@
-{% if common %}
+
+<script type="text/javascript">
+window.joogle_globals = null;
+</script>
+
 {% include "common_template.html" %}
-{% endif %}
 
 <script type="text/javascript">
 
 $(document).ready(function() {
+
 	{% include 'js_library_loading.html' %}
+});
 
     function {{ callback_name }}() {
-    
-    	{% include 'js_button_group.html' %}    	
-
-    
+    	// empty function
     }
-});
+    
 </script>
 
-<div id="{{ bg._div_id }}" {{ bg._div_styles|format_styles_list }}></div>

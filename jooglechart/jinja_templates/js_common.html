@@ -15,13 +15,16 @@ $(document).ready(function() {
 		}
 	});
 
+	{% if refresh_globals %}
+		window.joogle_globals = null;
+	{% endif %}
 
-	if (typeof window.joogle_globals === "undefined") {
+	if (typeof window.joogle_globals === "undefined" || window.joogle_globals === null) {
 		window.joogle_globals = {};
 	
 		window.joogle_globals.sonar = new (function () {
 			// object for holding all sonar pieces
-			this.handler_array = []
+			this.handler_array = [];
 			this.add_handler = function(handler) { this.handler_array.push(handler)};
 			this.send = function(key, value) {
 				var data = { sonar_key: key, sonar_value: value };
@@ -33,13 +36,65 @@ $(document).ready(function() {
 				}
 			}
 			this.call_handlers = function(data) {
-				for (i = 0; i < this.handler_array.length; i++) {
+				for (var i = 0; i < this.handler_array.length; i++) {
 					this.handler_array[i](data);
 				}
+			}
+			this.call_text_receivers = function (data) {
+				$(".text_receiver").each(function() {
+					var receiver = this;
+					var key = receiver.dataset.key;
+					var array_style = receiver.dataset.arraystyle;
+					var sub_text = data.sonar_value;
+					var default_text = receiver.dataset.default;
+					if (typeof default_text === "undefined") {
+						default_text = "";
+					}
+					var clear_text = receiver.dataset.clear_text;
+					if (sub_text.constructor !== Array) {
+						sub_text = $.trim(sub_text);
+						if (sub_text.length == 0) {
+							sub_text = default_text;
+						}
+						sub_text = [sub_text];
+					} else if (sub_text.length === 0) {
+						sub_text = [default_text];
+					}
+					sub_text = globals.format_array_for_text_receiver(sub_text, array_style);
+					if (key == data.sonar_key) {
+						var template = receiver.dataset.text;
+						template = template.replace("{}", sub_text);
+						receiver.innerHTML = template;
+					}
+				})
 			}
 		})();
 	}
 	
+	window.joogle_globals.format_array_for_text_receiver = function(arr, array_style) {
+		console.log(array_style)
+		if (array_style === "colloquial") {
+			if (arr.length === 1) { return arr[0]; }
+			var front = "";
+			var back = "";
+			var back_arr = arr.slice(arr.length - 2, arr.length);
+			back = back_arr[0] + " and " + back_arr[1];
+			if (arr.length > 2) {
+				var front_arr = arr.slice(0, arr.length - 1);
+				for (var i = 0; i < front_arr.length; i++) {
+					front += front_arr[i] + ", ";
+				}
+			}
+			return front + back;
+		}
+		else if (array_style === "parens") {
+			return "(" + arr.join(", ") + ")";
+		}
+		else if (array_style === "brackets") {
+			return "[" + arr.join(", ") + "]";
+		}
+	}
+
 	window.joogle_globals.update_category_filter = function(filter, selected_values) {
 		// utility function for updating Google Charts filter		
 		var filter_state = filter.getState();
@@ -57,19 +112,31 @@ $(document).ready(function() {
 		filter.setState(filter_state);
 		filter.draw();
 	}
-	window.joogle_globals.update_chart = function(values_arr, data, chartwrapper, column) {
+	window.joogle_globals.update_filter_binding_selection = function(selected_values, data, filter, column) {
+		// Method for filtering controlWrapper's dataTable and redrawing.  Used for filter sonar receiver.
+		
 		var filtered_rows = [];
-		if (values_arr.length == 0) {
+		if (selected_values.length == 0) {
 			filtered_rows = null;
 		}
 		else {
-			for (var i = 0; i < values_arr.length; i++) {
-				var rows = data.getFilteredRows([{column: column, value: values_arr[i]}]);
+			for (var i = 0; i < selected_values.length; i++) {
+				var rows = data.getFilteredRows([{column: column, value: selected_values[i]}]);
 				filtered_rows = $.merge(filtered_rows, rows);
 			}
 		}
-		chartwrapper.setView({
+		// undocumented setView method on control wrappers
+		filter.setView({
 			rows: filtered_rows
+		});
+
+		filter.draw();
+	}
+	window.joogle_globals.update_chart = function(values_arr, data, chartwrapper, column, view_cols) {
+		var filtered_rows = joogle_globals.get_rows_for_column_selections(column, values_arr, data);
+		chartwrapper.setView({
+			rows: filtered_rows,
+			columns: view_cols
 		});
 		chartwrapper.draw();			
 	}
@@ -82,6 +149,19 @@ $(document).ready(function() {
 		chartwrapper.draw();			
 	}
 	
+	window.joogle_globals.get_rows_for_column_selections = function(column, selections, datatable) {
+		var rows_total = [];
+		if (selections.length == 0) {
+			rows_total = null;
+		}
+		else {
+			for (var i = 0; i < selections.length; i++) {
+				var rows = datatable.getFilteredRows([{column: parseInt(column), value: selections[i]}]);
+				rows_total = $.merge(rows_total, rows);
+			}
+		}
+		return rows_total;		
+	}
 
 	/*
 		The google.load function can only be called once per page.  On the first
@@ -101,7 +181,7 @@ $(document).ready(function() {
 	
     // load visualization library    
     function google_loader(callback) {    
-	    google.charts.load('current', {packages: ['table', 'corechart', 'controls']});
+	    google.charts.load('current', {packages: ['table', 'corechart', 'controls', 'sankey', 'calendar', 'gauge', 'treemap']});
 	    google.charts.setOnLoadCallback(callback);
     }
 	

@@ -1,7 +1,10 @@
+		var binding_selections = {}; // map of column indexes to selected values	
+		var filter_column_index = {{ filter._filter_column_index }};
 
 		{% if filter._json %}
-		var data = new google.visualization.DataTable({{ filter._json }});
+		var datatable = new google.visualization.DataTable({{ filter._json }});
 		{% else %}
+				{# remove this? #}
         var data = new google.visualization.DataTable();
         data.addColumn('{{ filter._data_type }}', 'choices');
 		{% endif %}
@@ -9,11 +12,28 @@
 		var {{ filter._name }} = new google.visualization.ControlWrapper({
 			'controlType': '{{ filter._type }}',
 			'containerId': '{{ filter._div_id }}',
-			'dataTable': data,
+			'dataTable': datatable,
 			'options': {{ filter._options|default("{}")|to_json }},
 			'state': {{ filter._state|default("{}")|to_json }}
 		});
 		
+		function get_binding_selections() {
+			var binding_rows = [];
+			var binding_values = [];
+			for (var column in binding_selections) {
+				if (binding_selections[column].length > 0) {
+					var rows = joogle_globals.get_rows_for_column_selections(column, binding_selections[column], datatable);
+					$.merge(binding_rows, rows);
+				}
+			}
+			
+			// now we've got the binding rows, get the values in the right column
+			for (var ix in binding_rows) {
+				binding_values.push(datatable.getValue(binding_rows[ix], 0));
+			}
+			return binding_values;
+		}
+
 		// Add sonar senders, if any
 		{% include 'js_filter_senders.html' %}
 

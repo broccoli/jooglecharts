@@ -1,6 +1,7 @@
 		var senders = [];
 		var values = {{ cbg._values }};
-		var $main_div = $("#{{ cbg._div_id }}");
+		var id = "{{ cbg._div_id }}";
+		var $main_div = $("#" + id);
 		var add_clear = {{ cbg._clear_button }};
 		{% if cbg._initial_values %}
 		var initial_values = {{ cbg._initial_values|to_json }};
@@ -8,13 +9,14 @@
 		
 		
 		
-		// --------- Add sonar senders, if any ---------
+		// --------- Add checkbox sonar senders, if any ---------
 		{% include 'js_checkbox_group_senders.html' %}
-		
-		// ---------------------------------------------
+		// ------------------------------------------------------
 		// define call_senders before call to create_checkboxes()
 		function call_senders() {
-			$.each(senders, function(index, value) { value() });
+			for (var i = 0; i < senders.length; i++) {
+				senders[i]();
+			}
 		}
 
 		function add_clear_button() {
@@ -28,10 +30,11 @@
 		}
 		
 		function create_checkboxes() {
-			$main_div.addClass("checkbox");
+			//$main_div.addClass("checkbox");
 			for (var i = 0; i < values.length; i++) {
 				var value = values[i];
 				var $div = $("<div>");
+				$div.addClass("checkbox");
 				var $label = $("<label>");
 				var $input = $("<input>");
 				$input.attr("type", "checkbox").attr("value", value).click(function(event) {
@@ -52,14 +55,14 @@
 		function update_checkboxes(values) {
 			// clear_buttons();
 			$main_div.find("input").each(function(index, value) {
-				$input = $(this);
-				var input_val = $input.attr("value");
+				input = this;
+				var input_val = input.value;
 				if ($.inArray(input_val, values) >= 0) {
 					// $label.addClass("active");
-					$input.prop("checked", true);
+					input.checked = true;
 				}
 				else {
-					$input.prop("checked", false);					
+					input.checked = false;
 				}
 			});
 			call_senders();
@@ -67,12 +70,13 @@
 
 		function get_selected_values() {
 			var selected_values = [];
-			$main_div.find("input").each(function(){
-				$this = $(this);
-				if ($this.is(":checked")) {
-					selected_values.push($this.attr("value"));
-				}
+			$main_div.find("input:checked").each(function(){
+				selected_values.push(this.value);
 			});
 			return selected_values;
 		}
 
+		// --------- Add checkbox sonar receivers, if any ---------
+		{% include 'js_checkbox_group_receivers.html' %}
+		// ------------------------------------------------------
+		

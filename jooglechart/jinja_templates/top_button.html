@@ -9,11 +9,11 @@ $(document).ready(function() {
 
     function {{ callback_name }}() {
     
-    	{% include 'js_button_group.html' %}    	
+    	{% include 'js_button.html' %}    	
 
     
     }
 });
 </script>
 
-<div id="{{ bg._div_id }}" {{ bg._div_styles|format_styles_list }}></div>
+<div id="{{ button._div_id }}" {{ button._div_styles|format_styles_list }}></div>

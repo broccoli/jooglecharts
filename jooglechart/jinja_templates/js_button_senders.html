@@ -1,0 +1,7 @@
+		// add senders before before creating checkboxes
+		{% for sender in button._senders %}
+		senders.push(function() {
+			joogle_globals.sonar.send("{{ sender.key }}", value);
+		})
+		{% endfor %}
+		

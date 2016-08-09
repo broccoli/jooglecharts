@@ -13,13 +13,13 @@
           {% endfor %}
         {% endif %}
 
-		// -------------- Add senders, if any -------------
+		// -------------- Add chartwrapper senders, if any -------------
           {% include 'js_chartwrapper_senders.html' %}
-		// ------------------------------------------------
+		// -------------------------------------------------------------
 
-		// -------------- Add receivers, if any -------------
+		// -------------- Add chartwrapper receivers, if any -------------
           {% include 'js_chartwrapper_receivers.html' %}
-		// --------------------------------------------------
+		// ---------------------------------------------------------------
 
     {% if jg._series_filter %}
     	{% include 'js_series_filter.html' %}

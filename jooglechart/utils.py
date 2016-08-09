@@ -74,6 +74,14 @@ def set_common_on_context(context, include_common):
         else:
             context['common'] = False
         
+    if is_first_joogle[0] == True:
+        context['refresh_globals'] = True
+        is_first_joogle[0] = False
+
+
+    # I want to refresh the globals if either the first joogle object is run
+    # or the joogle_include is run.
+    
         
     # ISHBOOK-495
     context['notebook_url'] = _get_notebook_url()
@@ -81,24 +89,25 @@ def set_common_on_context(context, include_common):
 
 include_has_been_called = [False]
 
-def _render_include():
+def _render_joogle_include():
     
     include_has_been_called[0] = True
     
     context = {}
     context['callback_name'] = 'joogle_include'
+    set_common_on_context(context, include_common=True)
     
-    return j2_env.get_template('top_include.html').render(context).encode('utf-8')
+    return j2_env.get_template('top_joogle_include.html').render(context).encode('utf-8')
 
-def include():
+def joogle_include():
     
-    # include should be called before rendering any joogle object.  If
+    # joogle_include should be called before rendering any joogle object.  If
     # a joogle object is rendered first, problems can arise in development
     # if notebook cells are re-run.  This will cause the first object
     # to drop the common js code, and there will be a js error the next time
     # the notebook is open if the output is saved.
     
-    display(HTML(_render_include()))
+    display(HTML(_render_joogle_include()))
 
 def _add_dict_to_dict(current_options, options_dict):
 
