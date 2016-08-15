@@ -1,0 +1,78 @@
+	window.joogle_globals.Legend = function(options) {
+		this.series = options.series;
+		this.colors = options.colors;
+		this.$list;
+		this.div_id = options.div_id;
+		this.$div = $("#" + this.div_id);
+		this.initial_values = options.initial_values;
+		this.key_style = options.key_style;
+		this.list_style = options.list_style;
+	};
+
+	window.joogle_globals.Legend.prototype.get_color_for_series = function(el) {
+		var el_index = this.series.indexOf(el);
+		return this.colors[el_index % this.colors.length];		
+	}
+	
+	window.joogle_globals.Legend.prototype.get_key = function(el) {
+		var $key = $("<svg>");
+		if (this.key_style === 'block') {
+			$key.attr({'width':26, 'height':10});
+			$rect = $('<rect>');
+			var color = this.get_color_for_series(el);
+			$rect.attr({'x': 0, 'y':0, 'height':10, 'width':24, 'fill': color});
+			$key.append($rect);
+		}
+		else if (this.key_style === 'circle') {
+			$key.attr({'width':16, 'height':12});
+			$rect = $('<circle>');
+			var color = this.get_color_for_series(el);
+			$rect.attr({'cx': 8, 'cy':6, 'r':6, 'fill': color});
+			$key.append($rect);
+			
+		}
+		return $key;
+	}
+
+	window.joogle_globals.Legend.prototype.add_series_to_legend = function(el) {
+		var $li = $("<li>");
+		var color = this.get_color_for_series(el);
+		var $key = this.get_key(el);
+		$li.append($key).append('<span>' + el + '</span>');
+		this.$list.append($li);
+	}
+
+	window.joogle_globals.Legend.prototype.legend_focus = function(el) {
+		var value = $(el).find("span").html();
+		google.visualization.events.trigger(this, 'select', [value]);
+	}
+	
+	window.joogle_globals.Legend.prototype.update_legend = function(series_input) {
+		this.$list.empty();
+		thisLegend = this;
+		for (var i = 0; i < this.series.length; i++) {
+			if (series_input.indexOf(this.series[i]) >= 0) {
+				this.add_series_to_legend(this.series[i]);
+			}
+		}
+		// refresh dom element to make svg appear
+		this.$list.html(function(){return this.innerHTML});
+		this.$list.find('li').click(function() {
+			thisLegend.legend_focus(this);
+		})
+
+		google.visualization.events.trigger(this, 'ready');
+	}
+
+
+	window.joogle_globals.Legend.prototype.draw = function() {
+		this.$list = $("<ul>");
+		this.$div.append(this.$list);
+		if (typeof this.initial_values !== "undefined" && this.initial_values !== null) {
+			this.update_legend(this.initial_values);				
+		}
+		else {
+			this.update_legend(this.series);				
+		}
+	
+	}
