@@ -1,6 +1,6 @@
 		var buttons = new joogle_globals.ButtonGroup({
 			'container_id': "{{ bg._div_id }}",
-			'add_clear': {{ bg._clear_button }},
+			'add_clear': {{ bg._clear_button|to_json }},
 			'clear_button_position': "{{ bg._clear_button_position }}",
 			'values': {{ bg._values|to_json }},
 			'type': "{{ bg._type }}",

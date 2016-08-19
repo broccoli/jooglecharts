@@ -38,12 +38,7 @@ class ButtonGroup(object):
         
         if type(self._values) == pd.Series:
             self._values = self._values.tolist()
-        
-        if self._clear_button:
-            self._clear_button = "true"
-        else:
-            self._clear_button = 'false'
-            
+                    
 #         if self._clear_button_position == "last":
 #             self._append_or_prepend = "append"
 #         else:
