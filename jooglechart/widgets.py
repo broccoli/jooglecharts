@@ -232,13 +232,6 @@ class TextReceiver(object):
 
         display(HTML(self.render()))
 
-def is_string(obj):
-    try:
-        dummy = obj.lower()
-        return True
-        # string
-    except:
-        return False
 
 class Button(object):
 
@@ -253,7 +246,7 @@ class Button(object):
         self._div_styles = {}
         
         # check if value is a string
-        if is_string(value):
+        if isinstance(value, str):
             value = value.strip()
             if len(value) == 0:
                 value = []
