@@ -1,0 +1,132 @@
+		// Declare a unique namespace.
+		window.joogle_globals.ButtonGroup = {};
+
+		// Class constructor. Parameter container is a DOM elementon the client that
+		// that will contain the chart.
+		window.joogle_globals.ButtonGroup = function(options) {
+			this.container_id = options.container_id;
+			this.add_clear = options.add_clear;
+			this.clear_button_position = options.clear_button_position;
+			this.values = options.values;
+			this.type = options.type;
+			this.button_group_class = options.button_group_class;
+			this.$outer_div = $("#" + this.container_id);
+			this.$buttons_div;
+			this.title = options.title;
+			this.initial_values = options.initial_values;
+			this.clear_button_bold = options.clear_button_bold;
+		}
+	
+		window.joogle_globals.ButtonGroup.prototype.get_selected_values = function() {
+			var selected_values = [];
+			this.$buttons_div.find("input:checked").each(function(){
+				selected_values.push(this.value);
+			});
+			return selected_values;
+		}
+
+		window.joogle_globals.ButtonGroup.prototype.add_clear_button = function() {
+			var $button = $("<button>");
+			var thisButtonGroup = this;
+			$button.addClass("btn btn-default").html("clear all").click(function() {
+				thisButtonGroup.clear_buttons();
+				$button.blur();
+				thisButtonGroup.call_senders();
+				google.visualization.events.trigger(thisButtonGroup, 'ready');
+			});
+			if (this.clear_button_bold) {
+				console.log("---- in clear button bold");
+				$button.css('font-weight', 'bold');
+			}
+			if (this.clear_button_position === "last") {
+				$button.appendTo(this.$buttons_div);
+			}
+			else {
+				$button.prependTo(this.$buttons_div);
+			}
+		}
+
+		window.joogle_globals.ButtonGroup.prototype.call_senders = function() {
+			var selected_values = this.get_selected_values();
+			google.visualization.events.trigger(this, 'select', selected_values);	
+		}
+		window.joogle_globals.ButtonGroup.prototype.add_title = function() {
+			var title_styles = {'font-weight': 'bold', 'outline': 'none', 'cursor': 'default'};
+			var $title_div = $("<div>");
+			$title_div.css(title_styles).addClass("btn").text(this.title).prependTo(this.$buttons_div);
+		}
+		window.joogle_globals.ButtonGroup.prototype.update_button_group_no_ready = function(values) {
+			if (this.type == "radio" && values.length > 1) {
+				values = [values[0]];
+			}
+			this.clear_buttons();
+			this.$buttons_div.find("label").each(function(index, value) {
+				var label = this;
+				var input = label.childNodes[0];
+				var input_val = input.value;
+				if ($.inArray(input_val, values) >= 0) {
+					label.className += " active";
+					input.checked = true;
+				}
+			});
+			this.call_senders();
+		}
+		window.joogle_globals.ButtonGroup.prototype.update_button_group = function(values) {
+			this.update_button_group_no_ready(values);
+			google.visualization.events.trigger(this, 'ready');				
+		}
+		window.joogle_globals.ButtonGroup.prototype.clear_buttons = function() {
+			var $buttons_div = this.$buttons_div;
+			$buttons_div.find("label").each(function() {
+				$buttons_div.find("input").attr('checked', false);
+				$(this).removeClass("active");
+			});
+		}
+
+		window.joogle_globals.ButtonGroup.prototype.create_buttons = function() {
+			// create labels, checkboxes/radios, attach click events
+			/*
+				To get the inputs clicked properly, I had to put the click on event on the
+				label and then trigger click on the input before calling senders.  PITA.
+			
+				trigger ready in four cases
+				1.  first creating buttons
+				2.  calling update buttons after clear or receive message
+				3.  click on a value button.\
+				4.  click on clear button
+			*/
+			var thisButtonGroup = this;
+			this.$buttons_div = $("<div>");
+			$buttons_div = this.$buttons_div;
+			this.$outer_div.append($buttons_div);
+			$buttons_div.addClass(this.button_group_class).attr('data-toggle', "buttons");
+			for (var i = 0; i < this.values.length; i++) {
+				var value = this.values[i];
+				var $label = $("<label>");
+				var $input = $("<input>");
+				$input.attr("type", this.type).attr("value", value).click(function(event) {
+					if (this.type == "radio") {  // For radio, need to force uncheck the other inputs.  PITA.
+						$buttons_div.find("input").not($(this)).attr("checked", false);
+					}
+					event.stopPropagation();  // stop bubbling up to label
+				})
+				$label.addClass("btn btn-default").html(value).prepend($input).click(function(event) {
+					this.childNodes[0].click(); // get child input and click					
+					thisButtonGroup.call_senders();
+					google.visualization.events.trigger(thisButtonGroup, 'ready');
+				});
+				$buttons_div.append($label);
+			}
+			if (this.add_clear) { this.add_clear_button(); }			
+			if (typeof this.initial_values !== "undefined" && this.initial_values !== null) {
+				this.update_button_group_no_ready(this.initial_values);
+			}
+			if (typeof this.title !== "undefined" && this.title !== null) {
+				this.add_title(this.title);
+			}
+			google.visualization.events.trigger(this, 'ready');	
+		}
+	
+		window.joogle_globals.ButtonGroup.prototype.draw = function() {
+			this.create_buttons();		
+		}

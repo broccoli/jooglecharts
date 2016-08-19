@@ -1,0 +1,11 @@
+		{% for receiver in legend._receivers %}
+		(function(key, legend, div_id) {
+			var func = function(data) {
+				if (data.sonar_key === key && document.getElementById(div_id) !== null) {
+					legend.update_legend(data.sonar_value);
+				}
+			}
+			joogle_globals.sonar.add_handler(func);
+			joogle_globals.sonar.add_one_time_ready_poller(key, func, legend);
+		})("{{ receiver.key }}", legend, "{{ legend._div_id }}");
+		{% endfor %}

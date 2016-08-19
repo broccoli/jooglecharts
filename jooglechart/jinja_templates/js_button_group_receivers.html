@@ -1,9 +1,11 @@
 		{% for receiver in bg._receivers %}
-		joogle_globals.sonar.add_handler(function (data) {
-			// See if the button group exists in the DOM.  Rerunning cells in Jupyter
-			// creates more handlers on elements no longer on the DOM.  Bad performance.
-			if (data.sonar_key == "{{ receiver.key }}" && document.getElementById(id) !== null) {
-				update_button_group(data.sonar_value);
+		(function(key, buttons, div_id) {
+			var func = function(data) {
+				if (data.sonar_key === key && document.getElementById(div_id) !== null) {
+					buttons.update_button_group(data.sonar_value);
+				}
 			}
-		});
+			joogle_globals.sonar.add_handler(func);
+			joogle_globals.sonar.add_one_time_ready_poller(key, func, buttons);
+		})("{{ receiver.key }}", buttons, "{{ bg._div_id }}");
 		{% endfor %}

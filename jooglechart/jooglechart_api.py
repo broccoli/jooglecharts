@@ -14,12 +14,8 @@ Sonar todo:
 -- DONE. add receive for checklist widget
 -- DONE.  modify chartrow to accept widgets, text.
 -- DONE.  test checklist widget for long lists.  Add height handling and scrollbars for long lists?
--- modify SuperCategoryFilter to use the sonar machinery behind the scenes?
--- need a way to check if in aquarium for aquarium_hidden.
 -- DONE. add titles to button group and checkbox group.
 -- DONE.  create common code widget
--- text receiver widget
--- change clear button on checkbox group to link (or optional link)
 -- DONE.  flexible widths in ChartRow; gutter in ChartRow
 -- DONE.  ability to add div styles to all widgets and filters
 -- DONE. add sender/receiver to SeriesFilter
@@ -27,20 +23,57 @@ Sonar todo:
 -- DONE. Change update chart to include view cols
 -- DONE.  add update binding selection choices to filter handlers.  Must take binding column index.
 -- DONE.  create clear button widget to clear other widgets
-    custom text, link or button, button size, button style
--- chart with select freezes up when you click on legend.
--- fix chart with select when you have a filter on it.
--- SeriesFilter listeners and senders
+-- DONE.  chart with select freezes up when you click on legend.
+-- DONE.  fix chart with select when you have a filter on it.
+-- DONE.  SeriesFilter receivers and senders
 -- DONE.  in filter receivers, check if div is in dom.
--- Add view_cols to update chart range.
--- Add update binding range to filter handlers. Must take bound column index.
--- Try setting initial values on stand alone filters
+-- DONE.  Try setting initial values on stand alone filters
 -- DONE. Add modes to chartrow.
+-- NOT SONAR.  BACKBURNER. Add aggregation option to jooglechart?  Does an aggregation on a column.
+-- DONE.  Figure out how to initialize charts and widgets that communicate with each other.
+-- DONE.  Filter receiver doesn't work when sending/receiving empty selection.
+-- DONE.  Add update_series receiver on charts for a series filter.
+-- DONE.  Add message polling to filter receivers.
+-- DONE.  Add DOM checking to filter receivers.
+-- DONE.  Create get_visible_columns method for charts so that you can create a series filter.
+-- DONE.  Add view_cols to update chart range.
+-- DONE.  Change name of chart receiver actions.  filter_values, filter_range, filter_columns
+-- DONE.  Change name of action for chart select?  DONE.  and type for sender. 
+-- DONE. Specify column for chart sender selection.  Need to specify column?  Yes I do.
+
+-- modify SuperCategoryFilter to use the sonar machinery behind the scenes?
+-- need a way to check if in aquarium for aquarium_hidden.
+-- text receiver widget. Much of it done, but don't know how to handle initial values, if initial values are lists for example.
+-- change clear button on checkbox group to link (or optional link)
+-- *** Add update binding range to filter handlers. Must take bound column index.
 -- Add Breakpoint parameter and @media max-height setting.
--- Add aggregation option to jooglechart?  Does an aggregation on a column.
--- Figure out how to initialize charts and widgets that communicate with each other.
+-- Create javascript classes for button, checkbox group widget (allows message polling).
 -- Create a detail chart demo using update selection.
 -- Custom legend.
+-- ****** SeriesFilter doesn't work if you put a receiver on the chart.
+-- *** Add wrapping divs on all box items.
+-- bug:  ButtonGroup send to ButtonGroup receive doesn't show selected buttons.
+-- *** make column not required for chart receiver (for filter_columns). make required for certain actions.
+-- Create unit tests for connected filters/widgets that have initial values.
+-- *** Break supercategory filter if you put senders or receivers on it.
+-- change python viewable columns code for Series Filter.  Keep the names. Don't need in template.
+-- Checkbox Group -- change type to radio=True/False?
+-- add_div_styles take underscore for hyphen.
+-- change ButtonGroup parameter:  radio=True/False
+-- make button to reset filter range for demo
+-- clear_button_bold not working on ButtonGroup?
+-- change ChartRow padding to accept integer or string
+-- create Sender widget?  Sender just sends a value on load. (Can be used for testing.)
+-- Add check for message.data.msg is defined in window event listener.
+-- Fix filter_columns when view_cols is set.
+-- unit test
+    Standalone Filter > standalone Filter > Chart
+    filter/chart > filter/chart > chart
+    filter > chart > chart
+
+
+
+
 
 styler todo
 -- add indeed_colors=True option
@@ -49,8 +82,8 @@ styler todo
 
 
 
-'''
 
+'''
 '''
 Created on Dec 5, 2015
 
@@ -132,6 +165,7 @@ class _GoogleFilter(object):
         self._senders = []
         self._receivers = []
         self._div_styles = {}
+        self._has_selected_values = False
 
     def add_options(self, options = None, **kwargs):
         """
@@ -179,7 +213,7 @@ class _GoogleFilter(object):
         if style_dict == None and not kwargs:
             # user is resetting styles
 
-            self.div_styles = {}
+            self._div_styles = {}
         else:
             if style_dict == None:
                 style_dict = {}
@@ -192,12 +226,11 @@ class _GoogleFilter(object):
         
         if type == "default":
             if self._type == "CategoryFilter":
-                type = "selection"
+                type = "values"
             elif self._type in ["DateRangeFilter", "NumberRangeFilter"]:
                 type = "range"
-#             elif self._type == "NumberRangeFilter":
-#                 type = "number_range"
-                
+
+                        
         self._senders.append({'on': on, 'key': key, 'type': type})
         
     
@@ -206,11 +239,11 @@ class _GoogleFilter(object):
         rec_dict = {}
         if action == "default":
             if self._type == "CategoryFilter":
-                action = "update_selection"
+                action = "update_values"
             elif self._type in ["DateRangeFilter", "NumberRangeFilter"]:
                 action = "update_range"
         
-        if action == "update_binding_selection":
+        if action == "update_binding_values":
             if "bound_column" in kwargs:
                 rec_dict['bound_column'] = kwargs['bound_column']
             else:
@@ -300,6 +333,10 @@ class Filter(_GoogleFilter):
 #                 self._data_type = "date"
 #             elif self._type == "NumberRangeFilter":
 #                 self._data_type = "number"
+
+        # get has_selected_values to see if a one time ready listener is needed.
+        self._has_selected_values = 'selectedValues' in self._state
+        
         
     def render(self, include_common=None, freestanding=True):
         
@@ -333,7 +370,7 @@ class SeriesFilter(_GoogleFilter):
     """
     
     def __init__(self):
-        super(SeriesFilter, self).__init__(None)
+        super(SeriesFilter, self).__init__("CategoryFilter")
 #         Filter.__init__(self, None)
         self.add_options(ui_label = "Columns")
         self.add_options(filterColumnIndex = 0)
@@ -371,34 +408,8 @@ class SeriesFilter(_GoogleFilter):
                 if chart.view_cols != view_cols:
                     message = "For SeriesFilter, all charts must have the same view cols"
                     raise JoogleChartsException(message)
-        
-        
-        try:
-            columns = jooglechart._dataframe.columns.values.tolist()
-        except:
-            # TODO: data is in a 2d array
-            columns = jooglechart._2d_array[0]
-            
-        # get a list of series column indices.
-        # if view_cols is set, that will be our initial series index list
-        # if not, take the indexes for all the columns
-        if view_cols:
-            series_indexes = view_cols[:]
-        else:
-            series_indexes = range(jooglechart._num_cols)
-
-        # remove role cols from series indexes
-        if jooglechart.roles:
-            role_cols = [role[0] for role in jooglechart.roles]
-            for col in role_cols:
-                if col in series_indexes:
-                    series_indexes.remove(col)
-        
-        # remove the category column -- first remaining series column
-        series_indexes.pop(0)
-
-        # get the series names
-        series_names = [columns[ix] for ix in series_indexes]
+                
+        series_indexes, series_names = jooglechart._get_viewable_series_indexes_and_names()
 
         # make data frame of series names to use for series filter DataTable        
         df = pd.DataFrame({'columns': series_names})
@@ -467,9 +478,6 @@ class SuperCategoryFilter(_GoogleFilter):
         context['super_filter'] = self
         context['super_filter_type'] = 'category'
     
-        # ISHBOOK-495
-#         context['notebook_url'] = _get_notebook_url()
-
         set_common_on_context(context, include_common)
         
         return j2_env.get_template('super_filter_template.html').render(context).encode('utf-8')
@@ -554,6 +562,8 @@ class _Chart():
         self._div_classes = []
         self._senders = []
         self._receivers = []
+        self._jooglechart = None
+
  
         # add any leftover kwargs to options
         if kwargs:
@@ -626,19 +636,69 @@ class _Chart():
             cols = [cols]
         self.view_cols = cols
 
-    def add_sender(self, key, on="select", type='send_selection'):
+    def add_sender(self, key, column, on="select", type='send_selection'):
         # possible types:
         #   send date range
         #   send number range
         
-        self._senders.append({'on': on, 'key': key, 'type': type})
+        self._senders.append({'on': on, 'key': key, 'type': type, 'column': column})
 
-    def add_receiver(self, key, column, action='update_selection'):
-        # possible types:
-        #   send date range
-        #   send number range
+    def add_receiver(self, key, *args, **kwargs):
+        
+        action = kwargs.pop('action', 'filter_values')
+        
+        column = kwargs.pop('column', None)
+        
+        if action in ['filter_values', 'filter_range'] and column is None:
+            message = "A column must be specified the chart receiver for filter_values or filter_range"
+            raise JoogleChartsException(message)
         
         self._receivers.append({'key': key, 'action': action, 'column': column})
+
+    
+#     def get_viewable_series(self):
+#         series_names = [columns[ix] for ix in series_indexes]
+#         return series_names
+
+
+    def _get_viewable_series_indexes_and_names(self):
+        
+        # get the columns that are not roll columns and are not excluded from set_view_cols
+        # this list will exclude the first category column.  For charts that 
+        # use the standard data model.
+
+        jooglechart = self._jooglechart
+        try:
+            columns = jooglechart._dataframe.columns.values.tolist()
+        except:
+            # TODO: data is in a 2d array
+            columns = jooglechart._2d_array[0]
+            
+        # get a list of series column indices.
+        # if view_cols is set, that will be our initial series index list
+        # if not, take the indexes for all the columns
+        view_cols = jooglechart.charts[0].view_cols
+        if view_cols:
+            series_indexes = view_cols[:]
+        else:
+            series_indexes = range(jooglechart._num_cols)
+
+        # remove role cols from series indexes
+        if jooglechart.roles:
+            role_cols = [role[0] for role in jooglechart.roles]
+            for col in role_cols:
+                if col in series_indexes:
+                    series_indexes.remove(col)
+        
+        # remove the category column -- first remaining series column
+        series_indexes.pop(0)
+ 
+        # get the series names
+        series_names = [columns[ix] for ix in series_indexes]
+         # get the series names
+        
+        return series_indexes, series_names
+    
 
     def _set_render_properties(self, num_cols, chart_type=None):
 
@@ -706,7 +766,8 @@ class JoogleChart():
         # Chart attributes
         chart_type = kwargs.pop('chart_type', DEFAULT_CHART_TYPE)
 
-        self.charts.append(_Chart(chart_type))
+#         self.charts.append(_Chart(chart_type))
+        self._add_chart(_Chart(chart_type))
 
         # add any leftover kwargs to options
         if kwargs:
@@ -758,6 +819,16 @@ class JoogleChart():
     def set_chart_type(self, chart_type):
 
         self.charts[0].chart_type = chart_type
+
+
+    
+    def _get_viewable_series_indexes_and_names(self):
+# 
+        return self.charts[0]._get_viewable_series_indexes_and_names()
+    
+    def get_viewable_series(self):
+        # return the series names only.  Can be used to make a stand alone series filter
+        return self.charts[0]._get_viewable_series_indexes_and_names()[1]
 
     def add_formatter(self, formatter, options=None, cols=None, source_cols=None, pattern=None, dest_col=None):
 
@@ -817,28 +888,29 @@ class JoogleChart():
         self._global_title = title
 
     def _add_chart(self, chart):
+        chart._jooglechart = self
         self.charts.append(chart)
 
     def copy(self):
 
         return copy.deepcopy(self)
 
-    def add_sender(self, key, on="select", type='selection'):
+    def add_sender(self, key, column, on="select", type='selection'):
         # possible types:
         #   send date range
         #   send number range
         
-        self.charts[0].add_sender(key, on, type)
+        self.charts[0].add_sender(key, column, on, type)
 #         self._senders.append({'on': on, 'key': key, 'type': type})
 
 
-    def add_receiver(self, key, column, action='update_selection'):
+    def add_receiver(self, key, *args, **kwargs):
         # possible types:
         #   send date range
         #   send number range
         
         self._has_senders = True
-        self.charts[0].add_receiver(key, column, action)
+        self.charts[0].add_receiver(key, **kwargs)
 #         self._senders.append({'on': on, 'key': key, 'type': type})
 
 
@@ -1068,7 +1140,7 @@ class ChartRow:
         if style_dict == None and not kwargs:
             # user is resetting styles
 
-            self.div_styles = {}
+            self._div_styles = {}
         else:
             if style_dict == None:
                 style_dict = {}

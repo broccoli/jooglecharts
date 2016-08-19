@@ -38,16 +38,11 @@ class ButtonGroup(object):
         
         if type(self._values) == pd.Series:
             self._values = self._values.tolist()
-        
-        if self._clear_button:
-            self._clear_button = "true"
-        else:
-            self._clear_button = 'false'
-            
-        if self._clear_button_position == "last":
-            self._append_or_prepend = "append"
-        else:
-            self._append_or_prepend = "prepend"
+                    
+#         if self._clear_button_position == "last":
+#             self._append_or_prepend = "append"
+#         else:
+#             self._append_or_prepend = "prepend"
             
         if self._orientation == "vertical":
             self._button_group_class = "btn-group-vertical"
@@ -65,7 +60,7 @@ class ButtonGroup(object):
         if style_dict == None and not kwargs:
             # user is resetting styles
 
-            self.div_styles = {}
+            self._div_styles = {}
         else:
             if style_dict == None:
                 style_dict = {}
@@ -155,7 +150,7 @@ class CheckboxGroup(object):
         if style_dict == None and not kwargs:
             # user is resetting styles
 
-            self.div_styles = {}
+            self._div_styles = {}
         else:
             if style_dict == None:
                 style_dict = {}
@@ -207,25 +202,28 @@ indeed_20 = []
 
 class TextReceiver(object):
     
-    def __init__(self, key, text, array_style="parens", pretext=None, default=""):
-        self._text = text
+    def __init__(self, key, template, list_style="parens", pretext=None, default=""):
+        self._template = template
         self._pretext = pretext
         self._key = key
-        self._array_style = array_style
+        self._list_style = list_style
         self._default = default
 
-        if array_style not in ['parens', 'brackets', 'colloquial']:
-            message = "TextReceiver array_style must be colloquial, parens, or brackets"
+        if list_style not in ['parens', 'brackets', 'colloquial']:
+            message = "TextReceiver list_style must be colloquial, parens, or brackets"
             raise JoogleChartsException(message)
 
         if self._pretext == None:
-            self._pretext = text.replace(default)
+            self._pretext = template.replace('{}', default)
 
 
-    def render(self):
+    def render(self, include_common=None):
+        
+        # Not doing anything with include_common.  Just need to have it in the signature
+        # so it can be called by Box and RowChart.
         
         context = {}
-        context['text_receiver'] = self
+        context['tr'] = self
         
         return j2_env.get_template('top_text_receiver.html').render(context).encode('utf-8')
 
@@ -234,13 +232,6 @@ class TextReceiver(object):
 
         display(HTML(self.render()))
 
-def is_string(obj):
-    try:
-        dummy = unicode(obj)
-        return True
-        # string
-    except:
-        return False
 
 class Button(object):
 
@@ -255,7 +246,7 @@ class Button(object):
         self._div_styles = {}
         
         # check if value is a string
-        if is_string(value):
+        if isinstance(value, str):
             value = value.strip()
             if len(value) == 0:
                 value = []
@@ -289,7 +280,7 @@ class Button(object):
         if style_dict == None and not kwargs:
             # user is resetting styles
 
-            self.div_styles = {}
+            self._div_styles = {}
         else:
             if style_dict == None:
                 style_dict = {}
@@ -330,6 +321,15 @@ class Button(object):
 
         display(HTML(self.render(include_common)))
 
+def replace_underscores_with_dashes(d):
+    
+    new_dict = {}
+    
+    for key in d:
+        new_key = key.replace('_', '-')
+        new_dict[new_key] = d[key]
+    return new_dict
+
 
 class Box(object):
     
@@ -353,11 +353,12 @@ class Box(object):
         if style_dict == None and not kwargs:
             # user is resetting styles
 
-            self.div_styles = {}
+            self._div_styles = {}
         else:
             if style_dict == None:
                 style_dict = {}
             if kwargs:
+                kwargs = replace_underscores_with_dashes(kwargs)
                 style_dict.update(kwargs)
             _add_dict_to_dict(self._div_styles, style_dict)
 
@@ -388,20 +389,36 @@ class Box(object):
 
         display(HTML(self.render(include_common)))
 
-class TableLegend(object):
+class Legend(object):
     
     
-    def __init__(self, values, colors="google_31", initial_values=None):
+    def __init__(self, values, colors="google_31", initial_values=None, inline=False,
+                 key_style="block"):
         
         self._values = values
         self._initial_values = initial_values
+        self._key_style = key_style
+        self._senders = []
         self._receivers = []
         self._div_id = None
+        
+        if inline:
+            self._display = "inline-block"
+        else:
+            self._display = "inherit"
         
         if colors == "google_31":
             self._colors = google_31
         else:
             self._colors = colors
+
+    def add_sender(self, key):
+        
+        # For now, we assume the on event is click and the type of data sent
+        # is the array of selections.  If that needs to change in the future,
+        # add params on="click" and type="selection"
+        
+        self._senders.append({'key': key})
 
     def add_receiver(self, key):
         
@@ -414,18 +431,18 @@ class TableLegend(object):
     def _set_render_properties(self):
         
         self._num = get_joogle_object_counter()
-        self._div_id = "table_legend_" + str(self._num) + "_div_id"
+        self._div_id = "joogle_legend_" + str(self._num) + "_div_id"
     
     def render(self, include_common=True):
         
         self._set_render_properties()
         context = {}
         context['callback_name'] = 'doStuff_' + str(self._num)
-        context['table_legend'] = self
+        context['legend'] = self
         
         set_common_on_context(context, include_common)
         
-        return j2_env.get_template('top_table_legend.html').render(context).encode('utf-8')
+        return j2_env.get_template('top_legend.html').render(context).encode('utf-8')
     
     def show(self, include_common=True):
 

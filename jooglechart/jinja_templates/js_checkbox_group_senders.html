@@ -1,5 +1,6 @@
 		// add senders before before creating checkboxes
 		{% for sender in cbg._senders %}
+		{% include "js_flush_message_map.html" %}
 		senders.push(function() {
 			var selected_values = get_selected_values();
 			joogle_globals.sonar.send("{{ sender.key }}", selected_values);

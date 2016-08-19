@@ -25,8 +25,10 @@ $(document).ready(function() {
 		window.joogle_globals.sonar = new (function () {
 			// object for holding all sonar pieces
 			this.handler_array = [];
+			this.message_map = {};
 			this.add_handler = function(handler) { this.handler_array.push(handler)};
 			this.send = function(key, value) {
+				this.message_map[key] = value;
 				var data = { sonar_key: key, sonar_value: value };
 				if (window.self !== window.top) {
 					window.parent.postMessage(data, window.location.origin + window.location.pathname);
@@ -39,12 +41,31 @@ $(document).ready(function() {
 				for (var i = 0; i < this.handler_array.length; i++) {
 					this.handler_array[i](data);
 				}
+				this.call_text_receivers(data);
+			}
+			this.poll_message_map = function(key) {
+				if (key in this.message_map) {
+					return this.message_map[key];
+				}
+				else { return null};
+			}
+			this.add_one_time_ready_poller = function(key, func, vis) {
+				/*
+					Check if a sonar msg was sent before chart was ready, and run function.
+					Can happen if a sender has been initialized with a value.
+				*/
+				google.visualization.events.addOneTimeListener(vis, "ready", function() {
+					var result = joogle_globals.sonar.poll_message_map(key);
+					if (result !== null) {
+						func({"sonar_key": key, "sonar_value": result});
+					}
+				});
 			}
 			this.call_text_receivers = function (data) {
-				$(".text_receiver").each(function() {
+				$(".joogle_text_receiver").each(function() {
 					var receiver = this;
 					var key = receiver.dataset.key;
-					var array_style = receiver.dataset.arraystyle;
+					var list_style = receiver.dataset.liststyle;
 					var sub_text = data.sonar_value;
 					var default_text = receiver.dataset.default;
 					if (typeof default_text === "undefined") {
@@ -60,9 +81,9 @@ $(document).ready(function() {
 					} else if (sub_text.length === 0) {
 						sub_text = [default_text];
 					}
-					sub_text = globals.format_array_for_text_receiver(sub_text, array_style);
+					sub_text = joogle_globals.format_list_for_text_receiver(sub_text, list_style);
 					if (key == data.sonar_key) {
-						var template = receiver.dataset.text;
+						var template = receiver.dataset.template;
 						template = template.replace("{}", sub_text);
 						receiver.innerHTML = template;
 					}
@@ -71,9 +92,8 @@ $(document).ready(function() {
 		})();
 	}
 	
-	window.joogle_globals.format_array_for_text_receiver = function(arr, array_style) {
-		console.log(array_style)
-		if (array_style === "colloquial") {
+	window.joogle_globals.format_list_for_text_receiver = function(arr, list_style) {
+		if (list_style === "colloquial") {
 			if (arr.length === 1) { return arr[0]; }
 			var front = "";
 			var back = "";
@@ -87,10 +107,10 @@ $(document).ready(function() {
 			}
 			return front + back;
 		}
-		else if (array_style === "parens") {
+		else if (list_style === "parens") {
 			return "(" + arr.join(", ") + ")";
 		}
-		else if (array_style === "brackets") {
+		else if (list_style === "brackets") {
 			return "[" + arr.join(", ") + "]";
 		}
 	}
@@ -141,10 +161,11 @@ $(document).ready(function() {
 		chartwrapper.draw();			
 	}
 
-	window.joogle_globals.update_chart_range = function(minValue, maxValue, data, chartwrapper, column) {
-		var rows = data.getFilteredRows([{column: column, minValue: minValue, maxValue: maxValue}]);
+	window.joogle_globals.update_chart_range = function(minValue, maxValue, data, chartwrapper, column, view_cols) {
+		var filtered_rows = data.getFilteredRows([{column: column, minValue: minValue, maxValue: maxValue}]);
 		chartwrapper.setView({
-			rows: rows
+			rows: filtered_rows,
+			columns: view_cols
 		});
 		chartwrapper.draw();			
 	}
@@ -161,6 +182,95 @@ $(document).ready(function() {
 			}
 		}
 		return rows_total;		
+	}
+
+	window.joogle_globals.get_binding_selections = function(binding_selections, datatable) {
+		// A filter's column can be bound by another sender (a filter, typically).
+		// Need to get the filtering values for the bound column if it had received a filtering messsage.
+		var binding_rows = [];
+		var binding_values = [];
+		for (var column in binding_selections) {
+			if (binding_selections[column].length > 0) {
+				var rows = joogle_globals.get_rows_for_column_selections(column, binding_selections[column], datatable);
+				$.merge(binding_rows, rows);
+			}
+		}			
+		// now we've got the binding rows, get the values in the right column
+		for (var ix in binding_rows) {
+			binding_values.push(datatable.getValue(binding_rows[ix], 0));
+		}
+		return binding_values;
+	}
+
+	window.joogle_globals.draw_chart_filtered_columns = function(datatable, viewable_columns, selected_columns, callback) {
+		// an object of series properties will be passed to the chart wrapper for setting color
+	    var series = {};
+		
+		// initialize the array of dataTable column indices, e.g, [0, 1, 2, etc.]
+	    var columns = [];
+	    for (var i = 0; i < datatable.getNumberOfColumns(); i++) {
+	        columns.push(i);
+	    }
+		
+		// Loop through series cols
+		for (var i = 0; i < viewable_columns.length; i++) {
+			series[i] = {}	// initialize series object
+			var ix = viewable_columns[i]	// get series column index in the original data table
+							
+			// check if series has been selected
+			var test_val = datatable.getColumnLabel(ix);
+			if ($.inArray(test_val, selected_columns) >= 0) {
+				// if the series is selected, just pass the normal column
+				// and get the default color
+				columns[ix] = ix;
+				series[i].color = null;
+			} else {
+				// create a column object that returns null, hiding the series on the chart
+                columns[ix] = {
+                    label: datatable.getColumnLabel(ix),
+                    type: datatable.getColumnType(ix),
+                    calc: function () {
+                        return null;
+                    }
+                };
+				
+				// gray out the series color for the legend
+				series[i].color = '#CCCCCC';
+			}	
+		}
+        var view = new google.visualization.DataView(datatable);
+        view.setColumns(columns);
+		
+		callback(view, series);
+	}
+
+	window.joogle_globals.get_viewable_columns = function(chart) {
+		var datatable = chart.getDataTable();
+		var view_cols = chart.getOption('view.columns', []);
+		if (view_cols.length === 0) {
+			var num_cols = datatable.getNumberOfColumns();
+			for (var i = 0; i < num_cols; i++){
+				view_cols.push(0);
+			}
+		}
+		var non_role_cols = [];
+		for (var i = 0; i < view_cols.length; i++) {
+			var role = datatable.getColumnRole(i);
+			if (role === "") { non_role_cols.push(i); }
+		}
+		non_role_cols.shift()
+		return non_role_cols;
+	}
+
+	window.joogle_globals.get_label_index_map = function(chart) {
+		var datatable = chart.getDataTable();
+		var num_columns = datatable.getNumberOfColumns();
+		var label_index_map = {};
+		for (var i = 0; i < num_columns; i++) {
+			var label = datatable.getColumnLabel(i);
+			label_index_map[label] = i;
+		}
+		return label_index_map;
 	}
 
 	/*
@@ -196,6 +306,11 @@ $(document).ready(function() {
 		}
 	}
 	
+{% include "js_button_group_prototype.html" %}
+
+
+{% include "js_legend_prototype.html" %}
+
 	/* <<<<<<<<<<<<<<<<<<<<<<<<<<<<< GLOBALS AREA */
 
 });

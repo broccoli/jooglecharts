@@ -1,0 +1,6 @@
+		{% for sender in legend._senders %}
+		{% include "js_flush_message_map.html" %}
+        google.visualization.events.addListener(legend, 'select', function(message) {
+			joogle_globals.sonar.send('{{ sender.key }}', message);
+		});
+		{% endfor %}

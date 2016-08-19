@@ -24,8 +24,6 @@
 	      state: {{ jg._series_filter._state|default("{}")|to_json }}
 	    });
 
-	    {{ jg._series_filter._name }}.draw();
-
 		// pass an array of the series' columns in the orignal datatable from python
 		// series cols are the viewable, non-role, non-category cols
 		var series_cols = {{ jg._series_filter._series_indexes|to_json }};
@@ -38,47 +36,19 @@
 
 		// an object of series properties will be passed to the chart wrapper for setting color
 	    var series = {};
+		
+		// ----------- Add SeriesFilter receivers, if any ------------
+		{% set filter = jg._series_filter %}
+		{% include 'js_filter_receivers.html' %}
+		// ---------------------------------------------------------
 
-		function series_filter_update_chart() {
-			
-			var selectedValues = {{ jg._series_filter._name }}.getState().selectedValues;
+	    {{ jg._series_filter._name }}.draw();
 
-			// Loop through series cols
-			for (var i = 0; i < series_cols.length; i++) {
-				
-				// initialize series object
-				series[i] = {}
-				
-				// get series column index in the original data table
-				var ix = series_cols[i]
-								
-				// check if series has been selected
-				var test_val = {{ jg.data_name }}.getColumnLabel(ix);
-				if ($.inArray(test_val, selectedValues) >= 0) {
-					// if the series is selected, just pass the normal column
-					// and get the default color
-					columns[ix] = ix;
-					series[i].color = null;
-				} else {
-					
-					// create a column object that returns null, hiding the series on the chart
-	                columns[ix] = {
-	                    label: {{ jg.data_name }}.getColumnLabel(ix),
-	                    type: {{ jg.data_name }}.getColumnType(ix),
-	                    calc: function () {
-	                        return null;
-	                    }
-	                };
-					
-					// gray out the series color for the legend
-					series[i].color = '#CCCCCC';
-				}
-				
-			}
-
-            var view = new google.visualization.DataView({{ jg.data_name }});
-            view.setColumns(columns);
-
+		/*
+			including both ready and statechange listeners as hack. The statechange event won't fire
+			for the SuperCategoryFilter but the ready event will.
+		*/
+		function update_chart_callback(view, series) {
             {% for chart in jg.charts %}
 				{{ chart.name }}.setDataTable(view);
 				{{ chart.name }}.setOption('series', series);
@@ -90,13 +60,30 @@
 	            {{ chart.name }}.draw();
 	            {% endfor %}
             {% endif %}
-			
 		}
 		
-		/*
-			including both ready and statechange listeners as hack. The statechange event won't fire
-			for the SuperCategoryFilter but the ready event will.
-		*/
-	    google.visualization.events.addListener({{ jg._series_filter._name }}, 'ready', series_filter_update_chart);
-	    google.visualization.events.addListener({{ jg._series_filter._name }}, 'statechange', series_filter_update_chart);
-		series_filter_update_chart();
+		function update_chart() {
+			var selected_values = {{ jg._series_filter._name }}.getState().selectedValues;
+			window.joogle_globals.draw_chart_filtered_columns({{ jg.data_name }}, series_cols, selected_values, update_chart_callback);
+
+            /* ----------- Add SeriesFilter senders, if any ----------- */
+            // for series filter, just send whenever update is called
+            // update is called on both ready and statechange.
+            {% for sender in jg._series_filter._senders %}
+			{% include "js_flush_message_map.html" %}
+            joogle_globals.sonar.send("{{ sender.key }}", selected_values);
+            {% endfor %}
+			/* -------------------------------------------------------- */			
+			
+		}
+	    google.visualization.events.addListener({{ jg._series_filter._name }}, 'ready', function() {
+	    	update_chart();
+	    });
+	    google.visualization.events.addListener({{ jg._series_filter._name }}, 'statechange', function() {
+	    	update_chart();
+	    });
+		update_chart();
+
+{#	    google.visualization.events.addListener({{ jg._series_filter._name }}, 'ready', series_filter_update_chart);#}
+{#	    google.visualization.events.addListener({{ jg._series_filter._name }}, 'statechange', series_filter_update_chart);#}
+{#		series_filter_update_chart();#}

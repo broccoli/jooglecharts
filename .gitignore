@@ -5,6 +5,10 @@ driver*
 test_chart_string.ipynb
 *ignore*
 demo*
+jooglechart/reveal.js/*
+jooglechart/reveal.js.zip
+*.html
+jooglechart/custom.css
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
