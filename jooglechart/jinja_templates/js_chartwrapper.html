@@ -3,7 +3,9 @@
         var {{ chart.name }} = new google.visualization.ChartWrapper({      
             "containerId": "{{ chart.chart_div_id }}",
             "dataTable": {{ jg.data_name }},
+            {% if chart.view_cols %}
             "view": {columns: {{ chart.view_cols|to_json }}},  
+            {% endif %}
             "chartType": "{{ chart.display_chart_type }}",
             "options": {{ chart.chart_options|to_json }}
         });
