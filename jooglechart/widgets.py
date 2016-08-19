@@ -60,7 +60,7 @@ class ButtonGroup(object):
         if style_dict == None and not kwargs:
             # user is resetting styles
 
-            self.div_styles = {}
+            self._div_styles = {}
         else:
             if style_dict == None:
                 style_dict = {}
@@ -150,7 +150,7 @@ class CheckboxGroup(object):
         if style_dict == None and not kwargs:
             # user is resetting styles
 
-            self.div_styles = {}
+            self._div_styles = {}
         else:
             if style_dict == None:
                 style_dict = {}
@@ -287,7 +287,7 @@ class Button(object):
         if style_dict == None and not kwargs:
             # user is resetting styles
 
-            self.div_styles = {}
+            self._div_styles = {}
         else:
             if style_dict == None:
                 style_dict = {}
@@ -360,7 +360,7 @@ class Box(object):
         if style_dict == None and not kwargs:
             # user is resetting styles
 
-            self.div_styles = {}
+            self._div_styles = {}
         else:
             if style_dict == None:
                 style_dict = {}

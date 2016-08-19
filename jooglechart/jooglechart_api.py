@@ -213,7 +213,7 @@ class _GoogleFilter(object):
         if style_dict == None and not kwargs:
             # user is resetting styles
 
-            self.div_styles = {}
+            self._div_styles = {}
         else:
             if style_dict == None:
                 style_dict = {}
@@ -1140,7 +1140,7 @@ class ChartRow:
         if style_dict == None and not kwargs:
             # user is resetting styles
 
-            self.div_styles = {}
+            self._div_styles = {}
         else:
             if style_dict == None:
                 style_dict = {}
