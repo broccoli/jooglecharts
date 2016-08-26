@@ -71,6 +71,8 @@ Sonar todo:
     filter/chart > filter/chart > chart
     filter > chart > chart
 
+-- Change chart sender to sending col/rol/all
+-- Change filter sender "type" to "message"
 
 
 
