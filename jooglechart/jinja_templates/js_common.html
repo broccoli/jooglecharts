@@ -7,7 +7,8 @@ $(document).ready(function() {
 
 	window.addEventListener('message', function(message) {
 		// listener for sonar message from iframe parent
-		if (message.data.msg.sonar_key !== undefined && message.data.msg.sonar_value !== undefined && 
+		if (typeof message.data.msg !== "undefined" && typeof message.data.msg.sonar_key !== "undefined" && 
+				typeof message.data.msg.sonar_value !== "undefined" && 
 				message.data.originId !== message.data.destinationId) {
 			if (joogle_globals.sonar.handler_array !== undefined) {
 				joogle_globals.sonar.call_handlers(message.data.msg);
