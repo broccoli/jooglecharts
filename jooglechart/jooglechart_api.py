@@ -68,6 +68,8 @@ Sonar todo:
 -- Fix filter_columns when view_cols is set.
 -- Add display values to ButtonGroup, CheckboxGroup, Button
 -- Add title to checkboxes
+-- For Button and ButtonGroup, use "display_text" as parameter (not text).  Make it optional -- use values if not included.
+-- Specify button style as "button" or "link".  Need to check for these values in the widget.
 -- unit test
     Standalone Filter > standalone Filter > Chart
     filter/chart > filter/chart > chart
