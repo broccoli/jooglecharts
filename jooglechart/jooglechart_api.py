@@ -41,48 +41,49 @@ Sonar todo:
 -- DONE.  Change name of action for chart select?  DONE.  and type for sender. 
 -- DONE. Specify column for chart sender selection.  Need to specify column?  Yes I do.
 -- DONE.  Custom legend.
+-- DONE.  Specify button style as "button" or "link".  Need to check for these values in the widget.
+-- DONE.  *** Add wrapping divs on all box items.
+-- DONE.  change ButtonGroup parameter:  radio=True/False
+    select_style = "single" "multi"
+-- DONE.  Add check for message.data.msg is defined in window event listener.
+
 
 -- need a way to check if in aquarium for aquarium_hidden.
 -- text receiver widget. Much of it done, but don't know how to handle initial values, if initial values are lists for example.
--- change clear button on checkbox group to link (or optional link)
--- *** Add update binding range to filter handlers. Must take bound column index.
 -- Add Breakpoint parameter and @media max-height setting.
--- Create javascript classes for button, checkbox group widget (allows message polling).
 -- Create a detail chart demo using update selection.
 -- ****** SeriesFilter doesn't work if you put a receiver on the chart.
--- *** Add wrapping divs on all box items.
 -- bug:  ButtonGroup send to ButtonGroup receive doesn't show selected buttons.
 -- *** make column not required for chart receiver (for filter_columns). make required for certain actions.
 -- Create unit tests for connected filters/widgets that have initial values.
--- *** Break supercategory filter if you put senders or receivers on it.
 -- change python viewable columns code for Series Filter.  Keep the names. Don't need in template.
--- Checkbox Group -- change type to radio=True/False?
--- add_div_styles take underscore for hyphen.
--- change ButtonGroup parameter:  radio=True/False
-    select_style = "single" "multi"
--- make button to reset filter range for demo
--- clear_button_bold not working on ButtonGroup?
 -- change ChartRow padding to accept integer or string
--- create Sender widget?  Sender just sends a value on load. (Can be used for testing.)
--- Add check for message.data.msg is defined in window event listener.
 -- Fix filter_columns when view_cols is set.
--- Add display values to ButtonGroup, CheckboxGroup, Button
--- Add title to checkboxes
 -- Fix buttongroup send to buttongroup
 -- Change chart sender to send row value or column value (and maybe row and column)
 -- For Button and ButtonGroup, use "display_text" as parameter (not text).  Make it optional -- use values if not included.
--- Specify button style as "button" or "link".  Need to check for these values in the widget.
 -- Remove initial_values from Legend.  Doesn't do anything different than values.
 -- Add mouseover event for Legend.  Add mouseover sender to the api.
 -- Add ButtonGroup, Button sizes:  small, medium, large
--- CheckboxGroup -- make into class so it can trigger events, and add onetime listener.
--- Button -- make into class so it can trigger events, and add onetime listener.
--- Change chart sender to sending col/row/all
 -- Change filter sender "type" to "message"
+-- make checkboxGroup font size 12 pt.
 
 ON HOLD
 -- modify SuperCategoryFilter to use the sonar machinery behind the scenes?
+-- *** Break supercategory filter if you put senders or receivers on it.
+-- create Sender widget?  Sender just sends a value on load. (Can be used for testing.)
+-- *** Add update binding range to filter handlers. Must take bound column index.
+    This is for binding a category filter to a range filter
 
+
+MAKE THEIR OWN TICKET
+-- Change chart sender to sending col/row/all
+-- CheckboxGroup -- make into class so it can trigger events, and add onetime listener.
+    -- Also change from divs to list, and add title as a list item.
+    -- Also add link/button option for clear button
+-- Button -- make into class so it can trigger events, and add onetime listener and message polling
+-- Add display text option to ButtonGroup, CheckboxGroup, Button
+-- Create widget class, make add_div_styles take underscore for hyphen.
 
 
 
