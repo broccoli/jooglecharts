@@ -4,7 +4,9 @@
 
 <div id="{{ box._div_id }}" {{ box._div_styles|format_styles_list }}>
     {% for string in box._content_strings %}
+    <div>
 	{{ string }}
+	</div>
     {% endfor %}
 </div>
 
