@@ -399,11 +399,10 @@ class Box(object):
 class Legend(object):
     
     
-    def __init__(self, values, colors="google_31", initial_values=None, inline=False,
+    def __init__(self, values, colors="google_31", inline=False,
                  key_style="block"):
         
         self._values = values
-        self._initial_values = initial_values
         self._key_style = key_style
         self._senders = []
         self._receivers = []
