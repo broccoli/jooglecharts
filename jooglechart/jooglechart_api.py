@@ -47,6 +47,7 @@ Sonar todo:
     select_style = "single" "multi"
 -- DONE.  Add check for message.data.msg is defined in window event listener.
 -- DONE.  Remove initial_values from Legend.  Doesn't do anything different than values.
+-- DONE.  change ChartRow padding to accept integer or string
 
 
 -- need a way to check if in aquarium for aquarium_hidden.
@@ -58,7 +59,6 @@ Sonar todo:
 -- *** make column not required for chart receiver (for filter_columns). make required for certain actions.
 -- Create unit tests for connected filters/widgets that have initial values.
 -- change python viewable columns code for Series Filter.  Keep the names. Don't need in template.
--- change ChartRow padding to accept integer or string
 -- Fix filter_columns when view_cols is set.
 -- Fix buttongroup send to buttongroup
 -- Change chart sender to send row value or column value (and maybe row and column)
