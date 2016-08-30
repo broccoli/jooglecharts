@@ -245,6 +245,10 @@ class Button(object):
         self._receivers = []
         self._div_styles = {}
         
+        if self._style != "link":
+            self._style = 'button'
+        
+        
         # check if value is a string
         if isinstance(value, str):
             value = value.strip()
@@ -265,8 +269,6 @@ class Button(object):
         self._num = get_joogle_object_counter()
         self._div_id = "joogle_button_" + str(self._num) + "_div_id"
                 
-        if self._style != "link":
-            self._style = 'button'
                         
 
     def add_div_styles(self, style_dict = None, **kwargs):
