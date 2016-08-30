@@ -39,13 +39,14 @@ Sonar todo:
 -- DONE.  Add view_cols to update chart range.
 -- DONE.  Change name of chart receiver actions.  filter_values, filter_range, filter_columns
 -- DONE.  Change name of action for chart select?  DONE.  and type for sender. 
--- DONE. Specify column for chart sender selection.  Need to specify column?  Yes I do.
+-- DONE.  Specify column for chart sender selection.  Need to specify column?  Yes I do.
 -- DONE.  Custom legend.
 -- DONE.  Specify button style as "button" or "link".  Need to check for these values in the widget.
 -- DONE.  *** Add wrapping divs on all box items.
 -- DONE.  change ButtonGroup parameter:  radio=True/False
     select_style = "single" "multi"
 -- DONE.  Add check for message.data.msg is defined in window event listener.
+-- DONE.  Remove initial_values from Legend.  Doesn't do anything different than values.
 
 
 -- need a way to check if in aquarium for aquarium_hidden.
@@ -62,11 +63,9 @@ Sonar todo:
 -- Fix buttongroup send to buttongroup
 -- Change chart sender to send row value or column value (and maybe row and column)
 -- For Button and ButtonGroup, use "display_text" as parameter (not text).  Make it optional -- use values if not included.
--- Remove initial_values from Legend.  Doesn't do anything different than values.
 -- Add mouseover event for Legend.  Add mouseover sender to the api.
 -- Add ButtonGroup, Button sizes:  small, medium, large
 -- Change filter sender "type" to "message"
--- make checkboxGroup font size 12 pt.
 
 ON HOLD
 -- modify SuperCategoryFilter to use the sonar machinery behind the scenes?
@@ -74,6 +73,7 @@ ON HOLD
 -- create Sender widget?  Sender just sends a value on load. (Can be used for testing.)
 -- *** Add update binding range to filter handlers. Must take bound column index.
     This is for binding a category filter to a range filter
+-- make checkboxGroup font size 12 pt.
 
 
 MAKE THEIR OWN TICKET
@@ -1103,9 +1103,22 @@ class ChartRow:
             message = "ChartRow mode must be bootstrap, free, weighted, or fixed."
             raise JoogleChartsException(message)
         
-        self._padding = kwargs.pop("padding", None)
-        if self._padding:
-            self._padding = str(int(self._padding)) + "px"
+        
+        padding = kwargs.pop("padding", None)
+        
+        
+#         self._padding = kwargs.pop("padding", None)
+#         if self._padding:
+#             self._padding = str(int(self._padding)) + "px"
+        if padding:
+            try:
+                # if it's an integer, add 'px'
+                padding = int(padding)
+                padding = str(padding) + "px"
+            except:
+                # if it's not an integer, just pass it verbaticm
+                pass
+            self._padding = padding
             
         self._weights = kwargs.pop("weights", [])
         if self._mode == "weighted":
@@ -1125,10 +1138,11 @@ class ChartRow:
                 raise JoogleChartsException(message)
             for width in widths:
                 try:
+                    # if it's an integer, add 'px'
                     w = int(width)
                     w = str(w) + "px"
-#                     self._widths.append(int(width))
                 except:
+                    # if it's not an integer, just pass it verbaticm
                     w = width
                 self._style_widths.append('style="width:{}"'.format(w))
 
