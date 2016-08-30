@@ -48,11 +48,11 @@ Sonar todo:
 -- DONE.  Add check for message.data.msg is defined in window event listener.
 -- DONE.  Remove initial_values from Legend.  Doesn't do anything different than values.
 -- DONE.  change ChartRow padding to accept integer or string
+-- DONE.  For Button, use "display_text" as parameter (not text).
 
 
 -- need a way to check if in aquarium for aquarium_hidden.
 -- text receiver widget. Much of it done, but don't know how to handle initial values, if initial values are lists for example.
--- Add Breakpoint parameter and @media max-height setting.
 -- Create a detail chart demo using update selection.
 -- ****** SeriesFilter doesn't work if you put a receiver on the chart.
 -- bug:  ButtonGroup send to ButtonGroup receive doesn't show selected buttons.
@@ -62,7 +62,6 @@ Sonar todo:
 -- Fix filter_columns when view_cols is set.
 -- Fix buttongroup send to buttongroup
 -- Change chart sender to send row value or column value (and maybe row and column)
--- For Button and ButtonGroup, use "display_text" as parameter (not text).  Make it optional -- use values if not included.
 -- Add mouseover event for Legend.  Add mouseover sender to the api.
 -- Add ButtonGroup, Button sizes:  small, medium, large
 -- Change filter sender "type" to "message"
@@ -74,6 +73,7 @@ ON HOLD
 -- *** Add update binding range to filter handlers. Must take bound column index.
     This is for binding a category filter to a range filter
 -- make checkboxGroup font size 12 pt.
+-- Add Breakpoint parameter and @media max-height setting.
 
 
 MAKE THEIR OWN TICKET
@@ -82,8 +82,7 @@ MAKE THEIR OWN TICKET
     -- Also change from divs to list, and add title as a list item.
     -- Also add link/button option for clear button
 -- Button -- make into class so it can trigger events, and add onetime listener and message polling
--- Add display text option to ButtonGroup, CheckboxGroup, Button
--- Create widget class, make add_div_styles take underscore for hyphen.
+-- Create Widget class, make add_div_styles take underscore for hyphen.
 
 
 
