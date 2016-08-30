@@ -40,8 +40,8 @@ Sonar todo:
 -- DONE.  Change name of chart receiver actions.  filter_values, filter_range, filter_columns
 -- DONE.  Change name of action for chart select?  DONE.  and type for sender. 
 -- DONE. Specify column for chart sender selection.  Need to specify column?  Yes I do.
+-- DONE.  Custom legend.
 
--- modify SuperCategoryFilter to use the sonar machinery behind the scenes?
 -- need a way to check if in aquarium for aquarium_hidden.
 -- text receiver widget. Much of it done, but don't know how to handle initial values, if initial values are lists for example.
 -- change clear button on checkbox group to link (or optional link)
@@ -49,7 +49,6 @@ Sonar todo:
 -- Add Breakpoint parameter and @media max-height setting.
 -- Create javascript classes for button, checkbox group widget (allows message polling).
 -- Create a detail chart demo using update selection.
--- Custom legend.
 -- ****** SeriesFilter doesn't work if you put a receiver on the chart.
 -- *** Add wrapping divs on all box items.
 -- bug:  ButtonGroup send to ButtonGroup receive doesn't show selected buttons.
@@ -60,6 +59,7 @@ Sonar todo:
 -- Checkbox Group -- change type to radio=True/False?
 -- add_div_styles take underscore for hyphen.
 -- change ButtonGroup parameter:  radio=True/False
+    select_style = "single" "multi"
 -- make button to reset filter range for demo
 -- clear_button_bold not working on ButtonGroup?
 -- change ChartRow padding to accept integer or string
@@ -68,17 +68,21 @@ Sonar todo:
 -- Fix filter_columns when view_cols is set.
 -- Add display values to ButtonGroup, CheckboxGroup, Button
 -- Add title to checkboxes
+-- Fix buttongroup send to buttongroup
+-- Change chart sender to send row value or column value (and maybe row and column)
 -- For Button and ButtonGroup, use "display_text" as parameter (not text).  Make it optional -- use values if not included.
 -- Specify button style as "button" or "link".  Need to check for these values in the widget.
 -- Remove initial_values from Legend.  Doesn't do anything different than values.
 -- Add mouseover event for Legend.  Add mouseover sender to the api.
--- unit test
-    Standalone Filter > standalone Filter > Chart
-    filter/chart > filter/chart > chart
-    filter > chart > chart
-
--- Change chart sender to sending col/rol/all
+-- Add ButtonGroup, Button sizes:  small, medium, large
+-- CheckboxGroup -- make into class so it can trigger events, and add onetime listener.
+-- Button -- make into class so it can trigger events, and add onetime listener.
+-- Change chart sender to sending col/row/all
 -- Change filter sender "type" to "message"
+
+ON HOLD
+-- modify SuperCategoryFilter to use the sonar machinery behind the scenes?
+
 
 
 
