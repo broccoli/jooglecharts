@@ -14,13 +14,13 @@ import pandas as pd
 class ButtonGroup(object):
 
     
-    def __init__(self, values, initial_values=None, type="checkbox", 
+    def __init__(self, values, initial_values=None, select_style="multi", 
             clear_button=False, clear_button_position="first",
             orientation="horizontal", clear_button_bold=False, title=None):
 
         self._values = values
         self._initial_values = initial_values
-        self._type = type
+#         self._type = type
         self._clear_button = clear_button
         self._clear_button_position = clear_button_position
         self._orientation = orientation
@@ -30,6 +30,11 @@ class ButtonGroup(object):
         self._receivers = []
         self._div_styles = {}
         self._title = title
+    
+        if select_style == "single":
+            self._type = "radio"
+        else:
+            self._type = "checkbox"
     
     def _set_render_properties(self):
         
