@@ -70,6 +70,8 @@ Sonar todo:
 -- Add title to checkboxes
 -- For Button and ButtonGroup, use "display_text" as parameter (not text).  Make it optional -- use values if not included.
 -- Specify button style as "button" or "link".  Need to check for these values in the widget.
+-- Remove initial_values from Legend.  Doesn't do anything different than values.
+-- Add mouseover event for Legend.  Add mouseover sender to the api.
 -- unit test
     Standalone Filter > standalone Filter > Chart
     filter/chart > filter/chart > chart
