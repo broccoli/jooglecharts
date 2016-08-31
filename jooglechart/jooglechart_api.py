@@ -48,7 +48,7 @@ Sonar todo:
 -- DONE.  Add check for message.data.msg is defined in window event listener.
 -- DONE.  Remove initial_values from Legend.  Doesn't do anything different than values.
 -- DONE.  change ChartRow padding to accept integer or string
--- DONE.  For Button, use "display_text" as parameter (not text).
+-- DONE.  Change filter sender "type" to "message"
 
 
 -- need a way to check if in aquarium for aquarium_hidden.
@@ -64,7 +64,6 @@ Sonar todo:
 -- Change chart sender to send row value or column value (and maybe row and column)
 -- Add mouseover event for Legend.  Add mouseover sender to the api.
 -- Add ButtonGroup, Button sizes:  small, medium, large
--- Change filter sender "type" to "message"
 
 ON HOLD
 -- modify SuperCategoryFilter to use the sonar machinery behind the scenes?
