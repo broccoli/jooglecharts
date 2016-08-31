@@ -64,6 +64,8 @@ Sonar todo:
 -- Change chart sender to send row value or column value (and maybe row and column)
 -- Add mouseover event for Legend.  Add mouseover sender to the api.
 -- Add ButtonGroup, Button sizes:  small, medium, large
+-- custom bound filter case:  select category, select city, unselect category. (city filter still shows but is not controlling)
+    Check this behavior against real bound filter behavior.
 
 ON HOLD
 -- modify SuperCategoryFilter to use the sonar machinery behind the scenes?
