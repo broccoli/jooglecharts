@@ -234,9 +234,9 @@ class _GoogleFilter(object):
             _add_dict_to_dict(self._div_styles, style_dict)
             
 
-    def add_sender(self, key, on="statechange", type='default'):
+    def add_sender(self, key, on="statechange", message_type='default'):
         
-        if type == "default":
+        if message_type == "default":
             if self._type == "CategoryFilter":
                 type = "values"
             elif self._type in ["DateRangeFilter", "NumberRangeFilter"]:
