@@ -240,11 +240,11 @@ class TextReceiver(object):
 
 class Button(object):
 
-    def __init__(self, value, display_text, style="button"):
+    def __init__(self, value, text, style="button"):
 
         self._value = None
         self._style = style
-        self._display_text = display_text
+        self._text = text
         self._div_id = None
         self._senders = []
         self._receivers = []
