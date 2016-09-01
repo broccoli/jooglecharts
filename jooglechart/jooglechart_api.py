@@ -649,12 +649,12 @@ class _Chart():
             cols = [cols]
         self.view_cols = cols
 
-    def add_sender(self, key, column, on="select", type='send_selection'):
+    def add_sender(self, key, column, on="select", message_type='category'):
         # possible types:
         #   send date range
         #   send number range
         
-        self._senders.append({'on': on, 'key': key, 'type': type, 'column': column})
+        self._senders.append({'on': on, 'key': key, 'type': message_type, 'column': column})
 
     def add_receiver(self, key, *args, **kwargs):
         
@@ -908,12 +908,12 @@ class JoogleChart():
 
         return copy.deepcopy(self)
 
-    def add_sender(self, key, column, on="select", type='selection'):
+    def add_sender(self, key, column, on="select", message_type='category'):
         # possible types:
         #   send date range
         #   send number range
         
-        self.charts[0].add_sender(key, column, on, type)
+        self.charts[0].add_sender(key, column, on, message_type)
 #         self._senders.append({'on': on, 'key': key, 'type': type})
 
 
