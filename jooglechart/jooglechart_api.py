@@ -49,6 +49,8 @@ Sonar todo:
 -- DONE.  Remove initial_values from Legend.  Doesn't do anything different than values.
 -- DONE.  change ChartRow padding to accept integer or string
 -- DONE.  Change filter sender "type" to "message"
+-- DONE.  Fix filter_columns when view_cols is set.
+-- DONE.  make column not required for chart receiver (for filter_columns). make required for certain actions.
 
 
 -- need a way to check if in aquarium for aquarium_hidden.
@@ -56,12 +58,9 @@ Sonar todo:
 -- Create a detail chart demo using update selection.
 -- ****** SeriesFilter doesn't work if you put a receiver on the chart.
 -- bug:  ButtonGroup send to ButtonGroup receive doesn't show selected buttons.
--- *** make column not required for chart receiver (for filter_columns). make required for certain actions.
--- Create unit tests for connected filters/widgets that have initial values.
 -- change python viewable columns code for Series Filter.  Keep the names. Don't need in template.
--- Fix filter_columns when view_cols is set.
 -- Fix buttongroup send to buttongroup
--- Change chart sender to send row value or column value (and maybe row and column)
+-- Change chart sender to send category, header, value
 -- Add mouseover event for Legend.  Add mouseover sender to the api.
 -- Add ButtonGroup, Button sizes:  small, medium, large
 -- custom bound filter case:  select category, select city, unselect category. (city filter still shows but is not controlling)
@@ -85,6 +84,8 @@ MAKE THEIR OWN TICKET
 -- Button -- make into class so it can trigger events, and add onetime listener and message polling
 -- Create Widget class, make add_div_styles take underscore for hyphen.
 
+UNIT TESTS
+-- Create unit tests for connected filters/widgets that have initial values.
 
 
 
