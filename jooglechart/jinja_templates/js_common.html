@@ -246,19 +246,31 @@ $(document).ready(function() {
 	}
 
 	window.joogle_globals.get_viewable_columns = function(chart) {
+		// Get the column indexes for viewable series.  Check to see if viewable columns was specified
+		// Then take out the role columns, and then drop the first column, since its a category.
+		
 		var datatable = chart.getDataTable();
-		var view_cols = chart.getOption('view.columns', []);
+		var view = chart.getView();
+		
+		// if view columns not specified, get empty array
+		var view_cols = view === null ? [] : view.columns;
+
 		if (view_cols.length === 0) {
+			// if no view_cols are set, just get an array of all column numbers
 			var num_cols = datatable.getNumberOfColumns();
 			for (var i = 0; i < num_cols; i++){
-				view_cols.push(0);
+				view_cols.push(i);
 			}
 		}
+		
+		// get the subset of view_cols that are not role columns
 		var non_role_cols = [];
 		for (var i = 0; i < view_cols.length; i++) {
 			var role = datatable.getColumnRole(i);
-			if (role === "") { non_role_cols.push(i); }
+			if (role === "") { non_role_cols.push(view_cols[i]); }
 		}
+		
+		// shift off the first column of categories
 		non_role_cols.shift()
 		return non_role_cols;
 	}
