@@ -14,13 +14,13 @@ import pandas as pd
 class ButtonGroup(object):
 
     
-    def __init__(self, values, initial_values=None, type="checkbox", 
+    def __init__(self, values, initial_values=None, select_style="multi", 
             clear_button=False, clear_button_position="first",
             orientation="horizontal", clear_button_bold=False, title=None):
 
         self._values = values
         self._initial_values = initial_values
-        self._type = type
+#         self._type = type
         self._clear_button = clear_button
         self._clear_button_position = clear_button_position
         self._orientation = orientation
@@ -30,6 +30,11 @@ class ButtonGroup(object):
         self._receivers = []
         self._div_styles = {}
         self._title = title
+    
+        if select_style == "single":
+            self._type = "radio"
+        else:
+            self._type = "checkbox"
     
     def _set_render_properties(self):
         
@@ -245,6 +250,10 @@ class Button(object):
         self._receivers = []
         self._div_styles = {}
         
+        if self._style != "link":
+            self._style = 'button'
+        
+        
         # check if value is a string
         if isinstance(value, str):
             value = value.strip()
@@ -265,8 +274,6 @@ class Button(object):
         self._num = get_joogle_object_counter()
         self._div_id = "joogle_button_" + str(self._num) + "_div_id"
                 
-        if self._style != "link":
-            self._style = 'button'
                         
 
     def add_div_styles(self, style_dict = None, **kwargs):
@@ -392,11 +399,10 @@ class Box(object):
 class Legend(object):
     
     
-    def __init__(self, values, colors="google_31", initial_values=None, inline=False,
+    def __init__(self, values, colors="google_31", inline=False,
                  key_style="block"):
         
         self._values = values
-        self._initial_values = initial_values
         self._key_style = key_style
         self._senders = []
         self._receivers = []

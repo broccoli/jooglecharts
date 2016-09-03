@@ -4,7 +4,7 @@
 		this.$list;
 		this.div_id = options.div_id;
 		this.$div = $("#" + this.div_id);
-		this.initial_values = options.initial_values;
+{#		this.initial_values = options.initial_values;#}
 		this.key_style = options.key_style;
 		this.list_style = options.list_style;
 	};
@@ -68,11 +68,11 @@
 	window.joogle_globals.Legend.prototype.draw = function() {
 		this.$list = $("<ul>");
 		this.$div.append(this.$list);
-		if (typeof this.initial_values !== "undefined" && this.initial_values !== null) {
-			this.update_legend(this.initial_values);				
-		}
-		else {
-			this.update_legend(this.series);				
-		}
+		this.update_legend(this.series);				
+{#		if (typeof this.initial_values !== "undefined" && this.initial_values !== null) {#}
+{#			this.update_legend(this.initial_values);				#}
+{#		}#}
+{#		else {#}
+{#		}#}
 	
 	}
