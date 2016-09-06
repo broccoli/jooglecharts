@@ -173,7 +173,7 @@ $(document).ready(function() {
 				}
 				
 				else if (type === "range"){
-					// todo
+					filtered_rows = data.getFilteredRows([{column: column, minValue: values[0], maxValue: values[1]}]);
 				}
 				
 				if (total_filtered_rows.length == 0) { total_filtered_rows = filtered_rows;}
@@ -195,15 +195,6 @@ $(document).ready(function() {
 		chartwrapper.draw();			
 	}
 
-	window.joogle_globals.update_chart_range = function(minValue, maxValue, data, chartwrapper, column, view_cols) {
-		var filtered_rows = data.getFilteredRows([{column: column, minValue: minValue, maxValue: maxValue}]);
-		chartwrapper.setView({
-			rows: filtered_rows,
-			columns: view_cols
-		});
-		chartwrapper.draw();			
-	}
-	
 	window.joogle_globals.get_rows_for_column_and_values = function(column, selections, datatable) {
 		// for a list of values and a column, get the row numbers that have those values.
 		var rows_total = [];

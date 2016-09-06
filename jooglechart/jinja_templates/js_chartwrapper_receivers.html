@@ -7,11 +7,14 @@
 		{% if receiver.action == 'filter_values' %}
 		key_filter_list.push({'key': '{{ receiver.key }}', 'type': 'values', 'column': {{ receiver.column }}});
 		{% endif %}
+		{% if receiver.action == 'filter_range' %}
+		key_filter_list.push({'key': '{{ receiver.key }}', 'type': 'range', 'column': {{ receiver.column }}});
+		{% endif %}
 		{% endfor %}
 
 
 		{% for receiver in chart._receivers %}
-		{% if receiver.action == 'filter_values' %}
+		{% if receiver.action == 'filter_values' or receiver.action == 'filter_range' %}
 		(function(key, chart, datatable, chart_div_id, view_cols) {
 			var func = function(data) {
 				if (data.sonar_key === key && document.getElementById(chart_div_id) !== null) {
@@ -22,17 +25,17 @@
 			joogle_globals.sonar.add_one_time_ready_poller(key, func, chart);
 		})("{{ receiver.key }}", {{ chart.name }}, {{ jg.data_name }}, "{{ chart.chart_div_id }}", {{ chart.view_cols|to_json }});
 		{% endif %}
-		{% if receiver.action == 'filter_range' %}
-		(function(key, chart, datatable, chart_div_id, col, view_cols) {
-			var func = function(data) {
-				if (data.sonar_key === key && document.getElementById(chart_div_id) !== null) {
-					joogle_globals.update_chart_range(data.sonar_value[0], data.sonar_value[1], datatable, chart, col, view_cols);
-				}
-			}
-			joogle_globals.sonar.add_handler(func);
-			joogle_globals.sonar.add_one_time_ready_poller(key, func, chart);
-		})("{{ receiver.key }}", {{ chart.name }}, {{ jg.data_name }}, "{{ chart.chart_div_id }}", {{ receiver.column }}, {{ chart.view_cols|to_json }});
-		{% endif %}
+{#		{% if receiver.action == 'filter_range' %}#}
+{#		(function(key, chart, datatable, chart_div_id, col, view_cols) {#}
+{#			var func = function(data) {#}
+{#				if (data.sonar_key === key && document.getElementById(chart_div_id) !== null) {#}
+{#					joogle_globals.update_chart_range(data.sonar_value[0], data.sonar_value[1], datatable, chart, col, view_cols);#}
+{#				}#}
+{#			}#}
+{#			joogle_globals.sonar.add_handler(func);#}
+{#			joogle_globals.sonar.add_one_time_ready_poller(key, func, chart);#}
+{#		})("{{ receiver.key }}", {{ chart.name }}, {{ jg.data_name }}, "{{ chart.chart_div_id }}", {{ receiver.column }}, {{ chart.view_cols|to_json }});#}
+{#		{% endif %}#}
 		{% if receiver.action == 'filter_columns' %}
 		// handler to filter columns
 		(function(key, chart, datatable, chart_div_id, col, view_cols) {
