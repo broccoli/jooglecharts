@@ -1198,7 +1198,7 @@ class ChartRow:
         set_common_on_context(context, include_common)
 
         for obj in self._objects:
-            if isinstance(obj, str):
+            if isinstance(obj, (str, unicode)):
                 self._content_strings.append(obj)
             else:
                 self._content_strings.append(obj.render(include_common=False))
