@@ -51,6 +51,7 @@ Sonar todo:
 -- DONE.  Change filter sender "type" to "message"
 -- DONE.  Fix filter_columns when view_cols is set.
 -- DONE.  make column not required for chart receiver (for filter_columns). make required for certain actions.
+-- DONE.  check for unicode in Box and ChartRow
 
 
 
@@ -59,7 +60,6 @@ MINOR
 -- Add ButtonGroup, Button sizes:  small, medium, large
 -- custom bound filter case:  select category, select city, unselect category. (city filter still shows but is not controlling)
     Check this behavior against real bound filter behavior.
--- check for unicode in Box and ChartRow
 -- when there's a range and category filter, range filtering doesn't check for category filtering.
 
 MODERATE
@@ -1198,7 +1198,7 @@ class ChartRow:
         set_common_on_context(context, include_common)
 
         for obj in self._objects:
-            if isinstance(obj, str):
+            if isinstance(obj, (str, unicode)):
                 self._content_strings.append(obj)
             else:
                 self._content_strings.append(obj.render(include_common=False))
