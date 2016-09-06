@@ -153,10 +153,43 @@ $(document).ready(function() {
 
 		filter.draw();
 	}
-	window.joogle_globals.update_chart = function(values_arr, data, chartwrapper, column, view_cols) {
-		var filtered_rows = joogle_globals.get_rows_for_column_selections(column, values_arr, data);
+	window.joogle_globals.update_chart = function(data, chartwrapper, view_cols, key_filter_list) {
+		/*  This function updates a chart using values from all controlling sonar filters.
+			The key_filter_list has the column and filter type for each key.  Get the value
+			for that filter from the message_map.		
+		*/
+		var total_filtered_rows = [];
+		for (var i = 0; i < key_filter_list.length; i++) {
+			// get the list of rows shown by each filter and get their intersection
+			
+			var key = key_filter_list[i].key;
+			var type = key_filter_list[i].type;
+			var values = window.joogle_globals.sonar.message_map[key];
+			var column = key_filter_list[i].column;
+
+			if (typeof values !== 'undefined' && values.length > 0) {
+				if (type === "values") {
+					filtered_rows = joogle_globals.get_rows_for_column_and_values(column, values, data);
+				}
+				
+				else if (type === "range"){
+					// todo
+				}
+				
+				if (total_filtered_rows.length == 0) { total_filtered_rows = filtered_rows;}
+				else {
+					// get the intersection of current rows and the latest list of filtered rows.
+					total_filtered_rows = total_filtered_rows.filter(function(n) {
+					  return filtered_rows.indexOf(n) > -1;
+					});	
+				}				
+			}
+		}
+		
+		if (total_filtered_rows.length === 0) { total_filtered_rows = null};
+
 		chartwrapper.setView({
-			rows: filtered_rows,
+			rows: total_filtered_rows,
 			columns: view_cols
 		});
 		chartwrapper.draw();			
@@ -171,16 +204,13 @@ $(document).ready(function() {
 		chartwrapper.draw();			
 	}
 	
-	window.joogle_globals.get_rows_for_column_selections = function(column, selections, datatable) {
+	window.joogle_globals.get_rows_for_column_and_values = function(column, selections, datatable) {
+		// for a list of values and a column, get the row numbers that have those values.
 		var rows_total = [];
-		if (selections.length == 0) {
-			rows_total = null;
-		}
-		else {
-			for (var i = 0; i < selections.length; i++) {
-				var rows = datatable.getFilteredRows([{column: parseInt(column), value: selections[i]}]);
-				rows_total = $.merge(rows_total, rows);
-			}
+		for (var i = 0; i < selections.length; i++) {
+			// rows_total stays empty if selections is an empty array.
+			var rows = datatable.getFilteredRows([{column: parseInt(column), value: selections[i]}]);
+			rows_total = $.merge(rows_total, rows);
 		}
 		return rows_total;		
 	}
