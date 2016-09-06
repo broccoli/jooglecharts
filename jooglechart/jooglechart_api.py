@@ -53,18 +53,19 @@ Sonar todo:
 -- DONE.  make column not required for chart receiver (for filter_columns). make required for certain actions.
 
 
--- need a way to check if in aquarium for aquarium_hidden.
--- text receiver widget. Much of it done, but don't know how to handle initial values, if initial values are lists for example.
--- Create a detail chart demo using update selection.
--- ****** SeriesFilter doesn't work if you put a receiver on the chart.
--- bug:  ButtonGroup send to ButtonGroup receive doesn't show selected buttons.
--- change python viewable columns code for Series Filter.  Keep the names. Don't need in template.
--- Fix buttongroup send to buttongroup
--- Change chart sender to send category, header, value
--- Add mouseover event for Legend.  Add mouseover sender to the api.
+
+MINOR
+-- Fix buttongroup send to buttongroup for radio
 -- Add ButtonGroup, Button sizes:  small, medium, large
 -- custom bound filter case:  select category, select city, unselect category. (city filter still shows but is not controlling)
     Check this behavior against real bound filter behavior.
+-- check for unicode in Box and ChartRow
+-- when there's a range and category filter, range filtering doesn't check for category filtering.
+
+MODERATE
+-- text receiver widget. Much of it done, but don't know how to handle initial values, if initial values are lists for example.
+-- ****** SeriesFilter doesn't work if you put a receiver on the chart.
+-- change python viewable columns code for Series Filter.  Keep the names. Don't need in template.
 
 ON HOLD
 -- modify SuperCategoryFilter to use the sonar machinery behind the scenes?
@@ -74,6 +75,9 @@ ON HOLD
     This is for binding a category filter to a range filter
 -- make checkboxGroup font size 12 pt.
 -- Add Breakpoint parameter and @media max-height setting.
+-- need a way to check if in aquarium for aquarium_hidden.
+-- Add chart sender header, value
+-- Add mouseover event for Legend.  Add mouseover sender to the api.
 
 
 MAKE THEIR OWN TICKET
@@ -84,8 +88,10 @@ MAKE THEIR OWN TICKET
 -- Button -- make into class so it can trigger events, and add onetime listener and message polling
 -- Create Widget class, make add_div_styles take underscore for hyphen.
 
-UNIT TESTS
+UNIT TESTS, DEMOS
 -- Create unit tests for connected filters/widgets that have initial values.
+-- Create a detail chart demo using update selection.
+
 
 
 
