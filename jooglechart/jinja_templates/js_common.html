@@ -16,9 +16,6 @@ $(document).ready(function() {
 		}
 	});
 
-	{% if refresh_globals %}
-		window.joogle_globals = null;
-	{% endif %}
 
 	if (typeof window.joogle_globals === "undefined" || window.joogle_globals === null) {
 		window.joogle_globals = {};
@@ -133,41 +130,59 @@ $(document).ready(function() {
 		filter.setState(filter_state);
 		filter.draw();
 	}
-	window.joogle_globals.update_filter_binding_selection = function(selected_values, data, filter, column) {
-		// Method for filtering controlWrapper's dataTable and redrawing.  Used for filter sonar receiver.
+	window.joogle_globals.update_filter_binding_selection = function(binding_values, data, filter, column, sending_keys) {
+		// This method is used to update a custom bound filter when its controlling filter gets a selection.
 		
+		
+		// Get the list of rows in the table produced by the controlling filter.
 		var filtered_rows = [];
-		if (selected_values.length == 0) {
+		if (binding_values.length == 0) {
 			filtered_rows = null;
 		}
 		else {
-			for (var i = 0; i < selected_values.length; i++) {
-				var rows = data.getFilteredRows([{column: column, value: selected_values[i]}]);
+			for (var i = 0; i < binding_values.length; i++) {
+				var rows = data.getFilteredRows([{column: column, value: binding_values[i]}]);
 				filtered_rows = $.merge(filtered_rows, rows);
 			}
 		}
-		// undocumented setView method on control wrappers
+
+		// (undocumented setView method on control wrappers)
 		filter.setView({
 			rows: filtered_rows
 		});
-
 		filter.draw();
+		
+		// The selected values on the bound filter will stay or get discarded when the
+		// filter is redrawn with the binding values.  Set the values in the message map
+		// with the current selected values.
+		var selected_values = filter.getState().selectedValues;
+		for (var i = 0; i < sending_keys.length; i++) {
+			window.joogle_globals.sonar.message_map[sending_keys[i]] = selected_values;		
+		}
+		
+		
+		
 	}
 	window.joogle_globals.update_chart = function(data, chartwrapper, view_cols, key_filter_list) {
 		/*  This function updates a chart using values from all controlling sonar filters.
 			The key_filter_list has the column and filter type for each key.  Get the value
 			for that filter from the message_map.		
 		*/
+		
+		var no_filtered_values = true;
+		
 		var total_filtered_rows = [];
 		for (var i = 0; i < key_filter_list.length; i++) {
-			// get the list of rows shown by each filter and get their intersection
+			// get the list of rows filtered by each filter, and then get their intersection
 			
 			var key = key_filter_list[i].key;
 			var type = key_filter_list[i].type;
 			var values = window.joogle_globals.sonar.message_map[key];
 			var column = key_filter_list[i].column;
-
+			
 			if (typeof values !== 'undefined' && values.length > 0) {
+				// if we enter the loop, then at least one filter has a selection.
+				no_filtered_values = false;
 				if (type === "values") {
 					filtered_rows = joogle_globals.get_rows_for_column_and_values(column, values, data);
 				}
@@ -186,7 +201,8 @@ $(document).ready(function() {
 			}
 		}
 		
-		if (total_filtered_rows.length === 0) { total_filtered_rows = null};
+		// if the values sent be all the filters were empty, then show the whole chart.
+		if (no_filtered_values) { total_filtered_rows = null};
 
 		chartwrapper.setView({
 			rows: total_filtered_rows,

@@ -17,7 +17,6 @@
 			'state': {{ filter._state|default("{}")|to_json }}
 		});
 		
-		{% set binding_selections = 'binding_selections' %}
 		{% set datatable = 'datatable' %}
 		// ------------ Add filter senders, if any ---------------
 		{% include 'js_filter_senders.html' %}
