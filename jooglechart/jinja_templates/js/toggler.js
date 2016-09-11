@@ -1,4 +1,4 @@
-	var toggle_box = new joogle_globals.Toggler({
+	var toggler = new joogle_globals.Toggler({
 		"show_text": "{{ toggler._open_prompt }}",
 		"hide_text": "{{ toggler._close_prompt }}",
 		"icon_type": "{{ toggler._icon }}",
@@ -7,4 +7,4 @@
 		"duration": {{ toggler._duration }}
 	});
 	
-	toggle_box.init();
+	toggler.init();
