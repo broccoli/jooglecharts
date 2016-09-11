@@ -40,19 +40,20 @@
 	
 	window.joogle_globals.Toggler.prototype.init = function() {
 		
-		var toggle_box = this;
+		// cache toggler for reference in click callback
+		var toggler = this;
 
-		if (!toggle_box.is_open) {
-			toggle_box.$content.hide();
+		if (!toggler.is_open) {
+			toggler.$content.hide();
 		}
 		
-		toggle_box.set_prompt();
+		toggler.set_prompt();
 		
-		toggle_box.$prompt.click(function(event) {
+		toggler.$prompt.click(function(event) {
 			event.preventDefault();
-			toggle_box.$content.slideToggle(toggle_box.duration, function () {
-				toggle_box.is_open = !toggle_box.is_open;
-				toggle_box.set_prompt();
+			toggler.$content.slideToggle(toggler.duration, function () {
+				toggler.is_open = !toggler.is_open;
+				toggler.set_prompt();
 			});
 		})
 		
