@@ -4,22 +4,20 @@
 	vertical-align: default;
 }
 
-.joogle_toggle_box .toggle_prompt {
-	background-color:#eee;
+.joogle_toggler .toggle_prompt {
     border-radius: 4px;
     color: #666;
-    display: block;
     margin-bottom: 5px;
     padding: 5px 10px;
     text-decoration: none;
 }
 
-.joogle_toggle_box .toggle_prompt:hover {
+.joogle_toggler .toggle_prompt:hover {
     text-decoration: underline;
 	cursor:pointer;
 }
 
-.joogle_toggle_box .toggle_content {
+.joogle_toggler .toggle_content {
 	border: 1px solid #eee;
 	border-radius: 4px;
     margin: 5px 0;
@@ -27,11 +25,5 @@
     width: auto;
 }
 
-
-.joogle_clearfix:after {
-    content:" ";
-    display:block;
-    clear:both;
-}
 
 </style>
