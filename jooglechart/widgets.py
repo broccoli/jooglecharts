@@ -509,6 +509,7 @@ class Toggler(AddDivStyles, ContainerRender, Show):
         except:
             message = 'duration must be an integer, "slow", or "fast"'
             raise JoogleChartsException(message)
+        
 
 
     def add_prompt_div_styles(self, style_dict = None, **kwargs):        
