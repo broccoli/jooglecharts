@@ -7,9 +7,9 @@
 .joogle_toggler .toggle_prompt {
     border-radius: 4px;
     color: #666;
-    margin-bottom: 5px;
     padding: 5px 10px;
     text-decoration: none;
+	display:inline-block;
 }
 
 .joogle_toggler .toggle_prompt:hover {
@@ -25,5 +25,9 @@
     width: auto;
 }
 
+.joogle_toggler {
+	margin-top: 10px;
+	margin-bottom: 5px;
+}
 
 </style>
