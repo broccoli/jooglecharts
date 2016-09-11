@@ -4,7 +4,7 @@ Created on Jun 12, 2016
 @author: richd
 '''
 
-from utils import get_joogle_object_counter, set_common_on_context, j2_env, _add_dict_to_dict, JoogleChartsException
+from utils import get_joogle_object_counter, set_common_on_context, j2_env, _add_dict_to_dict, JoogleChartsException, _add_styles
 from super_classes import AddDivStyles, ContainerRender, Show
 
 from IPython.display import display, HTML
@@ -457,35 +457,55 @@ class Legend(object):
 
 
 
+
 class Toggler(AddDivStyles, ContainerRender, Show):
     
     def __init__(self, content, **kwargs):
 
+        
         self._content = content
         self._content_string = None
         self._div_styles = {}
+        self._prompt_div_styles = {}
+        self._content_div_styles = {}
         self._div_id = None
         self._open_prompt = kwargs.pop("open_prompt", "View")
         self._close_prompt = kwargs.pop("close_prompt", "Close")
         self._icon = kwargs.pop("icon", "none")
-        self._duration = kwargs.pop("duration", 400)
-#         self._state = kwargs.pop("state", "open")
         self._template = "top_toggler.html"
         self._context_name = "toggler"
+        self._div_prefix = "joogle_toggler_"
         
         if kwargs.pop("state", "open") == "closed":
             self._is_open = "false"
+
+            #initialize with display none so content doesn't appear before the js loads
+            self.add_content_div_styles(display="none")
         else:
             self._is_open = "true"
 
         duration = kwargs.pop("duration", 400)
         if duration == "slow":
-            self._duration = 600
+            duration = 600
         elif duration == "fast":
-            self._duration = 200
+            duration = 200
         
         try:
-            int(duration)
+            self._duration = int(duration)
         except:
             message = 'duration must an integer, "slow", or "fast"'
             raise JoogleChartsException(message)
+
+
+    def add_prompt_div_styles(self, style_dict = None, **kwargs):        
+        """
+        pass styles for the prompt div in a dictionary or as keyword arguments
+        """
+        _add_styles(self, "_prompt_div_styles", style_dict, **kwargs)
+
+
+    def add_content_div_styles(self, style_dict = None, **kwargs):        
+        """
+        pass styles for the content div in a dictionary or as keyword arguments
+        """
+        _add_styles(self, "_content_div_styles", style_dict, **kwargs)
