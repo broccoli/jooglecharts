@@ -1,17 +1,21 @@
+{# The prototype should have no Jinja variables.  Pass those in the constructor. #}
 
 	window.joogle_globals.Toggler = function(options) {
 		this.show_text = options.show_text;
 		this.hide_text = options.hide_text;
 		this.icon_type = options.icon_type;
 		this.div_id = options.div_id;
-		this.$div = $("#" + this.div_id);
 		this.is_open = options.is_open;
 		this.duration = options.duration;
+		
+		// jQuery objects
+		this.$div = $("#" + this.div_id);
 		this.$prompt = this.$div.find(".toggle_prompt");
 		this.$i = this.$prompt.find("i");
 		this.$text = this.$prompt.find(".toggle_text");
 		this.$content = this.$div.find(".toggle_content");
 		
+		// Font Awesome icon classes
 		if (this.icon_type === "plus") {
 			this.show_icon = "fa-plus";
 			this.hide_icon = "fa-minus";
@@ -43,10 +47,12 @@
 		// cache toggler for reference in click callback
 		var toggler = this;
 
+		// check initial state of content container
 		if (!toggler.is_open) {
 			toggler.$content.hide();
 		}
 		
+		// initialize the prompt text and icon
 		toggler.set_prompt();
 		
 		toggler.$prompt.click(function(event) {
