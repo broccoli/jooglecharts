@@ -5,7 +5,6 @@ Created on Sep 10, 2016
 '''
 
 from utils import get_joogle_object_counter, set_common_on_context, j2_env, _add_styles
-# from widgets import Toggler
 
 from IPython.display import display, HTML
 
@@ -33,9 +32,12 @@ class ContainerRender(object):
 
     """
     Module for dropping render function into Joogle containers
+    The container object needs the following properties
+        - self._context_name
+        - either self._objects or self.content
     """
     
-    _first_toggler = [True]
+    _first_toggler = True
 
     def render(self, include_common=None):
 
@@ -65,7 +67,7 @@ class ContainerRender(object):
                 self._content_string = self._content.render(include_common=False)
 
 
-        # check if we need to include the toggler prototype
+        # check if we need to include the Toggler prototype
         if self._context_name == "toggler":
             if ContainerRender._first_toggler:
                 ContainerRender._first_toggler = False
@@ -73,6 +75,7 @@ class ContainerRender(object):
 
 
         return j2_env.get_template(self._template).render(context).encode('utf-8')
+
 
 class Show(object):
 
