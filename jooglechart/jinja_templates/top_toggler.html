@@ -2,6 +2,8 @@
 {% include "common_template.html" %}
 {% endif %}
 
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
+
 <script type="text/javascript">
 
 $(document).ready(function() {
@@ -16,16 +18,16 @@ $(document).ready(function() {
     }
 </script>
 
-<div id="{{ toggler._div_id }}" {{ bg._div_styles|format_styles_list }}>
+<div id="{{ toggler._div_id }}" {{ toggler._div_styles|format_styles_list }} class="joogle_toggler">
 	
 	<div class="joogle_clearfix">
-		<span class="toggle_prompt">
+		<span class="toggle_prompt" {{ toggler._prompt_div_styles|format_styles_list }}>
 			<span class="toggle_text"></span>
 			<i class="fa" aria-hidden="true"></i>
 		</span>
 	</div>
 
-    <div class="toggle_content">
+    <div class="toggle_content" {{ toggler._content_div_styles|format_styles_list }}>
 	{{ toggler._content_string }}
 	</div>
 	
