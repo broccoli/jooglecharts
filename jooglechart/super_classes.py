@@ -9,15 +9,16 @@ from utils import get_joogle_object_counter, set_common_on_context, j2_env, _add
 from IPython.display import display, HTML
 
 """
-Drop-in modules only provide common methods for subclasses.  They don't need
+MIXIN CLASSES
+
+Mixin classes only provide common methods for subclasses.  They don't need
 an __init__ method or instance variables.
 """
-    
 
 class AddDivStyles(object):
     
     """
-    Module for dropping add_div_styles into Joogle objects
+    Mixin for dropping add_div_styles into Joogle objects
     """
 
     def add_div_styles(self, style_dict = None, **kwargs):        
@@ -31,7 +32,9 @@ class AddDivStyles(object):
 class ContainerRender(object):
 
     """
-    Module for dropping render function into Joogle containers
+    Mixin for dropping render function into Joogle containers.  This mixin checks
+    properties of the object to perform different logic.
+    
     The container object needs the following properties
         - self._context_name
         - either self._objects or self.content
@@ -80,7 +83,7 @@ class ContainerRender(object):
 class Show(object):
 
     """
-    Module for dropping show function into Joogle objects
+    Mixin for dropping show function into Joogle objects
     """
     def show(self, include_common=True):
 
