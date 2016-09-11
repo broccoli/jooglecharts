@@ -460,6 +460,20 @@ class Legend(object):
 
 class Toggler(AddDivStyles, ContainerRender, Show):
     
+    """
+    Toggler is a container that the user can open and close by clicking on a prompt.
+    Options:
+        - content:  string or joogle object to show/hide
+        - open_prompt:  prompt text to appear when closed
+        - close_prompt:  prompt text to appear when open
+        - icon:  show optional plus/minus or up/down arrow icon
+        - duration:  "fast", "slow", or integer in ms
+        - state:  starting state "open" or "closed"
+    Font Awesome is loaded for the icons.
+    
+    CSS styles can be added to the container, the prompt, or the content divs.
+    """
+    
     def __init__(self, content, **kwargs):
 
         
