@@ -5,6 +5,7 @@ Created on Jun 12, 2016
 '''
 
 from utils import get_joogle_object_counter, set_common_on_context, j2_env, _add_dict_to_dict, JoogleChartsException
+from super_classes import AddDivStyles, ContainerRender, Show
 
 from IPython.display import display, HTML
 
@@ -453,3 +454,38 @@ class Legend(object):
     def show(self, include_common=True):
 
         display(HTML(self.render(include_common)))
+
+
+
+class Toggler(AddDivStyles, ContainerRender, Show):
+    
+    def __init__(self, content, **kwargs):
+
+        self._content = content
+        self._content_string = None
+        self._div_styles = {}
+        self._div_id = None
+        self._open_prompt = kwargs.pop("open_prompt", "View")
+        self._close_prompt = kwargs.pop("close_prompt", "Close")
+        self._icon = kwargs.pop("icon", "none")
+        self._duration = kwargs.pop("duration", 400)
+#         self._state = kwargs.pop("state", "open")
+        self._template = "top_toggler.html"
+        self._context_name = "toggler"
+        
+        if kwargs.pop("state", "open") == "closed":
+            self._is_open = "false"
+        else:
+            self._is_open = "true"
+
+        duration = kwargs.pop("duration", 400)
+        if duration == "slow":
+            self._duration = 600
+        elif duration == "fast":
+            self._duration = 200
+        
+        try:
+            int(duration)
+        except:
+            message = 'duration must an integer, "slow", or "fast"'
+            raise JoogleChartsException(message)
