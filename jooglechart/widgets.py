@@ -493,7 +493,7 @@ class Toggler(AddDivStyles, ContainerRender, Show):
         try:
             self._duration = int(duration)
         except:
-            message = 'duration must an integer, "slow", or "fast"'
+            message = 'duration must be an integer, "slow", or "fast"'
             raise JoogleChartsException(message)
 
 
