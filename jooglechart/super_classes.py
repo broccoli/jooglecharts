@@ -40,7 +40,7 @@ class ContainerRender(object):
         - either self._objects or self.content
     """
     
-    _first_toggler = True
+#     _first_toggler = True
 
     def render(self, include_common=None):
 
@@ -71,10 +71,10 @@ class ContainerRender(object):
 
 
         # check if we need to include the Toggler prototype
-        if self._context_name == "toggler":
-            if ContainerRender._first_toggler:
-                ContainerRender._first_toggler = False
-                context["include_toggler_prototype"] = True
+#         if self._context_name == "toggler":
+#             if ContainerRender._first_toggler:
+#                 ContainerRender._first_toggler = False
+#                 context["include_toggler_prototype"] = True
 
 
         return j2_env.get_template(self._template).render(context).encode('utf-8')
