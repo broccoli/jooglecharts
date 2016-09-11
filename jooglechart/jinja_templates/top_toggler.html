@@ -7,9 +7,12 @@
 <script type="text/javascript">
 
 $(document).ready(function() {
-	{% include 'js_library_loading.html' %}
-});
 
+	{{ callback_name }}();
+	
+});
+	
+	// don't call google loader for the toggler. Loads faster if there's no charts.
     function {{ callback_name }}() {
     
     	{% include 'js/toggler.js' %}    	
