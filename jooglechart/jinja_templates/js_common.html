@@ -303,8 +303,9 @@ $(document).ready(function() {
 		// get the subset of view_cols that are not role columns
 		var non_role_cols = [];
 		for (var i = 0; i < view_cols.length; i++) {
-			var role = datatable.getColumnRole(i);
-			if (role === "") { non_role_cols.push(view_cols[i]); }
+			var col = view_cols[i];
+			var role = datatable.getColumnRole(col);
+			if (role === "") { non_role_cols.push(col); }
 		}
 		
 		// shift off the first column of categories
