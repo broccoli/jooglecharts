@@ -1,17 +1,13 @@
-{# Need to set binding_selections and datatable values outside this file.  In a dashboard, we need to create #}
-{# binding_selections for each filter.  (In a freestanding filter there will be only one.) #}
-
 
 {% if filter._senders %}
 
-		function filter_send_values(filter, binding_selections, datatable, key) {
+		var sending_keys = [];
+		{% for sender in filter._senders %}
+		sending_keys.push("{{ sender.key }}");
+		{% endfor %}
+
+		function filter_send_values(filter, datatable, key) {
 			var selected_values = filter.getState().selectedValues;
-			// if the selectedValues is empty, then defer to the binding selections.
-			// So the chart downstream will still have selections if the binding filter has
-			// a selection.
-			if (selected_values.length == 0) {
-				selected_values = joogle_globals.get_binding_selections(binding_selections, datatable);
-			}
 			joogle_globals.sonar.send(key, selected_values);		
 		}
 		
@@ -27,7 +23,7 @@
 		{% include "js_flush_message_map.html" %}
         google.visualization.events.addListener({{ filter._name }}, "{{ sender.on }}", function () {
 		{% if sender.type == 'values' %}
-			filter_send_values({{ filter._name }}, {{ binding_selections }}, {{ datatable }}, "{{ sender.key }}");			
+			filter_send_values({{ filter._name }}, {{ datatable }}, "{{ sender.key }}");			
 
 		{% elif sender.type == 'range' %}
 			filter_send_range({{ filter._name }}, "{{ sender.key }}");
@@ -38,7 +34,7 @@
 		// Add a one time listener to broadcast the initialized values.
         google.visualization.events.addOneTimeListener({{ filter._name }}, "ready", function () {
 		{% if sender.type == 'values' %}
-			filter_send_values({{ filter._name }}, {{ binding_selections }}, {{ datatable }}, "{{ sender.key }}");			
+			filter_send_values({{ filter._name }}, {{ datatable }}, "{{ sender.key }}");			
 			
 		{% elif sender.type == 'range' %}
 			filter_send_range({{ filter._name }}, "{{ sender.key }}");

@@ -20,16 +20,15 @@
 			joogle_globals.sonar.add_one_time_ready_poller(key, func, filter);
 		})("{{ receiver.key }}", {{ filter._name }}, "{{ filter._div_id }}");
 		{% elif receiver.action == "update_binding_values" %}
-		(function(key, filter, div_id, datatable, bound_column) {
+		(function(key, filter, div_id, datatable, bound_column, sending_keys) {
 			var func = function(data) {
 				if (data.sonar_key === key && document.getElementById(div_id) !== null) {
-					{{ binding_selections }}[bound_column] = data.sonar_value;
-					joogle_globals.update_filter_binding_selection(data.sonar_value, datatable, filter, bound_column);
+					joogle_globals.update_filter_binding_selection(data.sonar_value, datatable, filter, bound_column, sending_keys);
 				}
 			}
 			joogle_globals.sonar.add_handler(func);
 			joogle_globals.sonar.add_one_time_ready_poller(key, func, filter);
-		})("{{ receiver.key }}", {{ filter._name }}, "{{ filter._div_id }}", {{ datatable }}, {{ receiver.bound_column }});
+		})("{{ receiver.key }}", {{ filter._name }}, "{{ filter._div_id }}", {{ datatable }}, {{ receiver.bound_column }}, sending_keys);
 		{% endif %}
 {% endfor %}
 		
