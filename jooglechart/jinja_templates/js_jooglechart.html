@@ -4,6 +4,14 @@
 
     {% include 'js_chartwrapper.html' %}
     
+		// -------------- Add chartwrapper senders, if any -------------
+          {% include 'js_chartwrapper_senders.html' %}
+		// -------------------------------------------------------------
+
+		// -------------- Add chartwrapper receivers, if any -------------
+          {% include 'js_chartwrapper_receivers.html' %}
+		// ---------------------------------------------------------------
+    
         {% if jg.filters %}
       {% include 'js_dashboard.html' %}
         
@@ -13,13 +21,6 @@
         {% endfor %}
         {% endif %}
 
-		// -------------- Add chartwrapper senders, if any -------------
-          {% include 'js_chartwrapper_senders.html' %}
-		// -------------------------------------------------------------
-
-		// -------------- Add chartwrapper receivers, if any -------------
-          {% include 'js_chartwrapper_receivers.html' %}
-		// ---------------------------------------------------------------
 
     {% if jg._series_filter %}
     	{% include 'js_series_filter.html' %}
