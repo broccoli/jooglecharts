@@ -670,7 +670,8 @@ class _Chart():
         column = kwargs.pop('column', None)
         
         if action in ['filter_values', 'filter_range'] and column is None:
-            message = "A column must be specified the chart receiver for filter_values or filter_range"
+            message = "A column must be specified in the chart receiver"
+            message += " if the action is filter_values or filter_range"
             raise JoogleChartsException(message)
         
         self._receivers.append({'key': key, 'action': action, 'column': column})
