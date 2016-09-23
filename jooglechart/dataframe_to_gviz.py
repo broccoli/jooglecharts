@@ -30,7 +30,7 @@ def dataframe_to_gviz(cities_df, datetime_cols=None, allow_nulls=False):
 
     Notes:
     -- The default js format for pandas datetimes is date.
-    -- DATES CREATED WITH PYTHONG'S datetime.date ARE TREATED AS STRINGS IN
+    -- DATES CREATED WITH PYTHON'S datetime.date ARE TREATED AS STRINGS IN
        PANDAS. DTYPES RETURNS 'object'.
 
     Args:
@@ -55,7 +55,7 @@ def dataframe_to_gviz(cities_df, datetime_cols=None, allow_nulls=False):
     -- Using json in the constructors can be faster than calling addColumn/addRows
        on an empty DataTable instance.
     -- Data types are specified in json.
-    -- gviz_api handles dates automaticaally -- don't need to generate string
+    -- gviz_api handles dates automatically -- don't need to generate string
        for javascript Date() constructor.
     -- The ToJSCode() method is great for debugging.
 
@@ -83,9 +83,14 @@ def dataframe_to_gviz(cities_df, datetime_cols=None, allow_nulls=False):
     description = []
     for ix, (t, col) in enumerate(zip(cities_df.dtypes, cities_df.columns)):
         if datetime_cols and ix in datetime_cols:
-            description.append((col, 'datetime'))
+            t = 'datetime'
         else:
-            description.append((col, translation_dict[t.name]))
+            t = translation_dict[t.name]
+
+        # gviz_api takes various formats for table description.  We're using
+        # the ('id', 'type', 'label') format.  The id just needs to be an arbitrary
+        # unique string.
+        description.append((str(ix), t, col))
 
     # get a 2d-array of the data
     data = []
