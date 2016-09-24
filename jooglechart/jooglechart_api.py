@@ -160,8 +160,8 @@ from IPython.display import display, HTML
 
 from utils import (get_joogle_object_counter, set_common_on_context, j2_env, JoogleChartsException, _add_dict_to_dict,
     joogle_include, _render_joogle_include)
-
 from dataframe_to_gviz import dataframe_to_gviz
+from super_classes import ChartShow, ChartRender
 
 import sonar_keys
 
@@ -720,7 +720,7 @@ class _Chart():
         return series_indexes, series_names
     
 
-    def _set_render_properties(self, num_cols, chart_type=None):
+    def _set_render_properties(self, chart_type=None):
 
         # chart render properties
         self.num = get_joogle_object_counter()
@@ -752,7 +752,7 @@ class Styler():
         raise NotImplementedError('subclasses must override apply_styles()!')
         
 
-class JoogleChart():
+class JoogleChart(ChartShow, ChartRender):
 
     # TODO:  add handling of view cols as names rather than indexes.    
 
@@ -778,6 +778,7 @@ class JoogleChart():
         self._num_cols = None
         self._num_rows = None
         self._global_title = None
+        self._context_name = "jg"
 #         self._filter_layout = "auto"
 
         # Dashboard attributes
@@ -971,9 +972,9 @@ class JoogleChart():
         # get the number of columns
         for index, chart in enumerate(self.charts):
             if index == 0:
-                chart._set_render_properties(num_cols, chart_type)
+                chart._set_render_properties(chart_type)
             else:
-                chart._set_render_properties(num_cols)
+                chart._set_render_properties()
 
         # set render properties for filters
         for filter_ in self.filters:
@@ -994,77 +995,20 @@ class JoogleChart():
                     json_decode['cols'][col].update({'p': {'role': role}})
             self.json = json.dumps(json_decode)
 
-
-    def render(self, chart_type=None, include_common=None):
-
-        """
-        Render chart code.
-        chart_type is one-off type; not saved to underlying chart.
-        
-        By default, DO force common for render()
-        """
-        self._set_render_properties(chart_type)
-        
-        context = {}
-        context['jg'] = self
-        context['callback_name'] = 'doStuff_' + str(self.num)
-
-        # ISHBOOK-495
-#         context['notebook_url'] = _get_notebook_url()
-        
-        set_common_on_context(context, include_common)
-        
-        return j2_env.get_template('chart_template.html').render(context).encode('utf-8')
-
-
-    def show(self, chart_type=None, include_common=None, **kwargs):
-
-        """
-        .show creates chart with one-off chart type and style options.
-        They aren't saved to the underlying chart.
-        
-        By default don't force common for show()
-        """
-        
-
-        # any leftover kwargs are assumed to be chart options
-        chart = self.copy()
-        if kwargs:
-            chart.add_chart_options(**kwargs)
-        else:
-            chart = self
-        display(HTML(chart.render(chart_type, include_common)))
         
 
 
-class AggChart():
+class AggChart(ChartShow, ChartRender):
 
     def __init__(self, chart_type=DEFAULT_CHART_TYPE):
         
-        # jg attributes
         self.num = None
         self.name = None
         self.charts = []
-        # Data attributes
-#         self._2d_array = None
         self.formatters = []
-#         self.filters = []
-#         self.datetime_cols = kwargs.pop('datetime_cols', None)
-#         self.allow_nulls = kwargs.pop('allow_nulls', False)
-#         self.json = None
-#         self.roles = []
-#         self.tooltip_html = False
-#         self._series_filter = None
-#         self._dataframe = None
         self._stylers = []
-#         self._num_cols = None
-#         self._num_rows = None
         self._global_title = None
-#         self._draw_chart=True
-#         self._filter_layout = "auto"
-
-        # Dashboard attributes
-#         self.dashboard_div_id = None
+        self._context_name = "jg"
 
         self._draw_chart = False # don't draw this chart
 
@@ -1134,28 +1078,12 @@ class AggChart():
         self.name = "jooglechart_" + str(self.num)
         
         self.data_name = self.name + "_data"
-#         self.view_name = self.name + "_view"
-#         self.dashboard_name = self.name + "_dashboard"
-#         self.dashboard_div_id = self.dashboard_name + "_div_id"
 
         for styler in self._stylers:
             styler(self)            
 
-#         if self.json:
-#             # data is in a dataframe
-#             num_cols = len(self._dataframe.columns)
-# 
-#             # unicode            
-#             # Need to wrap the decoding in a try block so the user will be able to reshow
-#             # a chart in Jupyter.  If you reshow a chart, the code below will 
-#             # try to decode an already decoded string.         
-#             try:
-#                 self.json = self.json.decode('utf-8')
-#             except UnicodeEncodeError:
-#                 pass
-#         else:
-#             # data is in a 2d array
-#             num_cols = len(self._2d_array[0])
+        self.charts[0]._set_render_properties(chart_type)
+
 
         # get the number of columns
 #         for index, chart in enumerate(self.charts):
@@ -1163,67 +1091,6 @@ class AggChart():
 #                 chart._set_render_properties(num_cols, chart_type)
 #             else:
 #                 chart._set_render_properties(num_cols)
-
-        # set render properties for filters
-#         for filter_ in self.filters:
-#             filter_._set_render_properties()
-
-        # set render properties for series filter
-#         if self._series_filter:
-#             self._series_filter._set_render_properties(self)
-
-        # modify json with roles
-#         if self.roles:
-#             json_decode = json.loads(self.json)
-#             for col, role in self.roles:
-#                 if role == 'tooltip' and self.tooltip_html:
-#                     json_decode['cols'][col].update({'p': {'role': role, 'html': True}})
-#                     self.add_chart_options(tooltip_isHtml = True)
-#                 else:
-#                     json_decode['cols'][col].update({'p': {'role': role}})
-#             self.json = json.dumps(json_decode)
-
-
-    def render(self, chart_type=None, include_common=None):
-
-        """
-        Render chart code.
-        chart_type is one-off type; not saved to underlying chart.
-        
-        By default, DO force common for render()
-        """
-        self._set_render_properties(chart_type)
-        
-        context = {}
-        context['jg'] = self
-        context['callback_name'] = 'doStuff_' + str(self.num)
-
-        # ISHBOOK-495
-#         context['notebook_url'] = _get_notebook_url()
-        
-        set_common_on_context(context, include_common)
-        
-        return j2_env.get_template('chart_template.html').render(context).encode('utf-8')
-
-
-    def show(self, chart_type=None, include_common=None, **kwargs):
-
-        """
-        .show creates chart with one-off chart type and style options.
-        They aren't saved to the underlying chart.
-        
-        By default don't force common for show()
-        """
-        
-
-        # any leftover kwargs are assumed to be chart options
-        chart = self.copy()
-        if kwargs:
-            chart.add_chart_options(**kwargs)
-        else:
-            chart = self
-        display(HTML(chart.render(chart_type, include_common)))
-        
 
 
 
