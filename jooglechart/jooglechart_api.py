@@ -1012,15 +1012,16 @@ class AggChart(ChartShow, ChartRender):
         
         self.num = None
         self.name = None
-        self.charts = []
+        self._charts = None
         self.formatters = []
         self._stylers = []
         self._global_title = None
-        self._context_name = "jg"
+        self._context_name = "agg_chart"
+        self._template = 'top_agg_chart.html'
 
         self._draw_chart = False # don't draw this chart
 
-        self.charts.append(_Chart(chart_type))
+        self._chart = _Chart(chart_type)
 
 
     def _unasable_function(self):
@@ -1029,13 +1030,13 @@ class AggChart(ChartShow, ChartRender):
 
     def add_chart_options(self, options=None, **kwargs):
 
-        self.charts[0].add_chart_options(options, **kwargs)
+        self._chart.add_chart_options(options, **kwargs)
 
     def set_view_cols(self, *args, **kwargs):
         self._unasable_function()
 
     def set_chart_type(self, chart_type):
-        self.charts[0].chart_type = chart_type
+        self._charts.chart_type = chart_type
 
     def _get_viewable_series_indexes_and_names(self):
         self._unasable_function()
@@ -1071,11 +1072,11 @@ class AggChart(ChartShow, ChartRender):
 
     def add_div_styles(self, *args, **kwargs):
 
-        self.charts[0].add_div_styles(*args, **kwargs)
+        self._chart.add_div_styles(*args, **kwargs)
         
     def add_div_class(self, _class):
         
-        self.charts[0].add_div_class(_class)
+        self._chart.add_div_class(_class)
 
     def add_styler(self, styler):
         
@@ -1093,12 +1094,12 @@ class AggChart(ChartShow, ChartRender):
 
     def add_sender(self, key, column, on="select", message_type='category'):
         
-        self.charts[0].add_sender(key, column, on, message_type)
+        self._chart.add_sender(key, column, on, message_type)
 
-    def add_receiver(self, key, *args, **kwargs):
+    def add_receiver(self, key):
         
         self._has_senders = True
-        self.charts[0].add_receiver(key, **kwargs)
+        self._chart.add_receiver(key, action="aggregate_data")
 
 
     def _set_render_properties(self, chart_type=None):
@@ -1117,7 +1118,7 @@ class AggChart(ChartShow, ChartRender):
         for styler in self._stylers:
             styler(self)            
 
-        self.charts[0]._set_render_properties(chart_type)
+        self._chart._set_render_properties(chart_type)
 
 
         # get the number of columns
