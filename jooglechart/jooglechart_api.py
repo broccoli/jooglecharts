@@ -779,6 +779,7 @@ class JoogleChart(ChartShow, ChartRender):
         self._num_rows = None
         self._global_title = None
         self._context_name = "jg"
+        self._template = 'top_chart.html'
 #         self._filter_layout = "auto"
 
         # Dashboard attributes
