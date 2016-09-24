@@ -1021,10 +1021,26 @@ class AggChart(ChartShow, ChartRender):
 
         self.charts.append(_Chart(chart_type))
 
+
+    def _unasable_function(self):
+        message = "This function not available AggChart"
+        raise JoogleChartsException(message)
+
     def add_chart_options(self, options=None, **kwargs):
 
         self.charts[0].add_chart_options(options, **kwargs)
 
+    def set_view_cols(self, *args, **kwargs):
+        self._unasable_function()
+
+    def set_chart_type(self, chart_type):
+        self.charts[0].chart_type = chart_type
+
+    def _get_viewable_series_indexes_and_names(self):
+        self._unasable_function()
+    
+    def get_viewable_series(self):
+        self._unasable_function()
 
     def add_formatter(self, formatter, options=None, cols=None, source_cols=None, pattern=None, dest_col=None):
 
@@ -1039,6 +1055,18 @@ class AggChart(ChartShow, ChartRender):
         self.formatters.append(Formatter(formatter, options=options, cols=cols,
                 source_cols=source_cols, pattern=pattern, dest_col=dest_col))
 
+
+    def add_filter(self, filter):
+        self._unasable_function()
+        
+    def _add_series_filter(self, filter):
+        self._unasable_function()
+
+    def set_role(self, col, role):
+        self._unasable_function()
+
+    def set_tooltip(self, col, html=False):
+        self._unasable_function()
 
     def add_div_styles(self, *args, **kwargs):
 
@@ -1056,21 +1084,20 @@ class AggChart(ChartShow, ChartRender):
         
         self._global_title = title
 
-#     def _add_chart(self, chart):
-#         chart._jooglechart = self
-#         self.charts.append(chart)
+    def _add_chart(self, chart):
+        self._unasable_function()
+
+    def copy(self):
+        self._unasable_function()
 
     def add_sender(self, key, column, on="select", message_type='category'):
         
         self.charts[0].add_sender(key, column, on, message_type)
-#         self._senders.append({'on': on, 'key': key, 'type': type})
-
 
     def add_receiver(self, key, *args, **kwargs):
         
         self._has_senders = True
         self.charts[0].add_receiver(key, **kwargs)
-#         self._senders.append({'on': on, 'key': key, 'type': type})
 
 
     def _set_render_properties(self, chart_type=None):
