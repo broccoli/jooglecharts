@@ -46,7 +46,7 @@ class ChartRender(object):
 
         set_common_on_context(context, include_common)
         
-        return j2_env.get_template('chart_template.html').render(context).encode('utf-8')
+        return j2_env.get_template('top_chart.html').render(context).encode('utf-8')
 
 class ContainerRender(object):
 
