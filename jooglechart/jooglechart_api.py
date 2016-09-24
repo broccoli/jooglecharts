@@ -794,6 +794,11 @@ class JoogleChart(ChartShow, ChartRender):
         if kwargs:
             self.charts[0].add_chart_options(**kwargs)
 
+
+        self._set_data(args)
+            
+
+    def _set_data(self, args):
         # data can be passed as a 2d array, a DataFrame or 2 or more Series
         if len(args) == 1:
             # check if data is a dataframe or 2d list
@@ -828,6 +833,8 @@ class JoogleChart(ChartShow, ChartRender):
             self._num_cols = len(self._dataframe.columns)
             self._num_rows = len(self._dataframe)
             
+        
+        
 
     def add_chart_options(self, options=None, **kwargs):
 
