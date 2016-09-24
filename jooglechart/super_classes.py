@@ -41,12 +41,12 @@ class ChartRender(object):
         self._set_render_properties(chart_type)
         
         context = {}
-        context['jg'] = self
+        context[self._context_name] = self
         context['callback_name'] = 'doStuff_' + str(self.num)
 
         set_common_on_context(context, include_common)
         
-        return j2_env.get_template('top_chart.html').render(context).encode('utf-8')
+        return j2_env.get_template(self._template).render(context).encode('utf-8')
 
 class ContainerRender(object):
 
