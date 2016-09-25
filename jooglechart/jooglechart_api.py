@@ -159,7 +159,7 @@ import json
 from IPython.display import display, HTML
 
 from utils import (get_joogle_object_counter, set_common_on_context, j2_env, JoogleChartsException, _add_dict_to_dict,
-    joogle_include, _render_joogle_include)
+    joogle_include, _render_joogle_include, _validate_sender)
 from dataframe_to_gviz import dataframe_to_gviz
 from super_classes import ChartShow, ChartRender
 
@@ -169,7 +169,11 @@ import sonar_keys
 DEFAULT_CHART_TYPE = "ColumnChart"
 FILTER_NAME_ADD_ON = "__jooglechart_user_filter_name"  # deprecated, for super filter
 
-
+# valid sonar messages and on events
+VALID_CHART_MESSAGE_TYPES = {
+    'category': ('select'),
+    'data_view': ('ready')                     
+        }
 
 
 
@@ -656,10 +660,10 @@ class _Chart():
             cols = [cols]
         self.view_cols = cols
 
+        
     def add_sender(self, key, column, on="select", message_type='category'):
-        # possible types:
-        #   send date range
-        #   send number range
+
+        _validate_sender(on, message_type, VALID_CHART_MESSAGE_TYPES)
         
         self._senders.append({'on': on, 'key': key, 'type': message_type, 'column': column})
 
@@ -676,14 +680,9 @@ class _Chart():
         self._receivers.append({'key': key, 'action': action, 'column': column})
 
     
-#     def get_viewable_series(self):
-#         series_names = [columns[ix] for ix in series_indexes]
-#         return series_names
-
-
     def _get_viewable_series_indexes_and_names(self):
         
-        # get the columns that are not roll columns and are not excluded from set_view_cols
+        # get the columns that are not role columns and are not excluded from set_view_cols
         # this list will exclude the first category column.  For charts that 
         # use the standard data model.
 
@@ -715,7 +714,6 @@ class _Chart():
  
         # get the series names
         series_names = [columns[ix] for ix in series_indexes]
-         # get the series names
         
         return series_indexes, series_names
     
