@@ -13,6 +13,21 @@
 				joogle_globals.sonar.send('{{ sender.key }}', [selected_category]);
 			}
 		});
+		{% if sender.type == 'chart' %}
+{#		A chart itself cannot be sent as a message because objects with functions can't#}
+{#		be sent in window.postMessage.  See http://stackoverflow.com/questions/7704323/passing-objects-to-a-web-worker#}
+{#		Instead, we will pass a structured object of chart properties.  Whenever some receiver#}
+{#		needs a chart property, we'll just add it to the message object.  The receiver will just#}
+{#		get whatever properties it needs from the message.#}
+        google.visualization.events.addListener({{ chart.name }}, '{{ sender.on }}', function() {
+			var chart_wrapper = {{ chart.name }};
+			var chart_message = {};
+{#			Add chart properties needed by any receiver here.#}
+			chart_message['data_table'] = chart_wrapper.getDataTable();
+			chart_message['view'] = chart_wrapper.getView();
+			
+			joogle_globals.sonar.send('{{ sender.key }}', chart_message);
+		});
 		{% endif %}
 		{% endfor %}          
 		{% endfor %}
