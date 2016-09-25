@@ -13,6 +13,7 @@
 				joogle_globals.sonar.send('{{ sender.key }}', [selected_category]);
 			}
 		});
+		{% endif %}
 		{% if sender.type == 'chart' %}
 {#		A chart itself cannot be sent as a message because objects with functions can't#}
 {#		be sent in window.postMessage.  See http://stackoverflow.com/questions/7704323/passing-objects-to-a-web-worker#}
