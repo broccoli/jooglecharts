@@ -172,7 +172,7 @@ FILTER_NAME_ADD_ON = "__jooglechart_user_filter_name"  # deprecated, for super f
 # valid sonar messages and on events
 VALID_CHART_MESSAGE_TYPES = {
     'category': ('select'),
-    'data_view': ('ready')                     
+    'chart': ('ready')                     
         }
 
 
@@ -661,7 +661,7 @@ class _Chart():
         self.view_cols = cols
 
         
-    def add_sender(self, key, column, on="select", message_type='category'):
+    def add_sender(self, key, column=None, on="select", message_type='category'):
 
         _validate_sender(on, message_type, VALID_CHART_MESSAGE_TYPES)
         
@@ -922,7 +922,7 @@ class JoogleChart(ChartShow, ChartRender):
 
         return copy.deepcopy(self)
 
-    def add_sender(self, key, column, on="select", message_type='category'):
+    def add_sender(self, key, column=None, on="select", message_type='category'):
         # possible types:
         #   send date range
         #   send number range
