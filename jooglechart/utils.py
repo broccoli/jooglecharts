@@ -295,3 +295,17 @@ def _add_styles(obj, attr_name, style_dict, **kwargs):
         _add_dict_to_dict(getattr(obj, attr_name), style_dict)
     
 
+def _validate_sender(self, on, message_type, valid_message_types):
+
+    """
+    Validate the message type and on event combination for a sonar sender
+    """    
+    if message_type not in valid_message_types.key():
+        message = "{} is not a valid message_type".format(message_type)
+        raise JoogleChartsException(message)
+    
+    for key, value in valid_message_types.iteritems():
+        if message_type == key and on not in value:
+            message = "{} is not a valid on event for {}.".format(on, message_type)
+            raise JoogleChartsException(message)
+
