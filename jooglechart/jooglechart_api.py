@@ -1009,13 +1009,14 @@ class AggChart(ChartShow, ChartRender):
     def __init__(self, chart_type=DEFAULT_CHART_TYPE):
         
         self.num = None
-        self.name = None
+        self._name = None
         self._charts = None
         self.formatters = []
         self._stylers = []
         self._global_title = None
         self._context_name = "agg_chart"
         self._template = 'top_agg_chart.html'
+        self._div_id = None
 
         self._draw_chart = False # don't draw this chart
 
@@ -1109,9 +1110,9 @@ class AggChart(ChartShow, ChartRender):
 
         # jg render properties
         self.num = get_joogle_object_counter()
-        self.name = "jooglechart_" + str(self.num)
+        self._name = "agg_chart_" + str(self.num)
+        self._div_id = self._name + "_div_id"
         
-        self.data_name = self.name + "_data"
 
         for styler in self._stylers:
             styler(self)            
