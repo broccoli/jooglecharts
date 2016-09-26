@@ -9,7 +9,7 @@
 			}
 		}
 
-		(function(key, chart, chart_div_id) {
+		(function(key, group_column, chart, chart_div_id) {
 			var func = function(data) {
 				if (data.sonar_key === key && document.getElementById(chart_div_id) !== null) {
 					
@@ -29,11 +29,12 @@
 						remove_rows(dt_copy, source_view.rows);
 					}
 					
-					var dt = google.visualization.data.group(dt_copy, [2],
-						[{'column': 3, 'aggregation': google.visualization.data.avg, 'type': 'number', 'label': 'avg'},
-						{'column': 3, 'aggregation': google.visualization.data.count, 'type': 'number', 'label': 'count'},
-						]
-					);
+					var agg_columns = [];
+					{% for agg_column in receiver.agg_columns %}
+					agg_columns.push({'column': {{ agg_column.column }}, 'aggregation': google.visualization.data.{{ agg_column.function}}, 'type': 'number', 'label': '{{ agg_column.label }}'});
+					{% endfor %}
+
+					var dt = google.visualization.data.group(dt_copy, [group_column], agg_columns);
 					
 					chart.setDataTable(dt);
 					chart.draw();
@@ -48,7 +49,7 @@
 				func({"sonar_key": key, "sonar_value": result});
 			}
 
-		})("{{ receiver.key }}", {{ agg_chart._name }}, "{{ agg_chart._div_id }}");
+		})("{{ receiver.key }}", {{receiver.group_column}}, {{ agg_chart._name }}, "{{ agg_chart._div_id }}");
 
 		{% endfor %}
 		
