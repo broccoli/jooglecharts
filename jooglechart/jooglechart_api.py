@@ -1011,8 +1011,10 @@ class JoogleChart(ChartShow, ChartRender):
 
 class AggChart(ChartShow, ChartRender):
 
-    def __init__(self, chart_type=DEFAULT_CHART_TYPE):
+    def __init__(self, *args, **kwargs):
         
+        
+        print args, kwargs
         self.num = None
         self._name = None
         self._charts = None
@@ -1023,9 +1025,17 @@ class AggChart(ChartShow, ChartRender):
         self._template = 'top_agg_chart.html'
         self._div_id = None
 
-        self._draw_chart = False # don't draw this chart
+
+        chart_type = kwargs.pop('chart_type', DEFAULT_CHART_TYPE)
+        
+        # make sure a dataframe or series wasn't passed in args or kwargs
+        for i in list(args) + kwargs.values():
+            if isinstance(i, (pd.DataFrame, pd.Series)):
+                message = "AggChart does not accept DataFrames or Series"
+                raise JoogleChartsException(message)
 
         self._chart = _Chart(chart_type)
+        
 
 
     def _unasable_function(self):
