@@ -677,7 +677,13 @@ class _Chart():
             message = "A column must be specified the chart receiver for filter_values or filter_range"
             raise JoogleChartsException(message)
         
-        self._receivers.append({'key': key, 'action': action, 'column': column})
+        receiver_dict = {}
+        receiver_dict['key'] = key
+        receiver_dict['action'] = action
+        receiver_dict['column'] = column
+        receiver_dict.update(kwargs)
+        
+        self._receivers.append(receiver_dict)
 
     
     def _get_viewable_series_indexes_and_names(self):
@@ -1119,13 +1125,6 @@ class AggChart(ChartShow, ChartRender):
 
         self._chart._set_render_properties(chart_type)
 
-
-        # get the number of columns
-#         for index, chart in enumerate(self.charts):
-#             if index == 0:
-#                 chart._set_render_properties(num_cols, chart_type)
-#             else:
-#                 chart._set_render_properties(num_cols)
 
 
 
