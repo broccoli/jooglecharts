@@ -1014,10 +1014,9 @@ class AggChart(ChartShow, ChartRender):
     def __init__(self, *args, **kwargs):
         
         
-        print args, kwargs
         self.num = None
         self._name = None
-        self._charts = None
+        self._chart = None
         self.formatters = []
         self._stylers = []
         self._global_title = None
@@ -1035,6 +1034,10 @@ class AggChart(ChartShow, ChartRender):
                 raise JoogleChartsException(message)
 
         self._chart = _Chart(chart_type)
+
+        # adding chart to self.charts list so the bi styler can be used with AggChart
+        self.charts = []
+        self.charts.append(self._chart)
         
 
 
