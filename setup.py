@@ -10,7 +10,7 @@ setup(
     name='jooglechart',
     version='0.1.1',
     packages=['jooglechart',],
-    package_data={'jooglechart': ['jinja_templates/*.html', '*.ipynb']},
+    package_data={'jooglechart': ['jinja_templates/*.html', '*.ipynb', 'jinja_templates/js/*.js', 'jinja_templates/css/*.css']},
     license='Creative Commons Attribution-Noncommercial-Share Alike license',
     description='Tool for creating Google Charts in Jupyter notebooks.',
     long_description=open('README.md').read(),
