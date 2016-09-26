@@ -33,7 +33,7 @@
 						[{'column': 3, 'aggregation': google.visualization.data.avg, 'type': 'number', 'label': 'avg'},
 						{'column': 3, 'aggregation': google.visualization.data.count, 'type': 'number', 'label': 'count'},
 						]
-					)
+					);
 					
 					chart.setDataTable(dt);
 					chart.draw();
@@ -41,7 +41,7 @@
 			}
 			joogle_globals.sonar.add_handler(func);
 			joogle_globals.sonar.add_one_time_ready_poller(key, func, chart);
-		})("{{ receiver.key }}", {{ agg_chart._chart.name }}, "{{ agg_chart._chart.chart_div_id }}");
+		})("{{ receiver.key }}", {{ agg_chart._name }}, "{{ agg_chart._div_id }}");
 
 		{% endfor %}
 		
