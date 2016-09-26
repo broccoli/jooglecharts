@@ -25,7 +25,7 @@
 					var dt_copy = new google.visualization.DataTable(source_dt.toJSON());
 
 					// if source_view.rows is null, then the chart is unfiltered, so skip this
-					if (source_view !== null && source_view.rows !== null) {
+					if (typeof source_view !== 'undefined' && typeof source_view.rows !== 'undefined' && source_view.rows !== null) {
 						remove_rows(dt_copy, source_view.rows);
 					}
 					
