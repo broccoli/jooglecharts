@@ -853,7 +853,6 @@ class JoogleChart(ChartShow, ChartRender):
 
         self.charts[0].chart_type = chart_type
 
-
     
     def _get_viewable_series_indexes_and_names(self):
 # 
