@@ -1101,10 +1101,75 @@ class AggChart(ChartShow, ChartRender):
         
         self._chart.add_sender(key, column, on, message_type)
 
-    def add_receiver(self, key):
+    def add_receiver(self, key, **kwargs):
+
+        # An aggChart takes a to group on, and a column or columns to aggregate.
+        # The aggregation columns require a column index, an agg function, and an optional label.
+        # if a label is not specified, the function name is used.  agg_columns must be a list
+        # dictionaries
         
-        self._has_senders = True
-        self._chart.add_receiver(key, action="aggregate_data")
+
+        valid_agg_functions = ['avg', 'count', 'max', 'min', 'sum']
+        
+        group_column = kwargs.pop('group_column', None)
+        if group_column is None:
+            message = "A group column must be specified for an aggChart"
+            raise JoogleChartsException(message)
+        
+        agg_columns = kwargs.pop('agg_columns', None)
+        if agg_columns is None:
+            message = "A list of agg columns must be specified for an aggChart"
+            raise JoogleChartsException(message)
+            
+        
+        # validate agg columns
+        for agg_column in agg_columns:
+            # An agg column must be a dictionary
+            if not isinstance(agg_column, dict):
+                message = "agg_columns must be a list of dictionaries"
+                raise JoogleChartsException(message)
+            if not 'column' in agg_column:
+                message = "a column must be specified for each agg_column"
+                raise JoogleChartsException(message)
+            if not 'function' in agg_column:
+                message = "a function must be specified for each agg_column"
+                raise JoogleChartsException(message)
+            if not 'label' in agg_column:
+                agg_column['label'] = agg_column['function']
+                
+        
+#         f = kwargs.pop('functions', None)
+#         
+#         if f is None:
+#             message = "Aggregation requires one or more aggregation functions"
+#             raise JoogleChartsException(message)
+#         if not isinstance(f, (list, tuple)):
+#             # if functions is a string, put it in a list
+#             f = [f]
+#             
+#         # validate the functions passed
+#         for function in f:
+#             if function not in valid_agg_functions:
+#                 message = "{} is not a valid aggregation function".format(function)
+#                 raise JoogleChartsException(message)
+#             
+#         # get labels, if passed
+#         labels = kwargs.pop('labels', None)
+#         if labels is None:
+#             labels = f
+#         else:
+#             if not isinstance(labels, (list, tuple)):
+#                 labels = [labels]
+#             if len(labels) != len(f):
+#                 message = "Number of labels must match number of functions"
+#                 raise JoogleChartsException(message)
+#             
+#         column = kwargs.pop('column', None)
+#         if column is None:
+#             message = "A column must a specified for aggregation"
+#             raise JoogleChartsException(message)
+        
+        self._chart.add_receiver(key, action="aggregate_data", group_column=group_column, agg_columns=agg_columns)
 
 
     def _set_render_properties(self, chart_type=None):
