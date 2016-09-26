@@ -4,7 +4,8 @@ Created on Jun 12, 2016
 @author: richd
 '''
 
-from utils import get_joogle_object_counter, set_common_on_context, j2_env, _add_dict_to_dict, JoogleChartsException
+from utils import get_joogle_object_counter, set_common_on_context, j2_env, _add_dict_to_dict, JoogleChartsException, _add_styles
+from super_classes import AddDivStyles, ContainerRender, Show
 
 from IPython.display import display, HTML
 
@@ -453,3 +454,73 @@ class Legend(object):
     def show(self, include_common=True):
 
         display(HTML(self.render(include_common)))
+
+
+
+
+class Toggler(AddDivStyles, ContainerRender, Show):
+    
+    """
+    Toggler is a container that the user can open and close by clicking on a prompt.
+    Options:
+        - content:  string or joogle object to show/hide
+        - open_prompt:  prompt text to appear when closed
+        - close_prompt:  prompt text to appear when open
+        - icon:  show optional plus/minus or up/down arrow icon
+        - duration:  "fast", "slow", or integer in ms
+        - state:  starting state "open" or "closed"
+    Font Awesome is loaded for the icons.
+    
+    CSS styles can be added to the container, the prompt, or the content divs.
+    """
+    
+    def __init__(self, content, **kwargs):
+
+        
+        self._content = content
+        self._content_string = None
+        self._div_styles = {}
+        self._prompt_div_styles = {}
+        self._content_div_styles = {}
+        self._div_id = None
+        self._open_prompt = kwargs.pop("open_prompt", "View")
+        self._close_prompt = kwargs.pop("close_prompt", "Close")
+        self._icon = kwargs.pop("icon", "none")
+        self._template = "top_toggler.html"
+        self._context_name = "toggler"
+        self._div_prefix = "joogle_toggler_"
+        
+        if kwargs.pop("state", "open") == "closed":
+            self._is_open = "false"
+
+            #initialize with display none so content doesn't appear before the js loads
+            self.add_content_div_styles(display="none")
+        else:
+            self._is_open = "true"
+
+        duration = kwargs.pop("duration", 400)
+        if duration == "slow":
+            duration = 600
+        elif duration == "fast":
+            duration = 200
+        
+        try:
+            self._duration = int(duration)
+        except:
+            message = 'duration must be an integer, "slow", or "fast"'
+            raise JoogleChartsException(message)
+        
+
+
+    def add_prompt_div_styles(self, style_dict = None, **kwargs):        
+        """
+        pass styles for the prompt div in a dictionary or as keyword arguments
+        """
+        _add_styles(self, "_prompt_div_styles", style_dict, **kwargs)
+
+
+    def add_content_div_styles(self, style_dict = None, **kwargs):        
+        """
+        pass styles for the content div in a dictionary or as keyword arguments
+        """
+        _add_styles(self, "_content_div_styles", style_dict, **kwargs)

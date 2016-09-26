@@ -1,0 +1,41 @@
+{% if common %}
+{% include "common_template.html" %}
+{% endif %}
+
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
+
+<script type="text/javascript">
+
+$(document).ready(function() {
+	{% include 'js_library_loading.html' %}
+
+{#	{{ callback_name }}();#}
+	
+});
+	
+	// don't call google loader for the toggler. Loads faster if there's no charts.
+    function {{ callback_name }}() {
+    
+    	{% include 'js/toggler.js' %}    	
+
+    
+    }
+</script>
+
+<div id="{{ toggler._div_id }}" {{ toggler._div_styles|format_styles_list }} class="joogle_toggler">
+	
+	<div class="joogle_clearfix">
+		<span class="toggle_prompt" {{ toggler._prompt_div_styles|format_styles_list }}>
+			<span class="toggle_text"></span>
+			<i class="fa" aria-hidden="true"></i>
+		</span>
+	</div>
+
+    <div class="toggle_content" {{ toggler._content_div_styles|format_styles_list }}>
+	{{ toggler._content_string }}
+	</div>
+	
+</div>
+		
+
+{% include 'css/toggler.css' %}		

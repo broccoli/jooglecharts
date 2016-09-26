@@ -254,3 +254,44 @@ def get_df(rows=5, cols=1, min=20, max=100, category_column=False):
         d[name] = data
         columns.append(name)
     return pd.DataFrame(d, columns=columns)
+
+def replace_underscores_with_dashes(d):
+    
+    new_dict = {}
+    
+    for key in d:
+        new_key = key.replace('_', '-')
+        new_dict[new_key] = d[key]
+    return new_dict
+
+
+def _add_styles(obj, attr_name, style_dict, **kwargs):
+    
+    """
+    Method for adding css styles to an object's style list.  The list can be an arbitrarily named list.
+    Styles can be sent in a dictionary and/or in kwargs.  CSS styles with dashes
+    can be sent in kwargs with underscores replacing dashes.
+    """
+
+    # check if the object has the attribute
+    if not hasattr(obj, attr_name):
+        message = "Object does not have the style list as attribute. Contact package developer."
+        raise JoogleChartsException(message)
+    
+    # set None value to empty dictionary
+    if getattr(obj, attr_name) == None:
+        setattr(obj, attr_name, {})
+
+    if style_dict == None and not kwargs:
+        # user is resetting styles
+        setattr(obj, attr_name, {})
+    else:
+        if style_dict == None:
+            style_dict = {}
+        if kwargs:
+            kwargs = replace_underscores_with_dashes(kwargs)
+            # combine style dict and kwargs into one dict
+            style_dict.update(kwargs)
+        _add_dict_to_dict(getattr(obj, attr_name), style_dict)
+    
+
