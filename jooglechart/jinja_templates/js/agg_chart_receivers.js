@@ -40,7 +40,14 @@
 				}
 			}
 			joogle_globals.sonar.add_handler(func);
-			joogle_globals.sonar.add_one_time_ready_poller(key, func, chart);
+
+			// We're not using the one-time ready poller because there's no chart yet to have a ready event.
+			// So we're checking the message map here to see if a message has been sent.
+			var result = joogle_globals.sonar.poll_message_map(key);
+			if (result !== null) {
+				func({"sonar_key": key, "sonar_value": result});
+			}
+
 		})("{{ receiver.key }}", {{ agg_chart._name }}, "{{ agg_chart._div_id }}");
 
 		{% endfor %}
