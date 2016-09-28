@@ -474,7 +474,7 @@ class Toggler(AddDivStyles, ContainerRender, Show):
     CSS styles can be added to the container, the prompt, or the content divs.
     """
     
-    def __init__(self, content, **kwargs):
+    def __init__(self, content, *args, **kwargs):
 
         
         self._content = content
