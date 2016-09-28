@@ -490,6 +490,10 @@ class Toggler(AddDivStyles, ContainerRender, Show):
         self._context_name = "toggler"
         self._div_prefix = "joogle_toggler_"
         
+        if args:
+            message="Toggler only accepts one content object"
+            raise JoogleChartsException(message)
+
         if kwargs.pop("state", "open") == "closed":
             self._is_open = "false"
 
