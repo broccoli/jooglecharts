@@ -485,7 +485,7 @@ class Toggler(AddDivStyles, ContainerRender, Show):
         self._div_id = None
         self._open_prompt = kwargs.pop("open_prompt", "View")
         self._close_prompt = kwargs.pop("close_prompt", "Close")
-        self._icon = kwargs.pop("icon", "none")
+        self._icon = kwargs.pop("icon", "arrow")
         self._template = "top_toggler.html"
         self._context_name = "toggler"
         self._div_prefix = "joogle_toggler_"
