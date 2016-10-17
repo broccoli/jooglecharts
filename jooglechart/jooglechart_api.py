@@ -165,6 +165,8 @@ from dataframe_to_gviz import dataframe_to_gviz
 
 import sonar_keys
 
+from super_classes import AddDivStyles, ContainerRender
+
 
 DEFAULT_CHART_TYPE = "ColumnChart"
 FILTER_NAME_ADD_ON = "__jooglechart_user_filter_name"  # deprecated, for super filter
@@ -1050,7 +1052,7 @@ def _get_style_widths_from_weights(weights):
         style_widths.append(style_width)
     return style_widths
 
-class ChartRow:
+class ChartRow(AddDivStyles, ContainerRender):
 
     """
     A ChartRow can create a row of charts to display side-by-side.  Currently,
@@ -1093,18 +1095,16 @@ class ChartRow:
         self._objects = objects
         self.bootstrap_num = None
         self._content_strings = []
-#         self._flex_width = None
-#         self._gutter = None
         self._div_id = None
         self._div_styles = None
         self._weights = []
         self._widths = []
         self._style_widths = []
         self._padding = None
+        self._div_prefix = "joogle_chart_row"
+        self._context_name = "chartrow"
+        self._template = "top_chartrow.html"
         
-#         if "flex_width" in kwargs and kwargs['flex_width'] == True:
-#             self._flex_width = True
-#             self._gutter_width = kwargs.get("gutter_width", "20px");
 
         self._mode = kwargs.pop("mode", "bootstrap")
         if self._mode not in ['bootstrap', 'free', 'weighted', 'fixed']:
@@ -1114,10 +1114,6 @@ class ChartRow:
         
         padding = kwargs.pop("padding", None)
         
-        
-#         self._padding = kwargs.pop("padding", None)
-#         if self._padding:
-#             self._padding = str(int(self._padding)) + "px"
         if padding:
             try:
                 # if it's an integer, add 'px'
@@ -1163,52 +1159,6 @@ class ChartRow:
             self.bootstrap_num = 12 / num_objects
         
         
-            
-    def add_div_styles(self, style_dict = None, **kwargs):
-        """
-        pass styles for the chart div in a dictionary or as keyword arguments
-        """
-
-        if self._div_styles == None:
-            self._div_styles = {}
-
-        if style_dict == None and not kwargs:
-            # user is resetting styles
-
-            self._div_styles = {}
-        else:
-            if style_dict == None:
-                style_dict = {}
-            if kwargs:
-                style_dict.update(kwargs)
-            _add_dict_to_dict(self._div_styles, style_dict)
-
-    def render(self, include_common=None):
-
-        num = get_joogle_object_counter()
-        self._div_id = "joogle_chartrow_" + str(num)
-
-#             jc._set_render_properties()
-
-        context = {}
-        context['chartrow'] = self
-        context['callback_name'] = 'doStuff_' + str(num)
-
-        # call common context method before rendering all child
-        # objects
-        set_common_on_context(context, include_common)
-
-        for obj in self._objects:
-            if isinstance(obj, (str, unicode)):
-                self._content_strings.append(obj)
-            else:
-                self._content_strings.append(obj.render(include_common=False))
-
-        # ISHBOOK-495
-#         context['notebook_url'] = _get_notebook_url()
-
-
-        return j2_env.get_template('top_chartrow.html').render(context).encode('utf-8')
 
     def show(self, include_common=None):
 
