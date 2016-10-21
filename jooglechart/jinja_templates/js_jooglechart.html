@@ -12,10 +12,13 @@
           {% include 'js_chartwrapper_receivers.html' %}
 		// ---------------------------------------------------------------
     
+    	var has_dashboard;
         {% if jg.filters %}
-      {% include 'js_dashboard.html' %}
+        has_dashboard = true;
+      	{% include 'js_dashboard.html' %}
         
         {% else %}
+        has_dashboard = false;
         {% for chart in jg.charts %}
         {{ chart.name }}.draw();
         {% endfor %}
