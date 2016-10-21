@@ -15,18 +15,26 @@
 			}
 		});
 		{% endif %}
-		{% if sender.type == 'chart' %}
-{#		A chart itself cannot be sent as a message because objects with functions can't#}
-{#		be sent in window.postMessage.  See http://stackoverflow.com/questions/7704323/passing-objects-to-a-web-worker#}
-{#		Instead, we will pass a structured object of chart properties.  Whenever some receiver#}
-{#		needs a chart property, we'll just add it to the message object.  The receiver will just#}
-{#		get whatever properties it needs from the message.#}
+		{% if sender.type == 'agg' %}
+{#		The agg chart requires sending the table and the list of filtered rows.  This happens differently when#}
+{#		the chart is filtered by a native control or by a sonar filter, because getDataTable()#}
+{#		and getView() do different things in these cases.#}
+		
+{#		If the chart has a dashboard, getDataTable returns a list of all the columns in the table#}
+{#		(viewable and non-viewable) and a list of the filtered rows.#}
+		
+{#		If the chart does not have a dashbard, getDataTable returns the actual table.  Then we use#}
+{#		getView to get the modified view rows set by sonar.#}
+		
         google.visualization.events.addListener({{ chart.name }}, '{{ sender.on }}', function() {
 			var chart_wrapper = {{ chart.name }};
 			var chart_message = {};
-{#			Add chart properties needed by any receiver here.#}
-			chart_message['data_table'] = chart_wrapper.getDataTable();
-			chart_message['view'] = chart_wrapper.getView();
+			
+			chart_message['data_table'] = {{ jg.data_name }};
+			if has_dashboard:
+				chart_message['view'] = chart_wrapper.getDataTable().toJSON;
+			else:
+				chart_message['view'] = chart_wrapper.getView();
 			
 			joogle_globals.sonar.send('{{ sender.key }}', chart_message);
 		});
