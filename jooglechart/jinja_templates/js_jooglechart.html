@@ -4,6 +4,13 @@
 
     {% include 'js_chartwrapper.html' %}
     
+    
+        {% if jg.filters %}
+        var has_dashboard = true;        
+        {% else %}
+        var has_dashboard = false;
+        {% endif %}
+    
 		// -------------- Add chartwrapper senders, if any -------------
           {% include 'js_chartwrapper_senders.html' %}
 		// -------------------------------------------------------------
@@ -12,11 +19,8 @@
           {% include 'js_chartwrapper_receivers.html' %}
 		// ---------------------------------------------------------------
     
-    	var has_dashboard;
         {% if jg.filters %}
-        has_dashboard = true;
-      	{% include 'js_dashboard.html' %}
-        
+      	{% include 'js_dashboard.html' %}        
         {% else %}
         has_dashboard = false;
         {% for chart in jg.charts %}

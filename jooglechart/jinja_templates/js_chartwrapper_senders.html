@@ -31,10 +31,12 @@
 			var chart_message = {};
 			
 			chart_message['data_table'] = {{ jg.data_name }};
-			if has_dashboard:
-				chart_message['view'] = chart_wrapper.getDataTable().toJSON;
-			else:
+			if (has_dashboard) {
+				chart_message['view'] = JSON.parse(chart_wrapper.getDataTable().toJSON());
+			}
+			else{
 				chart_message['view'] = chart_wrapper.getView();
+			}
 			
 			joogle_globals.sonar.send('{{ sender.key }}', chart_message);
 		});
