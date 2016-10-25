@@ -172,7 +172,7 @@ FILTER_NAME_ADD_ON = "__jooglechart_user_filter_name"  # deprecated, for super f
 # valid sonar messages and on events
 VALID_CHART_MESSAGE_TYPES = {
     'category': ('select'),
-    'chart': ('ready')                     
+    'agg': ('ready')                     
         }
 
 
