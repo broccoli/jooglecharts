@@ -10,6 +10,7 @@ jooglechart/reveal.js.zip
 *.html
 jooglechart/custom.css
 jooglechart/JoogleChart_unit_tests.ipynb
+jooglechart/JoogleChart_unit_tests.ipynb
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
