@@ -1,0 +1,25 @@
+{% if common %}
+{% include "common_template.html" %}
+{% endif %}
+
+<script type="text/javascript">
+
+$(document).ready(function() {
+	{% include 'js_library_loading.html' %}
+});
+
+    function {{ callback_name }}() {
+  {% include 'js/agg_chart.js' %}
+  
+    }
+    
+</script>
+
+{% if agg_chart._global_title %}
+<h1 class="jooglechart_global_title">{{ agg_chart._global_title }}</h1>
+{% endif %}
+
+
+<div id="{{ agg_chart._div_id }}" {{ agg_chart._div_classes|get_classes }} {{ agg_chart.div_styles|format_styles_list }}></div>
+
+

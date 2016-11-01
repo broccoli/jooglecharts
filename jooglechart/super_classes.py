@@ -29,6 +29,25 @@ class AddDivStyles(object):
         
 
 
+class ChartRender(object):
+    def render(self, chart_type=None, include_common=None):
+
+        """
+        Render chart code.
+        chart_type is one-off type; not saved to underlying chart.
+        
+        By default, DO force common for render()
+        """
+        self._set_render_properties(chart_type)
+        
+        context = {}
+        context[self._context_name] = self
+        context['callback_name'] = 'doStuff_' + str(self.num)
+
+        set_common_on_context(context, include_common)
+        
+        return j2_env.get_template(self._template).render(context).encode('utf-8')
+
 class ContainerRender(object):
 
     """
@@ -88,3 +107,26 @@ class Show(object):
     def show(self, include_common=True):
 
         display(HTML(self.render(include_common)))
+
+
+class ChartShow(object):
+
+    """
+    Mixin for dropping show function into charts
+    """
+    def show(self, chart_type=None, include_common=None, **kwargs):
+
+        """
+        .show creates chart with one-off chart type and style options.
+        They aren't saved to the underlying chart.
+        
+        By default don't force common for show()
+        """
+
+        # any leftover kwargs are assumed to be chart options
+        chart = self.copy()
+        if kwargs:
+            chart.add_chart_options(**kwargs)
+        else:
+            chart = self
+        display(HTML(chart.render(chart_type, include_common)))

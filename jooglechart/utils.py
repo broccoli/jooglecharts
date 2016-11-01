@@ -236,7 +236,7 @@ capitals = ['Sacramento', 'Montpelier', 'Juneau', 'Montgomery', 'Little Rock',
               'Phoenix', 'Denver', 'Hartford', 'Tallahassee', 'Dover', 'Atlanta', 'Honolulu',
            'Austin', 'Albany', 'Frankfurt', 'Topeka', 'Baton Rouge']
 
-def get_df(rows=5, cols=1, min=20, max=100, category_column=False):
+def get_df(rows=5, cols=1, min=20, max=100, category_column=False, category_column2 = False):
     random.seed(2)
     cities = capitals[:rows]
     d = {}
@@ -248,11 +248,25 @@ def get_df(rows=5, cols=1, min=20, max=100, category_column=False):
         d['categories'] = categories
         columns.append('categories')
         
+    if category_column2:
+        
+        
+        fruit = []
+        for i in range(rows):
+            if i % 2 == 0:
+                fruit.append("Mango")
+            else:
+                fruit.append("Peach")
+        d['fruit'] = fruit
+        columns.append('fruit')
+
     for x in range(cols):
         name = chr(x + 65) + (chr(x + 97) * 8) # + chr(x + 97)
         data = [random.randint(min, max) for i in range(rows)]
         d[name] = data
         columns.append(name)
+        
+    
     return pd.DataFrame(d, columns=columns)
 
 def replace_underscores_with_dashes(d):
@@ -294,4 +308,18 @@ def _add_styles(obj, attr_name, style_dict, **kwargs):
             style_dict.update(kwargs)
         _add_dict_to_dict(getattr(obj, attr_name), style_dict)
     
+
+def _validate_sender(on, message_type, valid_message_types):
+
+    """
+    Validate the message type and on event combination for a sonar sender
+    """    
+    if message_type not in valid_message_types.keys():
+        message = "{} is not a valid message_type".format(message_type)
+        raise JoogleChartsException(message)
+    
+    for key, value in valid_message_types.iteritems():
+        if message_type == key and on not in value:
+            message = "{} is not a valid on event for {}.".format(on, message_type)
+            raise JoogleChartsException(message)
 

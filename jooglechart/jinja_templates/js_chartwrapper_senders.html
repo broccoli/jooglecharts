@@ -1,6 +1,7 @@
 		{% for chart in jg.charts %}
 		{% for sender in chart._senders %}
 		{% include "js_flush_message_map.html" %}
+		
 		{% if sender.type == 'category' %}
         google.visualization.events.addListener({{ chart.name }}, '{{ sender.on }}', function() {
   			var selection = {{ chart.name }}.getChart().getSelection()[0];
@@ -12,6 +13,32 @@
 				//var selected_category = {{ jg.data_name }}.getValue(true_selection_row, 0);
 				joogle_globals.sonar.send('{{ sender.key }}', [selected_category]);
 			}
+		});
+		{% endif %}
+		{% if sender.type == 'agg' %}
+{#		The agg chart requires sending the table and the list of filtered rows.  This happens differently when#}
+{#		the chart is filtered by a native control or by a sonar filter, because getDataTable()#}
+{#		and getView() do different things in these cases.#}
+		
+{#		If the chart has a dashboard, getDataTable returns a list of all the columns in the table#}
+{#		(viewable and non-viewable) and a list of the filtered rows.#}
+		
+{#		If the chart does not have a dashbard, getDataTable returns the actual table.  Then we use#}
+{#		getView to get the modified view rows set by sonar.#}
+		
+        google.visualization.events.addListener({{ chart.name }}, '{{ sender.on }}', function() {
+			var chart_wrapper = {{ chart.name }};
+			var chart_message = {};
+			
+			chart_message['data_table'] = {{ jg.data_name }};
+			if (has_dashboard) {
+				chart_message['view'] = JSON.parse(chart_wrapper.getDataTable().toJSON());
+			}
+			else{
+				chart_message['view'] = chart_wrapper.getView();
+			}
+			
+			joogle_globals.sonar.send('{{ sender.key }}', chart_message);
 		});
 		{% endif %}
 		{% endfor %}          

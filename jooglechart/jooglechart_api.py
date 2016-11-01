@@ -159,9 +159,9 @@ import json
 from IPython.display import display, HTML
 
 from utils import (get_joogle_object_counter, set_common_on_context, j2_env, JoogleChartsException, _add_dict_to_dict,
-    joogle_include, _render_joogle_include)
-
+    joogle_include, _render_joogle_include, _validate_sender)
 from dataframe_to_gviz import dataframe_to_gviz
+from super_classes import ChartShow, ChartRender
 
 import sonar_keys
 
@@ -171,7 +171,11 @@ from super_classes import AddDivStyles, ContainerRender
 DEFAULT_CHART_TYPE = "ColumnChart"
 FILTER_NAME_ADD_ON = "__jooglechart_user_filter_name"  # deprecated, for super filter
 
-
+# valid sonar messages and on events
+VALID_CHART_MESSAGE_TYPES = {
+    'category': ('select'),
+    'agg': ('ready')                     
+        }
 
 
 
@@ -658,10 +662,10 @@ class _Chart():
             cols = [cols]
         self.view_cols = cols
 
-    def add_sender(self, key, column, on="select", message_type='category'):
-        # possible types:
-        #   send date range
-        #   send number range
+        
+    def add_sender(self, key, column=None, on="select", message_type='category'):
+
+        _validate_sender(on, message_type, VALID_CHART_MESSAGE_TYPES)
         
         self._senders.append({'on': on, 'key': key, 'type': message_type, 'column': column})
 
@@ -676,17 +680,18 @@ class _Chart():
             message += " if the action is filter_values or filter_range"
             raise JoogleChartsException(message)
         
-        self._receivers.append({'key': key, 'action': action, 'column': column})
+        receiver_dict = {}
+        receiver_dict['key'] = key
+        receiver_dict['action'] = action
+        receiver_dict['column'] = column
+        receiver_dict.update(kwargs)
+        
+        self._receivers.append(receiver_dict)
 
     
-#     def get_viewable_series(self):
-#         series_names = [columns[ix] for ix in series_indexes]
-#         return series_names
-
-
     def _get_viewable_series_indexes_and_names(self):
         
-        # get the columns that are not roll columns and are not excluded from set_view_cols
+        # get the columns that are not role columns and are not excluded from set_view_cols
         # this list will exclude the first category column.  For charts that 
         # use the standard data model.
 
@@ -718,12 +723,11 @@ class _Chart():
  
         # get the series names
         series_names = [columns[ix] for ix in series_indexes]
-         # get the series names
         
         return series_indexes, series_names
     
 
-    def _set_render_properties(self, num_cols, chart_type=None):
+    def _set_render_properties(self, chart_type=None):
 
         # chart render properties
         self.num = get_joogle_object_counter()
@@ -755,7 +759,7 @@ class Styler():
         raise NotImplementedError('subclasses must override apply_styles()!')
         
 
-class JoogleChart():
+class JoogleChart(ChartShow, ChartRender):
 
     # TODO:  add handling of view cols as names rather than indexes.    
 
@@ -781,6 +785,8 @@ class JoogleChart():
         self._num_cols = None
         self._num_rows = None
         self._global_title = None
+        self._context_name = "jg"
+        self._template = 'top_chart.html'
 #         self._filter_layout = "auto"
 
         # Dashboard attributes
@@ -796,6 +802,11 @@ class JoogleChart():
         if kwargs:
             self.charts[0].add_chart_options(**kwargs)
 
+
+        self._set_data(args)
+            
+
+    def _set_data(self, args):
         # data can be passed as a 2d array, a DataFrame or 2 or more Series
         if len(args) == 1:
             # check if data is a dataframe or 2d list
@@ -830,6 +841,8 @@ class JoogleChart():
             self._num_cols = len(self._dataframe.columns)
             self._num_rows = len(self._dataframe)
             
+        
+        
 
     def add_chart_options(self, options=None, **kwargs):
 
@@ -842,7 +855,6 @@ class JoogleChart():
     def set_chart_type(self, chart_type):
 
         self.charts[0].chart_type = chart_type
-
 
     
     def _get_viewable_series_indexes_and_names(self):
@@ -918,7 +930,7 @@ class JoogleChart():
 
         return copy.deepcopy(self)
 
-    def add_sender(self, key, column, on="select", message_type='category'):
+    def add_sender(self, key, column=None, on="select", message_type='category'):
         # possible types:
         #   send date range
         #   send number range
@@ -974,9 +986,9 @@ class JoogleChart():
         # get the number of columns
         for index, chart in enumerate(self.charts):
             if index == 0:
-                chart._set_render_properties(num_cols, chart_type)
+                chart._set_render_properties(chart_type)
             else:
-                chart._set_render_properties(num_cols)
+                chart._set_render_properties()
 
         # set render properties for filters
         for filter_ in self.filters:
@@ -997,47 +1009,206 @@ class JoogleChart():
                     json_decode['cols'][col].update({'p': {'role': role}})
             self.json = json.dumps(json_decode)
 
+        
 
-    def render(self, chart_type=None, include_common=None):
+
+class AggChart(ChartShow, ChartRender):
+
+    def __init__(self, *args, **kwargs):
+        
+        
+        self.num = None
+        self._name = None
+        self._chart = None
+        self.formatters = []
+        self._stylers = []
+        self._global_title = None
+        self._context_name = "agg_chart"
+        self._template = 'top_agg_chart.html'
+        self._div_id = None
+
+
+        chart_type = kwargs.pop('chart_type', DEFAULT_CHART_TYPE)
+        
+        # make sure a dataframe or series wasn't passed in args or kwargs
+        for i in list(args) + kwargs.values():
+            if isinstance(i, (pd.DataFrame, pd.Series)):
+                message = "AggChart does not accept DataFrames or Series"
+                raise JoogleChartsException(message)
+
+        self._chart = _Chart(chart_type)
+
+        # adding chart to self.charts list so the bi styler can be used with AggChart
+        self.charts = []
+        self.charts.append(self._chart)
+        
+
+
+    def _unasable_function(self):
+        message = "This function not available AggChart"
+        raise JoogleChartsException(message)
+
+    def add_chart_options(self, options=None, **kwargs):
+
+        self._chart.add_chart_options(options, **kwargs)
+
+    def set_view_cols(self, *args, **kwargs):
+        self._unasable_function()
+
+    def set_chart_type(self, chart_type):
+        self._charts.chart_type = chart_type
+
+    def _get_viewable_series_indexes_and_names(self):
+        self._unasable_function()
+    
+    def get_viewable_series(self):
+        self._unasable_function()
+
+    def add_formatter(self, formatter, options=None, cols=None, source_cols=None, pattern=None, dest_col=None):
 
         """
-        Render chart code.
-        chart_type is one-off type; not saved to underlying chart.
-        
-        By default, DO force common for render()
+        Formatters all require chart_options and col, except for PatternFormat.  PatternFormat
+        requires pattern, source_cols, and col.
         """
-        self._set_render_properties(chart_type)
-        
-        context = {}
-        context['jg'] = self
-        context['callback_name'] = 'doStuff_' + str(self.num)
 
-        # ISHBOOK-495
-#         context['notebook_url'] = _get_notebook_url()
-        
-        set_common_on_context(context, include_common)
-        
-        return j2_env.get_template('chart_template.html').render(context).encode('utf-8')
+        if self.formatters == None:
+            self.formatters = []
+
+        self.formatters.append(Formatter(formatter, options=options, cols=cols,
+                source_cols=source_cols, pattern=pattern, dest_col=dest_col))
 
 
-    def show(self, chart_type=None, include_common=None, **kwargs):
+    def add_filter(self, filter):
+        self._unasable_function()
+        
+    def _add_series_filter(self, filter):
+        self._unasable_function()
+
+    def set_role(self, col, role):
+        self._unasable_function()
+
+    def set_tooltip(self, col, html=False):
+        self._unasable_function()
+
+    def add_div_styles(self, *args, **kwargs):
+
+        self._chart.add_div_styles(*args, **kwargs)
+        
+    def add_div_class(self, _class):
+        
+        self._chart.add_div_class(_class)
+
+    def add_styler(self, styler):
+        
+        self._stylers.append(styler)
+
+    def add_global_title(self, title):
+        
+        self._global_title = title
+
+    def _add_chart(self, chart):
+        self._unasable_function()
+
+    def copy(self):
+        self._unasable_function()
+
+    def add_sender(self, key, column, on="select", message_type='category'):
+        
+        self._chart.add_sender(key, column, on, message_type)
+
+    def add_receiver(self, key, **kwargs):
+
+        # An aggChart takes a to group on, and a column or columns to aggregate.
+        # The aggregation columns require a column index, an agg function, and an optional label.
+        # if a label is not specified, the function name is used.  agg_columns must be a list
+        # dictionaries
+        
+
+        valid_agg_functions = ['avg', 'count', 'max', 'min', 'sum']
+        
+        group_column = kwargs.pop('group_column', None)
+        if group_column is None:
+            message = "A group column must be specified for an aggChart"
+            raise JoogleChartsException(message)
+        
+        agg_columns = kwargs.pop('agg_columns', None)
+        if agg_columns is None:
+            message = "A list of agg columns must be specified for an aggChart"
+            raise JoogleChartsException(message)
+            
+        
+        # validate agg columns
+        for agg_column in agg_columns:
+            # An agg column must be a dictionary
+            if not isinstance(agg_column, dict):
+                message = "agg_columns must be a list of dictionaries"
+                raise JoogleChartsException(message)
+            if not 'column' in agg_column:
+                message = "a column must be specified for each agg_column"
+                raise JoogleChartsException(message)
+            if not 'function' in agg_column:
+                message = "a function must be specified for each agg_column"
+                raise JoogleChartsException(message)
+            if not 'label' in agg_column:
+                agg_column['label'] = agg_column['function']
+                
+        
+#         f = kwargs.pop('functions', None)
+#         
+#         if f is None:
+#             message = "Aggregation requires one or more aggregation functions"
+#             raise JoogleChartsException(message)
+#         if not isinstance(f, (list, tuple)):
+#             # if functions is a string, put it in a list
+#             f = [f]
+#             
+#         # validate the functions passed
+#         for function in f:
+#             if function not in valid_agg_functions:
+#                 message = "{} is not a valid aggregation function".format(function)
+#                 raise JoogleChartsException(message)
+#             
+#         # get labels, if passed
+#         labels = kwargs.pop('labels', None)
+#         if labels is None:
+#             labels = f
+#         else:
+#             if not isinstance(labels, (list, tuple)):
+#                 labels = [labels]
+#             if len(labels) != len(f):
+#                 message = "Number of labels must match number of functions"
+#                 raise JoogleChartsException(message)
+#             
+#         column = kwargs.pop('column', None)
+#         if column is None:
+#             message = "A column must a specified for aggregation"
+#             raise JoogleChartsException(message)
+        
+        self._chart.add_receiver(key, action="aggregate_data", group_column=group_column, agg_columns=agg_columns)
+
+
+    def _set_render_properties(self, chart_type=None):
 
         """
-        .show creates chart with one-off chart type and style options.
-        They aren't saved to the underlying chart.
-        
-        By default don't force common for show()
+        Set values needed for rendering the chart
         """
+
+
+        # jg render properties
+        self.num = get_joogle_object_counter()
+        self._name = "agg_chart_" + str(self.num)
+        self._div_id = self._name + "_div_id"
         
 
-        # any leftover kwargs are assumed to be chart options
-        chart = self.copy()
-        if kwargs:
-            chart.add_chart_options(**kwargs)
-        else:
-            chart = self
-        display(HTML(chart.render(chart_type, include_common)))
-        
+        for styler in self._stylers:
+            styler(self)            
+
+        self._chart._set_render_properties(chart_type)
+
+
+
+
+
 def _get_style_widths_from_weights(weights):
     
     # use less than 100 in case the computed widths in pixels are fractional and get rounded up,
