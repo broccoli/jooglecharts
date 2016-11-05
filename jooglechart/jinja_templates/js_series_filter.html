@@ -47,7 +47,10 @@
 		
 		function update_chart() {
 			var selected_values = {{ jg._series_filter._name }}.getState().selectedValues;
-			window.joogle_globals.draw_chart_filtered_columns({{ jg.data_name }}, series_cols, selected_values, update_chart_callback);
+			{% for chart in jg.charts %}
+			window.joogle_globals.draw_chart_filtered_columns({{ chart.name }}, selected_values);			
+			{% endfor %}
+{#			window.joogle_globals.draw_chart_filtered_columns({{ jg.data_name }}, series_cols, selected_values, update_chart_callback);#}
 
             /* ----------- Add SeriesFilter senders, if any ----------- */
             // for series filter, just send whenever update is called
