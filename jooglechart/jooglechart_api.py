@@ -1151,39 +1151,7 @@ class AggChart(ChartShow, ChartRender):
                 raise JoogleChartsException(message)
             if not 'label' in agg_column:
                 agg_column['label'] = agg_column['function']
-                
-        
-#         f = kwargs.pop('functions', None)
-#         
-#         if f is None:
-#             message = "Aggregation requires one or more aggregation functions"
-#             raise JoogleChartsException(message)
-#         if not isinstance(f, (list, tuple)):
-#             # if functions is a string, put it in a list
-#             f = [f]
-#             
-#         # validate the functions passed
-#         for function in f:
-#             if function not in valid_agg_functions:
-#                 message = "{} is not a valid aggregation function".format(function)
-#                 raise JoogleChartsException(message)
-#             
-#         # get labels, if passed
-#         labels = kwargs.pop('labels', None)
-#         if labels is None:
-#             labels = f
-#         else:
-#             if not isinstance(labels, (list, tuple)):
-#                 labels = [labels]
-#             if len(labels) != len(f):
-#                 message = "Number of labels must match number of functions"
-#                 raise JoogleChartsException(message)
-#             
-#         column = kwargs.pop('column', None)
-#         if column is None:
-#             message = "A column must a specified for aggregation"
-#             raise JoogleChartsException(message)
-        
+                        
         self._chart.add_receiver(key, action="aggregate_data", group_column=group_column, agg_columns=agg_columns)
 
 
@@ -1193,8 +1161,6 @@ class AggChart(ChartShow, ChartRender):
         Set values needed for rendering the chart
         """
 
-
-        # jg render properties
         self.num = get_joogle_object_counter()
         self._name = "agg_chart_" + str(self.num)
         self._div_id = self._name + "_div_id"
@@ -1204,8 +1170,6 @@ class AggChart(ChartShow, ChartRender):
             styler(self)            
 
         self._chart._set_render_properties(chart_type)
-
-
 
 
 
