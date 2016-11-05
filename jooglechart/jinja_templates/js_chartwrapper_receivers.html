@@ -29,15 +29,9 @@
 		// handler to filter columns
 		(function(key, chart, datatable, chart_div_id, col, view_cols) {
 			var series_cols = joogle_globals.get_viewable_columns(chart);
-			function update_chart_callback(view, series) {
-				chart.setDataTable(view);
-				chart.setOption('series', series);
-		        chart.draw();						
-			}
 			var func = function(data) {
 				if (data.sonar_key === key && document.getElementById(chart_div_id) !== null) {
-					// joogle_globals.update_chart(data.sonar_value, datatable, chart, col, view_cols);
-					window.joogle_globals.draw_chart_filtered_columns(datatable, series_cols, data.sonar_value, update_chart_callback);
+					window.joogle_globals.draw_chart_filtered_columns({{ chart.name }}, data.sonar_value);
 				}
 			}
 			joogle_globals.sonar.add_handler(func);
