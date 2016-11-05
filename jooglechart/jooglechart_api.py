@@ -589,6 +589,9 @@ class _Chart():
         self._senders = []
         self._receivers = []
         self._jooglechart = None
+        self._visible_columns = None
+        self._domain_column = None
+        
 
  
         # add any leftover kwargs to options
@@ -784,6 +787,7 @@ class JoogleChart(ChartShow, ChartRender):
         self._stylers = []
         self._num_cols = None
         self._num_rows = None
+        self._role_columns = []
         self._global_title = None
         self._context_name = "jg"
         self._template = 'top_chart.html'
@@ -901,6 +905,7 @@ class JoogleChart(ChartShow, ChartRender):
             raise JoogleChartsException(message)
 
         self.roles.append((col, role))
+        self._role_columns.append(col)
 
     def set_tooltip(self, col, html=False):
         self.set_role(col, 'tooltip')
