@@ -973,8 +973,6 @@ class JoogleChart(ChartShow, ChartRender):
             styler(self)            
 
         if self.json:
-            # data is in a dataframe
-            num_cols = len(self._dataframe.columns)
 
             # unicode            
             # Need to wrap the decoding in a try block so the user will be able to reshow
@@ -984,11 +982,8 @@ class JoogleChart(ChartShow, ChartRender):
                 self.json = self.json.decode('utf-8')
             except UnicodeEncodeError:
                 pass
-        else:
-            # data is in a 2d array
-            num_cols = len(self._2d_array[0])
 
-        # get the number of columns
+        # render properties for charts
         for index, chart in enumerate(self.charts):
             if index == 0:
                 chart._set_render_properties(chart_type)
@@ -999,7 +994,7 @@ class JoogleChart(ChartShow, ChartRender):
         for filter_ in self.filters:
             filter_._set_render_properties()
 
-        # set render properties for series filter
+        # set render properties for series filter (must be after charts)
         if self._series_filter:
             self._series_filter._set_render_properties(self)
 
