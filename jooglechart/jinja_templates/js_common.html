@@ -240,46 +240,69 @@ $(document).ready(function() {
 		return binding_values;
 	}
 
-	window.joogle_globals.draw_chart_filtered_columns = function(datatable, viewable_columns, selected_columns, callback) {
-		// an object of series properties will be passed to the chart wrapper for setting color
+	window.joogle_globals.draw_chart_filtered_columns = function(chart, selected_columns) {
+		/*
+			For a Table, the columns that aren't selected will be hidden altogether.  For a chart,
+			the line/column/bar will disappear but the series will remain in the legend with a 
+			grey key.
+		
+			We will set the view columns for the chart and then draw.  To get the view columns, 
+			start with an array of the visible column indexes.  For a Table, omit the columns
+			that weren't selected. For a chart, replace the non-selected columns with an object 
+			that returns nulls for values.
+			
+			Also for a chart, create an array of series objects to set the legend
+			key color to grey.
+		
+		*/
+		
+		var datatable = chart.getDataTable();
+		var chart_type = chart.getChartType();
 	    var series = {};
+		var view_columns = []
+		var series_ctr = 0;
 		
-		// initialize the array of dataTable column indices, e.g, [0, 1, 2, etc.]
-	    var columns = [];
-	    for (var i = 0; i < datatable.getNumberOfColumns(); i++) {
-	        columns.push(i);
-	    }
-		
-		// Loop through series cols
-		for (var i = 0; i < viewable_columns.length; i++) {
-			series[i] = {}	// initialize series object
-			var ix = viewable_columns[i]	// get series column index in the original data table
+		// Loop through the visible columns and create the array of view_columns
+		var visible_columns = chart.__visible_columns;
+		for (var i = 0; i < visible_columns.length; i++) {
+			series[series_ctr] = {}	// initialize series object
+			var ix = visible_columns[i]	// get series column index in the original data table
 							
-			// check if series has been selected
-			var test_val = datatable.getColumnLabel(ix);
-			if ($.inArray(test_val, selected_columns) >= 0) {
-				// if the series is selected, just pass the normal column
-				// and get the default color
-				columns[ix] = ix;
-				series[i].color = null;
-			} else {
-				// create a column object that returns null, hiding the series on the chart
-                columns[ix] = {
-                    label: datatable.getColumnLabel(ix),
-                    type: datatable.getColumnType(ix),
-                    calc: function () {
-                        return null;
-                    }
-                };
-				
-				// gray out the series color for the legend
-				series[i].color = '#CCCCCC';
-			}	
+			// get the column label
+			var column_label = datatable.getColumnLabel(ix);
+			
+			if (ix == chart.__domain_column || $.inArray(ix, chart.__role_columns) >= 0) {
+				view_columns.push(ix);				
+			}
+			else {
+				// check if the column label is in the list of selected labels
+				if ($.inArray(column_label, selected_columns) >= 0) {
+					// if the series is selected, just pass the normal column and get the default color
+					view_columns.push(ix);
+					series[series_ctr].color = null;				
+				} else {
+					if (chart_type !== "Table") {
+					
+						// create a column object that returns null, hiding the series on the chart
+		                view_columns.push({
+		                    type: datatable.getColumnType(ix),
+		                    label: datatable.getColumnLabel(ix),
+		                    type: datatable.getColumnType(ix),
+		                    calc: function () {
+		                        return null;
+		                    }
+		                });	
+						// gray out the series color for the legend
+						series[series_ctr].color = '#CCCCCC';
+					}
+				}
+				series_ctr++;				
+			}
 		}
-        var view = new google.visualization.DataView(datatable);
-        view.setColumns(columns);
 		
-		callback(view, series);
+		chart.setView({'columns': view_columns});
+		if (chart_type !== "Table") { chart.setOption('series', series); }
+        chart.draw();		
 	}
 
 	window.joogle_globals.get_label_index_map = function(chart) {
