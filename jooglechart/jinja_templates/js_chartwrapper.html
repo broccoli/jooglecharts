@@ -9,4 +9,8 @@
             "chartType": "{{ chart.display_chart_type }}",
             "options": {{ chart.chart_options|to_json }}
         });
+        // Add jooglechart-specific attributes
+		{{ chart.name }}['__visible_columns'] = {{ chart._visible_columns }};
+		{{ chart.name }}['__domain_column'] = {{ chart._domain_column }};
+		{{ chart.name }}['__role_columns'] = {{ jg._role_columns }};
     {% endfor %}
