@@ -324,16 +324,6 @@ class Filter(_GoogleFilter):
         # deprecated function for super category filter target
         
         self._label = label
-
-#     def set_data(self, data):
-#         if not (isinstance(data, pd.Series) or isinstance(data, pd.DataFrame)):
-#             raise JoogleChartsException("Filter data must be Series or DataFrame")
-#         if isinstance(data, pd.Series):
-#             df = pd.DataFrame(data)
-#         else:
-#             df = data
-#         table = dataframe_to_gviz(df, allow_nulls=True)
-#         self._json = table.ToJSon()
         
 
     def _set_render_properties(self, freestanding=False):
@@ -352,13 +342,6 @@ class Filter(_GoogleFilter):
             raise JoogleChartsException("Standalone filter must have filterColumnIndex")
         else:
             self._filter_column_index = self._options['filterColumnIndex']
-#             self.add_options(filterColumnIndex=0)
-#             if self._type == "CategoryFilter":
-#                 self._data_type = "string"
-#             elif self._type == "DateRangeFilter":
-#                 self._data_type = "date"
-#             elif self._type == "NumberRangeFilter":
-#                 self._data_type = "number"
 
         # get has_selected_values to see if a one time ready listener is needed.
         self._has_selected_values = 'selectedValues' in self._state
@@ -959,7 +942,6 @@ class JoogleChart(ChartShow, ChartRender):
         """
         Set values needed for rendering the chart
         """
-
 
         # jg render properties
         self.num = get_joogle_object_counter()
