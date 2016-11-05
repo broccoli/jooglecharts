@@ -720,10 +720,23 @@ class _Chart():
         self.name = "google_chart_" + str(self.num)
         self.chart_div_id = self.name + "_div_id"
 
+        self._visible_columns = self.view_cols or range(self._jooglechart._num_cols)
+
+        # domain column is first visible non-role columns
+        if self._jooglechart._role_columns:
+            for col in self._visible_columns:
+                if col not in self._jooglechart._role_columns:
+                    self._domain_column = col
+                    break
+        else:
+            self._domain_column = self._visible_columns[0]
+        
+        if self._domain_column is None:
+            raise JoogleChartsException("A chart must have one visible non-role column")
+
         # set chart options to empty dict if it's been nulled out
         if self.chart_options == None:
             self.chart_options = {}
-
 
         # add default classes
         self.add_div_class("jooglechart_container")
@@ -738,6 +751,7 @@ class _Chart():
             self.display_chart_type = self.chart_type
         else:
             self.display_chart_type = chart_type
+
 
 class Styler():
     
