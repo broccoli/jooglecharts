@@ -207,7 +207,7 @@ $(document).ready(function() {
 
 		chartwrapper.setView({
 			rows: total_filtered_rows,
-			columns: joogle_globals.get_view_cols(chartwrapper)
+			columns: chartwrapper.__current_view_columns
 		});
 		chartwrapper.draw();			
 	}
