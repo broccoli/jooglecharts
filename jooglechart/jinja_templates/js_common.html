@@ -163,12 +163,13 @@ $(document).ready(function() {
 		
 		
 	}
-	window.joogle_globals.update_chart = function(data, chartwrapper, view_cols, key_filter_list) {
+	window.joogle_globals.update_chart = function(chartwrapper, key_filter_list) {
 		/*  This function updates a chart using values from all controlling sonar filters.
 			The key_filter_list has the column and filter type for each key.  Get the value
 			for that filter from the message_map.		
 		*/
 		
+		var datatable = chartwrapper.getDataTable();
 		var no_filtered_values = true;
 		
 		var total_filtered_rows = [];
@@ -184,11 +185,11 @@ $(document).ready(function() {
 				// if we enter the loop, then at least one filter has a selection.
 				no_filtered_values = false;
 				if (type === "values") {
-					filtered_rows = joogle_globals.get_rows_for_column_and_values(column, values, data);
+					filtered_rows = joogle_globals.get_rows_for_column_and_values(column, values, datatable);
 				}
 				
 				else if (type === "range"){
-					filtered_rows = data.getFilteredRows([{column: column, minValue: values[0], maxValue: values[1]}]);
+					filtered_rows = datatable.getFilteredRows([{column: column, minValue: values[0], maxValue: values[1]}]);
 				}
 				
 				if (total_filtered_rows.length == 0) { total_filtered_rows = filtered_rows;}
@@ -206,9 +207,19 @@ $(document).ready(function() {
 
 		chartwrapper.setView({
 			rows: total_filtered_rows,
-			columns: view_cols
+			columns: joogle_globals.get_view_cols(chartwrapper)
 		});
 		chartwrapper.draw();			
+	}
+
+	window.joogle_globals.get_view_cols = function(chartwrapper) {
+		var view = chartwrapper.getView();
+		if (view == null) { return null; }
+		else {
+			var view_columns = view.columns;
+			if (typeof view_columns == 'undefined') { return null; }
+			else {return view_columns; }
+		}
 	}
 
 	window.joogle_globals.get_rows_for_column_and_values = function(column, selections, datatable) {
