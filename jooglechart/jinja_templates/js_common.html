@@ -205,6 +205,8 @@ $(document).ready(function() {
 		// if the values sent be all the filters were empty, then show the whole chart.
 		if (no_filtered_values) { total_filtered_rows = null};
 
+		chartwrapper.__current_view_columns = total_filtered_rows
+		
 		chartwrapper.setView({
 			rows: total_filtered_rows,
 			columns: chartwrapper.__current_view_columns

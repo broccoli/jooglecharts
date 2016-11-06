@@ -14,4 +14,5 @@
 		{{ chart.name }}['__domain_column'] = {{ chart._domain_column }};
 		{{ chart.name }}['__role_columns'] = {{ jg._role_columns }};
 		{{ chart.name }}['__current_view_columns'] = {{ chart._current_view_columns|to_json }};
+		{{ chart.name }}['__current_view_rows'] = null;
     {% endfor %}
