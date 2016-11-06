@@ -213,16 +213,6 @@ $(document).ready(function() {
 		chartwrapper.draw();			
 	}
 
-{#	window.joogle_globals.get_view_cols = function(chartwrapper) {#}
-{#		var view = chartwrapper.getView();#}
-{#		if (view == null) { return null; }#}
-{#		else {#}
-{#			var view_columns = view.columns;#}
-{#			if (typeof view_columns == 'undefined') { return null; }#}
-{#			else {return view_columns; }#}
-{#		}#}
-{#	}#}
-
 	window.joogle_globals.get_rows_for_column_and_values = function(column, selections, datatable) {
 		// for a list of values and a column, get the row numbers that have those values.
 		var rows_total = [];
@@ -313,7 +303,7 @@ $(document).ready(function() {
 		}
 		
 		chart.__current_view_columns = view_columns;
-		chart.setView({'columns': view_columns});
+		chart.setView({'columns': view_columns, 'rows': chart.__current_view_rows});
 		if (chart_type !== "Table") { chart.setOption('series', series); }
         chart.draw();
 	}
