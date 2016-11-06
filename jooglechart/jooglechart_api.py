@@ -374,11 +374,6 @@ class _Chart():
         else:
             self.display_chart_type = chart_type
 
-
-class Styler():
-    
-    def apply_styles(self, chart):
-        raise NotImplementedError('subclasses must override apply_styles()!')
         
 
 class JoogleChart(ChartShow, ChartRender):
