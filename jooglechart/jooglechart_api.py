@@ -197,6 +197,7 @@ class _Chart():
         self._jooglechart = None
         self._visible_columns = None
         self._domain_column = None
+        self._current_view_columns = None
         
 
  
@@ -344,6 +345,10 @@ class _Chart():
         if self._domain_column is None:
             raise JoogleChartsException("A chart must have one visible non-role column")
         
+    def _set_current_view_columns(self):
+        
+        self._current_view_columns = self.view_cols or None
+        
     def _set_render_properties(self, chart_type=None, agg_chart=False):
 
         # chart render properties
@@ -354,6 +359,7 @@ class _Chart():
         if not agg_chart:
             self._set_visible_columns()
             self._set_domain_column()
+            self._set_current_view_columns()
 
 
         # set chart options to empty dict if it's been nulled out
