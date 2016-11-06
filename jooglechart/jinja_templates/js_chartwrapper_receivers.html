@@ -12,18 +12,17 @@
 		{% endif %}
 		{% endfor %}
 
-
 		{% for receiver in chart._receivers %}
 		{% if receiver.action == 'filter_values' or receiver.action == 'filter_range' %}
-		(function(key, chart, datatable, chart_div_id, view_cols) {
+		(function(key, chart, chart_div_id) {
 			var func = function(data) {
 				if (data.sonar_key === key && document.getElementById(chart_div_id) !== null) {
-					joogle_globals.update_chart(datatable, chart, view_cols, key_filter_list);
+					joogle_globals.update_chart(chart, key_filter_list);
 				}
 			}
 			joogle_globals.sonar.add_handler(func);
 			joogle_globals.sonar.add_one_time_ready_poller(key, func, chart);
-		})("{{ receiver.key }}", {{ chart.name }}, {{ jg.data_name }}, "{{ chart.chart_div_id }}", {{ chart.view_cols|to_json }});
+		})("{{ receiver.key }}", {{ chart.name }}, "{{ chart.chart_div_id }}");
 		{% endif %}
 		{% if receiver.action == 'filter_columns' %}
 		// handler to filter columns
