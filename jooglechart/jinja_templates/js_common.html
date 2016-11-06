@@ -114,14 +114,12 @@ $(document).ready(function() {
 	}
 
 	window.joogle_globals.update_category_filter = function(filter, selected_values) {
-		// utility function for updating Google Charts filter		
 		var filter_state = filter.getState();
 		filter_state.selectedValues = selected_values;
 		filter.setState(filter_state);
 		filter.draw();
 	}
 	window.joogle_globals.update_range_filter = function(filter, range) {
-		// utility function for updating Google Charts filter		
 		var filter_state = filter.getState();
 		filter_state.lowValue = range[0];
 		filter_state.highValue = range[1];
@@ -164,7 +162,8 @@ $(document).ready(function() {
 		
 	}
 	window.joogle_globals.draw_chart_filtered_rows = function(chartwrapper, key_filter_list) {
-		/*  This function updates a chart using values from all controlling sonar filters.
+		/*
+		    This function updates a chart using values from all controlling sonar row filters.
 			The key_filter_list has the column and filter type for each key.  Get the value
 			for that filter from the message_map.		
 		*/
@@ -316,7 +315,7 @@ $(document).ready(function() {
 		chart.__current_view_columns = view_columns;
 		chart.setView({'columns': view_columns});
 		if (chart_type !== "Table") { chart.setOption('series', series); }
-        chart.draw();		
+        chart.draw();
 	}
 
 	window.joogle_globals.get_label_index_map = function(chart) {
