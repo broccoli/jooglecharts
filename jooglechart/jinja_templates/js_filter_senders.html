@@ -8,7 +8,7 @@
 
 		function filter_send_values(filter, datatable, key) {
 			var selected_values = filter.getState().selectedValues;
-			joogle_globals.sonar.send(key, {'selected_values': selected_values, 'series_names': {{ filter.__series_names }});
+			joogle_globals.sonar.send(key, {'selected_values': selected_values, 'series_names': {{ filter._name }}.__series_names} );
 		}
 		
 		function filter_send_range(filter, key) {
