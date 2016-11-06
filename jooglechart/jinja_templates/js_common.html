@@ -161,6 +161,7 @@ $(document).ready(function() {
 		
 		
 	}
+
 	window.joogle_globals.draw_chart_filtered_rows = function(chartwrapper, key_filter_list) {
 		/*
 		    This function updates a chart using values from all controlling sonar row filters.
@@ -177,10 +178,11 @@ $(document).ready(function() {
 			
 			var key = key_filter_list[i].key;
 			var type = key_filter_list[i].type;
-			var values = window.joogle_globals.sonar.message_map[key];
+			var data = window.joogle_globals.sonar.message_map[key];
 			var column = key_filter_list[i].column;
 			
-			if (typeof values !== 'undefined' && values.length > 0) {
+			if (typeof data !== 'undefined' && data.selected_values.length > 0) {
+				values = data.selected_values;
 				// if we enter the loop, then at least one filter has a selection.
 				no_filtered_values = false;
 				if (type === "values") {
