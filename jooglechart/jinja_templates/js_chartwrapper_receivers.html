@@ -28,7 +28,6 @@
 		{% if receiver.action == 'filter_columns' %}
 		// handler to filter columns
 		(function(key, chart, datatable, chart_div_id, col, view_cols) {
-			var series_cols = joogle_globals.get_viewable_columns(chart);
 			var func = function(data) {
 				if (data.sonar_key === key && document.getElementById(chart_div_id) !== null) {
 					window.joogle_globals.draw_chart_filtered_columns({{ chart.name }}, data.sonar_value);
