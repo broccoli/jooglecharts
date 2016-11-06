@@ -4,7 +4,7 @@ Created on Nov 5, 2016
 @author: richd
 '''
 
-from utils import JoogleChartsException
+from utils import JoogleChartsException, get_joogle_object_counter
 
 
 class Formatter():
