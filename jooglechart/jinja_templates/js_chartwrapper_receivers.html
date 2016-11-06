@@ -17,7 +17,7 @@
 		(function(key, chart, chart_div_id) {
 			var func = function(data) {
 				if (data.sonar_key === key && document.getElementById(chart_div_id) !== null) {
-					joogle_globals.update_chart(chart, key_filter_list);
+					joogle_globals.draw_chart_filtered_rows(chart, key_filter_list);
 				}
 			}
 			joogle_globals.sonar.add_handler(func);
