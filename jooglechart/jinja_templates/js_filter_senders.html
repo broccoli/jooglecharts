@@ -21,6 +21,7 @@
 
 {% for sender in filter._senders %}
 		{% include "js_flush_message_map.html" %}
+		
         google.visualization.events.addListener({{ filter._name }}, "{{ sender.on }}", function () {
 		{% if sender.type == 'values' %}
 			filter_send_values({{ filter._name }}, {{ datatable }}, "{{ sender.key }}");			
