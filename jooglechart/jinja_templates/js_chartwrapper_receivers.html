@@ -26,7 +26,7 @@
 		{% endif %}
 		{% if receiver.action == 'filter_columns' %}
 		// handler to filter columns
-		(function(key, chart, datatable, chart_div_id, col, view_cols) {
+		(function(key, chart, chart_div_id) {
 			var func = function(data) {
 				if (data.sonar_key === key && document.getElementById(chart_div_id) !== null) {
 					window.joogle_globals.draw_chart_filtered_columns({{ chart.name }}, data.sonar_value);
@@ -34,7 +34,7 @@
 			}
 			joogle_globals.sonar.add_handler(func);
 			joogle_globals.sonar.add_one_time_ready_poller(key, func, chart);
-		})("{{ receiver.key }}", {{ chart.name }}, {{ jg.data_name }}, "{{ chart.chart_div_id }}");
+		})("{{ receiver.key }}", {{ chart.name }}, "{{ chart.chart_div_id }}");
 		{% endif %}
 		{% if receiver.action == 'focus_column' %}
 		(function(key, chart, chart_div_id, col) {
