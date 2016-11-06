@@ -677,9 +677,9 @@ class _Chart():
     
     def _get_viewable_series_indexes_and_names(self):
         
-        # get the columns that are not role columns and are not excluded from set_view_cols
-        # this list will exclude the first category column.  For charts that 
-        # use the standard data model.
+        # The viewable series are those charted in a line chart of bar chart, say.
+        # They include the view cols, minus the domain column and the role columns.
+        # This method is used for the SeriesFilter.
 
         jooglechart = self._jooglechart
         try:
@@ -688,25 +688,12 @@ class _Chart():
             # TODO: data is in a 2d array
             columns = jooglechart._2d_array[0]
             
-        # get a list of series column indices.
-        # if view_cols is set, that will be our initial series index list
-        # if not, take the indexes for all the columns
-        view_cols = jooglechart.charts[0].view_cols
-        if view_cols:
-            series_indexes = view_cols[:]
-        else:
-            series_indexes = range(jooglechart._num_cols)
-
-        # remove role cols from series indexes
-        if jooglechart.roles:
-            role_cols = [role[0] for role in jooglechart.roles]
-            for col in role_cols:
-                if col in series_indexes:
-                    series_indexes.remove(col)
+        # remove category column and role columns from visible columns
+        series_indexes = self._visible_columns[:]
+        series_indexes.remove(self._domain_column)
+        for col in self._jooglechart._role_columns:
+            series_indexes.remove(col)            
         
-        # remove the category column -- first remaining series column
-        series_indexes.pop(0)
- 
         # get the series names
         series_names = [columns[ix] for ix in series_indexes]
         
@@ -720,6 +707,7 @@ class _Chart():
         self.name = "google_chart_" + str(self.num)
         self.chart_div_id = self.name + "_div_id"
 
+        # the visible columns are either the view_cols set by the user or all the column indexes.
         self._visible_columns = self.view_cols or range(self._jooglechart._num_cols)
 
         # domain column is first visible non-role columns
