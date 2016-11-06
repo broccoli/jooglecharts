@@ -418,7 +418,7 @@ class SeriesFilter(_GoogleFilter):
                     message = "For SeriesFilter, all charts must have the same view cols"
                     raise JoogleChartsException(message)
                 
-        series_indexes, series_names = jooglechart._get_viewable_series_indexes_and_names()
+        series_names = jooglechart.get_viewable_series()
 
         # make data frame of series names to use for series filter DataTable        
         df = pd.DataFrame({'columns': series_names})
@@ -428,7 +428,6 @@ class SeriesFilter(_GoogleFilter):
             self._state['selectedValues'] = series_names
 
         self._filter_table_json = dataframe_to_gviz(df).ToJSon()
-        self._series_indexes = series_indexes
         self._num = get_joogle_object_counter()
         
         if self._label:
@@ -675,11 +674,10 @@ class _Chart():
         self._receivers.append(receiver_dict)
 
     
-    def _get_viewable_series_indexes_and_names(self):
+    def _get_viewable_series_indexes(self):
         
         # The viewable series are those charted in a line chart of bar chart, say.
         # They include the view cols, minus the domain column and the role columns.
-        # This method is used for the SeriesFilter.
 
         jooglechart = self._jooglechart
         try:
@@ -689,7 +687,13 @@ class _Chart():
             columns = jooglechart._2d_array[0]
             
         # remove category column and role columns from visible columns
+        if not self._visible_columns:
+            self._set_visible_columns()
         series_indexes = self._visible_columns[:]
+        
+        if not self._domain_column:
+            self._set_domain_column()
+            
         series_indexes.remove(self._domain_column)
         for col in self._jooglechart._role_columns:
             series_indexes.remove(col)            
@@ -697,19 +701,14 @@ class _Chart():
         # get the series names
         series_names = [columns[ix] for ix in series_indexes]
         
-        return series_indexes, series_names
+        return series_indexes
     
 
-    def _set_render_properties(self, chart_type=None):
-
-        # chart render properties
-        self.num = get_joogle_object_counter()
-        self.name = "google_chart_" + str(self.num)
-        self.chart_div_id = self.name + "_div_id"
-
+    def _set_visible_columns(self):
         # the visible columns are either the view_cols set by the user or all the column indexes.
         self._visible_columns = self.view_cols or range(self._jooglechart._num_cols)
 
+    def _set_domain_column(self):
         # domain column is first visible non-role columns
         if self._jooglechart._role_columns:
             for col in self._visible_columns:
@@ -721,6 +720,17 @@ class _Chart():
         
         if self._domain_column is None:
             raise JoogleChartsException("A chart must have one visible non-role column")
+        
+    def _set_render_properties(self, chart_type=None):
+
+        # chart render properties
+        self.num = get_joogle_object_counter()
+        self.name = "google_chart_" + str(self.num)
+        self.chart_div_id = self.name + "_div_id"
+
+        self._set_visible_columns()
+        self._set_domain_column()
+
 
         # set chart options to empty dict if it's been nulled out
         if self.chart_options == None:
@@ -846,13 +856,29 @@ class JoogleChart(ChartShow, ChartRender):
         self.charts[0].chart_type = chart_type
 
     
-    def _get_viewable_series_indexes_and_names(self):
-# 
-        return self.charts[0]._get_viewable_series_indexes_and_names()
+#     def _get_viewable_series_indexes_and_names(self):
+# # 
+#         return self.charts[0]._get_viewable_series_indexes_and_names()
+    
+    def _get_column_names(self, indexes):
+        
+        columns = None
+        try:
+            columns = self._dataframe.columns.values.tolist()
+        except:
+            columns = self._2d_array[0]
+        
+        # get the series names
+        series_names = [columns[ix] for ix in indexes]
+        
+        return series_names
     
     def get_viewable_series(self):
-        # return the series names only.  Can be used to make a stand alone series filter
-        return self.charts[0]._get_viewable_series_indexes_and_names()[1]
+        # Return the series names only.  Can be used to make a stand alone series filter
+        # Return series for first chart.
+        
+        series_indexes = self.charts[0]._get_viewable_series_indexes()
+        return self._get_column_names(series_indexes)
 
     def add_formatter(self, formatter, options=None, cols=None, source_cols=None, pattern=None, dest_col=None):
 
@@ -1042,7 +1068,7 @@ class AggChart(ChartShow, ChartRender):
     def set_chart_type(self, chart_type):
         self._charts.chart_type = chart_type
 
-    def _get_viewable_series_indexes_and_names(self):
+    def _get_column_names(self):
         self._unasable_function()
     
     def get_viewable_series(self):
