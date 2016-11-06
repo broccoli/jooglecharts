@@ -158,10 +158,10 @@ import pandas as pd
 import json
 from IPython.display import display, HTML
 
-from utils import get_joogle_object_counter, JoogleChartsException, _add_dict_to_dict, _validate_sender
+from utils import get_joogle_object_counter, JoogleChartsException, _add_dict_to_dict, _validate_sender, joogle_include, _render_joogle_include
 from dataframe_to_gviz import dataframe_to_gviz
 from super_classes import ChartShow, ChartRender
-from chart_filters import SeriesFilter
+from chart_filters import SeriesFilter, Filter, SuperCategoryFilter
 from formatters import Formatter
 
 from super_classes import AddDivStyles, ContainerRender
@@ -296,7 +296,6 @@ class _Chart():
         receiver_dict.update(kwargs)
         
         self._receivers.append(receiver_dict)
-
     
     def _get_viewable_series_indexes(self):
         
@@ -345,15 +344,16 @@ class _Chart():
         if self._domain_column is None:
             raise JoogleChartsException("A chart must have one visible non-role column")
         
-    def _set_render_properties(self, chart_type=None):
+    def _set_render_properties(self, chart_type=None, agg_chart=False):
 
         # chart render properties
         self.num = get_joogle_object_counter()
         self.name = "google_chart_" + str(self.num)
         self.chart_div_id = self.name + "_div_id"
 
-        self._set_visible_columns()
-        self._set_domain_column()
+        if not agg_chart:
+            self._set_visible_columns()
+            self._set_domain_column()
 
 
         # set chart options to empty dict if it's been nulled out
@@ -803,7 +803,7 @@ class AggChart(ChartShow, ChartRender):
         for styler in self._stylers:
             styler(self)            
 
-        self._chart._set_render_properties(chart_type)
+        self._chart._set_render_properties(chart_type, agg_chart=True)
 
 
 
