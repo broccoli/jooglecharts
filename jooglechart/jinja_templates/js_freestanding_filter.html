@@ -17,6 +17,9 @@
 			'state': {{ filter._state|default("{}")|to_json }}
 		});
 		
+		{{ filter._name }}.__series_names = {{ filter._series_names }}
+		
+		
 		{% set datatable = 'datatable' %}
 		// ------------ Add filter senders, if any ---------------
 		{% include 'js_filter_senders.html' %}

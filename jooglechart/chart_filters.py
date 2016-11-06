@@ -129,8 +129,9 @@ class Filter(_GoogleFilter):
         self._label = None
         self._json = None
         self._data_type = None
-        self._data = kwargs.get('data')
+        self._data = None
         self._filter_column_index = None
+        self._series_names = None
         
         if 'data' in kwargs:
             self._data = kwargs['data']
@@ -175,6 +176,18 @@ class Filter(_GoogleFilter):
             raise JoogleChartsException("Standalone filter must have filterColumnIndex")
         else:
             self._filter_column_index = self._options['filterColumnIndex']
+            
+        
+#         print self._filter_column_index
+#         print isinstance(self._data, pd.DataFrame)
+#         print self._data
+        
+        if isinstance(self._data, pd.DataFrame):
+            self._series_names = list(self._data.ix[:, self._filter_column_index].values)
+        else:
+            self._series_names = list(self._data.values)
+#         self._series_names = self._data.iloc[0].values
+#         self._series_names = self._data.ix[:, self._filter_column_index].values
 
         # get has_selected_values to see if a one time ready listener is needed.
         self._has_selected_values = 'selectedValues' in self._state
@@ -218,6 +231,7 @@ class SeriesFilter(_GoogleFilter):
         self.add_options(filterColumnIndex = 0)
         self._label = None
         self._global_name = False
+        self._series_names = None
 
     def add_options(self, options = None, **kwargs):
         
@@ -252,6 +266,8 @@ class SeriesFilter(_GoogleFilter):
                     raise JoogleChartsException(message)
                 
         series_names = jooglechart.get_viewable_series()
+        
+        self._series_names = series_names
 
         # make data frame of series names to use for series filter DataTable        
         df = pd.DataFrame({'columns': series_names})

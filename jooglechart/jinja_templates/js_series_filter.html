@@ -24,6 +24,8 @@
 	      state: {{ jg._series_filter._state|default("{}")|to_json }}
 	    });
 
+		{{ jg._series_filter._name }}.__series_names = {{ jg._series_filter._series_names }}
+		
 		// initialize the array of dataTable column indices, e.g, [0, 1, 2, etc.]
 	    var columns = [];
 	    for (var i = 0; i < {{ jg.data_name }}.getNumberOfColumns(); i++) {

@@ -242,7 +242,8 @@ $(document).ready(function() {
 		return binding_values;
 	}
 
-	window.joogle_globals.draw_chart_filtered_columns = function(chart, selected_columns) {
+
+	window.joogle_globals.draw_chart_filtered_columns = function(chart, selected_columns, series_names) {
 		/*
 			For a Table, the columns that aren't selected will be hidden altogether.  For a chart,
 			the line/column/bar will disappear but the series will remain in the legend with a 
@@ -264,6 +265,8 @@ $(document).ready(function() {
 		var view_columns = []
 		var series_ctr = 0;
 		
+		var series_indexes = joogle_globals.get_column_indexes_from_names(datatable, series_names);
+		
 		// Loop through the visible columns and create the array of view_columns
 		var visible_columns = chart.__visible_columns;
 		for (var i = 0; i < visible_columns.length; i++) {
@@ -273,9 +276,13 @@ $(document).ready(function() {
 			// get the column label
 			var column_label = datatable.getColumnLabel(ix);
 			
-			if (ix == chart.__domain_column || $.inArray(ix, chart.__role_columns) >= 0) {
+			
+			if ($.inArray(ix, series_indexes) < 0 || $.inArray(ix, chart.__role_columns) >= 0) {
 				view_columns.push(ix);				
 			}
+			// if (ix == chart.__domain_column || $.inArray(ix, chart.__role_columns) >= 0) {
+			// 	view_columns.push(ix);
+			// }
 			else {
 				// check if the column label is in the list of selected labels
 				if ($.inArray(column_label, selected_columns) >= 0) {
@@ -307,16 +314,16 @@ $(document).ready(function() {
 		if (chart_type !== "Table") { chart.setOption('series', series); }
         chart.draw();
 	}
-
-	window.joogle_globals.get_label_index_map = function(chart) {
-		var datatable = chart.getDataTable();
-		var num_columns = datatable.getNumberOfColumns();
-		var label_index_map = {};
-		for (var i = 0; i < num_columns; i++) {
+	
+	window.joogle_globals.get_column_indexes_from_names = function(datatable, names) {
+		var indexes = [];
+		for (var i = 0; i < datatable.getNumberOfColumns(); i++) {
 			var label = datatable.getColumnLabel(i);
-			label_index_map[label] = i;
+			if ($.inArray(label, names) >= 0) {
+				indexes.push(i);
+			}
 		}
-		return label_index_map;
+		return indexes;
 	}
 
 	/*
