@@ -24,7 +24,7 @@
 	      state: {{ jg._series_filter._state|default("{}")|to_json }}
 	    });
 
-		{{ jg._series_filter._name }}.__series_names = {{ jg._series_filter._series_names }}
+		{{ jg._series_filter._name }}.__series_names = {{ jg._series_filter._series_names }};
 		
 		// initialize the array of dataTable column indices, e.g, [0, 1, 2, etc.]
 	    var columns = [];
@@ -46,7 +46,7 @@
 		function update_chart() {
 			var selected_values = {{ jg._series_filter._name }}.getState().selectedValues;
 			{% for chart in jg.charts %}
-			window.joogle_globals.draw_chart_filtered_columns({{ chart.name }}, selected_values);			
+			window.joogle_globals.draw_chart_filtered_columns({{ chart.name }}, selected_values, {{ jg._series_filter._name }}.__series_names);			
 			{% endfor %}
 {#			window.joogle_globals.draw_chart_filtered_columns({{ jg.data_name }}, series_cols, selected_values, update_chart_callback);#}
 
