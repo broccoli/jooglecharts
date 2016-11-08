@@ -1,11 +1,11 @@
         // Create ChartWrapper
 	{% for chart in jg.charts %}
+{#		The view.columns and view.rows are set to null when no selections are made.  Null#}
+{#		makes all columns or rows appear.#}
         var {{ chart.name }} = new google.visualization.ChartWrapper({      
             "containerId": "{{ chart.chart_div_id }}",
             "dataTable": {{ jg.data_name }},
-            {% if chart.view_cols %}
-            "view": {columns: {{ chart.view_cols|to_json }}},  
-            {% endif %}
+            "view": {"columns": {{ chart.view_cols|to_json }}, "rows": null},
             "chartType": "{{ chart.display_chart_type }}",
             "options": {{ chart.chart_options|to_json }}
         });

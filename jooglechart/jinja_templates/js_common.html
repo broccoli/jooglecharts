@@ -206,11 +206,9 @@ $(document).ready(function() {
 		// if the values sent by all the filters were empty, then show the whole chart.
 		if (no_filtered_values) { total_filtered_rows = null};
 
-		chartwrapper.__current_view_rows = total_filtered_rows
-		
 		chartwrapper.setView({
 			rows: total_filtered_rows,
-			columns: chartwrapper.__current_view_columns
+			columns: chartwrapper.getView().columns
 		});
 		chartwrapper.draw();			
 	}
@@ -311,8 +309,10 @@ $(document).ready(function() {
 			}
 		}
 		
-		chart.__current_view_columns = view_columns;
-		chart.setView({'columns': view_columns, 'rows': chart.__current_view_rows});
+		chart.setView({
+			'columns': view_columns,
+			'rows': chart.getView().rows
+		});
 		if (chart_type !== "Table") { chart.setOption('series', series); }
         chart.draw();
 	}
