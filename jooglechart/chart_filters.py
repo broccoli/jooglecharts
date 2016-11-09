@@ -182,10 +182,11 @@ class Filter(_GoogleFilter):
 #         print isinstance(self._data, pd.DataFrame)
 #         print self._data
         
-        if isinstance(self._data, pd.DataFrame):
-            self._series_names = list(self._data.ix[:, self._filter_column_index].values)
-        else:
-            self._series_names = list(self._data.values)
+        if freestanding:
+            if isinstance(self._data, pd.DataFrame):
+                self._series_names = list(self._data.ix[:, self._filter_column_index].values)
+            else:
+                self._series_names = list(self._data.values)
 #         self._series_names = self._data.iloc[0].values
 #         self._series_names = self._data.ix[:, self._filter_column_index].values
 
