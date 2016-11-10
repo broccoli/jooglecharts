@@ -304,14 +304,6 @@ class _Chart():
         # They include the view cols, minus the domain column and the role columns.
 
         jooglechart = self._jooglechart
-#         try:
-#             columns = jooglechart._dataframe.columns.values.tolist()
-#         except:
-#             # TODO: data is in a 2d array
-#             columns = jooglechart._2d_array[0]
-            
-            
-                
         
         # remove category column and role columns from visible columns
         if not self._visible_columns:
@@ -329,12 +321,10 @@ class _Chart():
         if exclude_filter_columns:            
             pass
             for filter in jooglechart.filters:
-                filter_column_index = filter.options.get("filterColumnIndex")
+                filter_column_index = filter._options.get("filterColumnIndex")
                 series_indexes.remove(filter_column_index)
 
-        # get the series names
-#         series_names = [columns[ix] for ix in series_indexes]
-        
+
         return series_indexes
     
 

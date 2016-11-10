@@ -225,7 +225,7 @@ class SeriesFilter(_GoogleFilter):
     first visible non-role columns (since it is the category, or y-axis).
     """
     
-    def __init__(self):
+    def __init__(self, **kwargs):
         super(SeriesFilter, self).__init__("CategoryFilter")
 #         Filter.__init__(self, None)
         self.add_options(ui_label = "Columns")
@@ -233,6 +233,7 @@ class SeriesFilter(_GoogleFilter):
         self._label = None
         self._global_name = False
         self._series_names = None
+        self._series_indexes = kwargs.get('cols')
 
     def add_options(self, options = None, **kwargs):
         
@@ -266,12 +267,16 @@ class SeriesFilter(_GoogleFilter):
                     message = "For SeriesFilter, all charts must have the same view cols"
                     raise JoogleChartsException(message)
                 
-        exclude_filter_columns = True if jooglechart.chart_type == "Table" else False
+        exclude_filter_columns = True if jooglechart.charts[0].chart_type == "Table" else False
             
-        series_names = jooglechart.get_viewable_series(exclude_filter_columns = exclude_filter_columns)
+        # Get series names; check if user passed in their own columns
+        if self._series_indexes:
+            series_names = jooglechart._get_column_names(self._series_indexes)
+        else:
+            series_names = jooglechart.get_viewable_series(exclude_filter_columns = exclude_filter_columns)        
         
         self._series_names = series_names
-
+        
         # make data frame of series names to use for series filter DataTable        
         df = pd.DataFrame({'columns': series_names})
 
