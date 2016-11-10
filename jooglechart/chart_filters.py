@@ -266,7 +266,9 @@ class SeriesFilter(_GoogleFilter):
                     message = "For SeriesFilter, all charts must have the same view cols"
                     raise JoogleChartsException(message)
                 
-        series_names = jooglechart.get_viewable_series()
+        exclude_filter_columns = True if jooglechart.chart_type == "Table" else False
+            
+        series_names = jooglechart.get_viewable_series(exclude_filter_columns = exclude_filter_columns)
         
         self._series_names = series_names
 

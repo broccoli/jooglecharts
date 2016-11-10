@@ -298,18 +298,21 @@ class _Chart():
         
         self._receivers.append(receiver_dict)
     
-    def _get_viewable_series_indexes(self):
+    def _get_viewable_series_indexes(self, exclude_filter_columns=False):
         
         # The viewable series are those charted in a line chart of bar chart, say.
         # They include the view cols, minus the domain column and the role columns.
 
         jooglechart = self._jooglechart
-        try:
-            columns = jooglechart._dataframe.columns.values.tolist()
-        except:
-            # TODO: data is in a 2d array
-            columns = jooglechart._2d_array[0]
+#         try:
+#             columns = jooglechart._dataframe.columns.values.tolist()
+#         except:
+#             # TODO: data is in a 2d array
+#             columns = jooglechart._2d_array[0]
             
+            
+                
+        
         # remove category column and role columns from visible columns
         if not self._visible_columns:
             self._set_visible_columns()
@@ -322,8 +325,15 @@ class _Chart():
         for col in self._jooglechart._role_columns:
             series_indexes.remove(col)            
         
+        # remove filter column indexes, if nec:
+        if exclude_filter_columns:            
+            pass
+            for filter in jooglechart.filters:
+                filter_column_index = filter.options.get("filterColumnIndex")
+                series_indexes.remove(filter_column_index)
+
         # get the series names
-        series_names = [columns[ix] for ix in series_indexes]
+#         series_names = [columns[ix] for ix in series_indexes]
         
         return series_indexes
     
@@ -496,11 +506,11 @@ class JoogleChart(ChartShow, ChartRender):
         
         return series_names
     
-    def get_viewable_series(self):
+    def get_viewable_series(self, exclude_filter_columns=False):
         # Return the series names only.  Can be used to make a stand alone series filter
         # Return series for first chart.
         
-        series_indexes = self.charts[0]._get_viewable_series_indexes()
+        series_indexes = self.charts[0]._get_viewable_series_indexes(exclude_filter_columns=exclude_filter_columns)
         return self._get_column_names(series_indexes)
 
     def add_formatter(self, formatter, options=None, cols=None, source_cols=None, pattern=None, dest_col=None):
