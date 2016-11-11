@@ -182,7 +182,7 @@ class Filter(_GoogleFilter):
 #         print isinstance(self._data, pd.DataFrame)
 #         print self._data
         
-        if freestanding:
+        if freestanding and self._type == "CategoryFilter":
             if isinstance(self._data, pd.DataFrame):
                 self._series_names = list(self._data.ix[:, self._filter_column_index].values)
             else:

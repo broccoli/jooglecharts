@@ -171,6 +171,7 @@ $(document).ready(function() {
 		
 		var datatable = chartwrapper.getDataTable();
 		var no_filtered_values = true;
+		var filtered_rows;
 		
 		var total_filtered_rows = [];
 		for (var i = 0; i < key_filter_list.length; i++) {
@@ -181,16 +182,16 @@ $(document).ready(function() {
 			var data = window.joogle_globals.sonar.message_map[key];
 			var column = key_filter_list[i].column;
 			
-			if (typeof data !== 'undefined' && data.selected_values.length > 0) {
-				values = data.selected_values;
+			if (typeof data !== 'undefined' && 
+			((type === "values" && data.selected_values.length > 0) || type === "range")) {
 				// if we enter the loop, then at least one filter has a selection.
 				no_filtered_values = false;
 				if (type === "values") {
-					filtered_rows = joogle_globals.get_rows_for_column_and_values(column, values, datatable);
+					filtered_rows = joogle_globals.get_rows_for_column_and_values(column, data.selected_values, datatable);
 				}
 				
 				else if (type === "range"){
-					filtered_rows = datatable.getFilteredRows([{column: column, minValue: values[0], maxValue: values[1]}]);
+					filtered_rows = datatable.getFilteredRows([{column: column, minValue: data[0], maxValue: data[1]}]);
 				}
 				
 				if (total_filtered_rows.length == 0) { total_filtered_rows = filtered_rows;}
