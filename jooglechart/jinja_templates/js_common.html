@@ -329,6 +329,17 @@ $(document).ready(function() {
 		return indexes;
 	}
 
+	window.joogle_globals.get_label_index_map = function(chart) {
+		var datatable = chart.getDataTable();
+		var num_columns = datatable.getNumberOfColumns();
+		var label_index_map = {};
+		for (var i = 0; i < num_columns; i++) {
+			var label = datatable.getColumnLabel(i);
+			label_index_map[label] = i;
+		}
+		return label_index_map;
+	}
+
 	/*
 		The google.load function can only be called once per page.  On the first
 		jooglechart, load the api and call loader with a callback.  For
