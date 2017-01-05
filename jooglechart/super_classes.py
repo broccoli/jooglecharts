@@ -102,8 +102,8 @@ class ContainerRender(object):
 #         except:
 #             pass
  
-        return j2_env.get_template(self._template).render(context).encode('utf-8')
-#         return j2_env.get_template(self._template).render(context)
+#         return j2_env.get_template(self._template).render(context).encode('utf-8')
+        return j2_env.get_template(self._template).render(context)
 #         return out_string
 
 
