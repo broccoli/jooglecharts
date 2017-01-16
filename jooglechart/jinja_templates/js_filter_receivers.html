@@ -3,7 +3,7 @@
 		(function(key, filter, div_id) {
 			var func = function(data) {
 				if (data.sonar_key === key && document.getElementById(div_id) !== null) {
-					joogle_globals.update_category_filter(filter, data.sonar_value);
+					joogle_globals.update_category_filter(filter, data.sonar_value.selected_values);
 				}
 			}
 			joogle_globals.sonar.add_handler(func);

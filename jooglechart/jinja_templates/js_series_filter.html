@@ -55,7 +55,7 @@
             // update is called on both ready and statechange.
             {% for sender in jg._series_filter._senders %}
 			{% include "js_flush_message_map.html" %}
-			joogle_globals.sonar.send(key, {'selected_values': selected_values, 'series_names': {{ filter._series_names }});
+			joogle_globals.sonar.send("{{ sender.key }}", {'selected_values': selected_values, 'series_names': {{ filter._series_names }} });
             {% endfor %}
 			/* -------------------------------------------------------- */			
 			

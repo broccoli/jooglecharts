@@ -3,7 +3,7 @@
 			// See if the button group exists in the DOM.  Rerunning cells in Jupyter
 			// creates more handlers on elements no longer on the DOM.  Bad performance.
 			if (data.sonar_key == "{{ receiver.key }}" && document.getElementById(id) !== null) {
-				update_checkboxes(data.sonar_value);
+				update_checkboxes(data.sonar_value.selected_values);
 			}
 		});
 		{% endfor %}
