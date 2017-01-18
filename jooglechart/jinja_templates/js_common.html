@@ -60,11 +60,15 @@ $(document).ready(function() {
 				});
 			}
 			this.call_text_receivers = function (data) {
+				var selected_values = data.sonar_value.selected_values;
+				if (typeof selected_values === "undefined") {
+					return;
+				}
 				$(".joogle_text_receiver").each(function() {
 					var receiver = this;
 					var key = receiver.dataset.key;
 					var list_style = receiver.dataset.liststyle;
-					var sub_text = data.sonar_value;
+					var sub_text = selected_values;
 					var default_text = receiver.dataset.default;
 					if (typeof default_text === "undefined") {
 						default_text = "";
@@ -155,7 +159,7 @@ $(document).ready(function() {
 		// with the current selected values.
 		var selected_values = filter.getState().selectedValues;
 		for (var i = 0; i < sending_keys.length; i++) {
-			window.joogle_globals.sonar.message_map[sending_keys[i]] = selected_values;		
+			window.joogle_globals.sonar.message_map[sending_keys[i]] = {'selected_values': selected_values};		
 		}
 		
 		

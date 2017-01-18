@@ -319,7 +319,6 @@ class _Chart():
         
         # remove filter column indexes, if nec:
         if exclude_filter_columns:            
-            pass
             for filter in jooglechart.filters:
                 filter_column_index = filter._options.get("filterColumnIndex")
                 series_indexes.remove(filter_column_index)
