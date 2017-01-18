@@ -198,6 +198,7 @@ class _Chart():
         self._visible_columns = None
         self._domain_column = None
         self._current_view_columns = None
+        self._viewable_series_indexes = None
         
 
  
@@ -348,6 +349,35 @@ class _Chart():
         
         self._current_view_columns = self.view_cols or None
         
+    def _set_viewable_series_indexes(self):
+        
+        # The viewable series are those charted in a line chart of bar chart, say.
+        # They include the view cols, minus the domain column and the role columns.
+
+        jooglechart = self._jooglechart
+        
+        # remove category column and role columns from visible columns
+        if not self._visible_columns:
+            self._set_visible_columns()
+        series_indexes = self._visible_columns[:]
+        
+        if not self._domain_column:
+            self._set_domain_column()
+            
+        series_indexes.remove(self._domain_column)
+        for col in self._jooglechart._role_columns:
+            series_indexes.remove(col)            
+        
+        # remove filter column indexes, if nec:
+#         if exclude_filter_columns:            
+#             for filter in jooglechart.filters:
+#                 filter_column_index = filter._options.get("filterColumnIndex")
+#                 series_indexes.remove(filter_column_index)
+
+
+        self._viewable_series_indexes = series_indexes
+#         return series_indexes
+        
     def _set_render_properties(self, chart_type=None, agg_chart=False):
 
         # chart render properties
@@ -359,6 +389,7 @@ class _Chart():
             self._set_visible_columns()
             self._set_domain_column()
             self._set_current_view_columns()
+            self._set_viewable_series_indexes()
 
 
         # set chart options to empty dict if it's been nulled out

@@ -270,7 +270,9 @@ $(document).ready(function() {
 		var view_columns = []
 		var series_ctr = 0;
 		
-		var series_indexes = joogle_globals.get_column_indexes_from_names(datatable, series_names);
+		// var series_indexes = joogle_globals.get_column_indexes_from_names(datatable, series_names);
+		
+		var series_indexes = chart.__viewable_series_indexes;
 		
 		// Loop through the visible columns and create the array of view_columns
 		var visible_columns = chart.__visible_columns;

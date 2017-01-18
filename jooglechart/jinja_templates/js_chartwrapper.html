@@ -15,4 +15,5 @@
 		{{ chart.name }}['__role_columns'] = {{ jg._role_columns }};
 		{{ chart.name }}['__current_view_columns'] = {{ chart._current_view_columns|to_json }};
 		{{ chart.name }}['__current_view_rows'] = null;
+		{{ chart.name }}['__viewable_series_indexes'] = {{ chart._viewable_series_indexes }};
     {% endfor %}
