@@ -11,7 +11,7 @@
 				var dt = {{ chart.name }}.getDataTable();
 				var selected_category = dt.getValue(selection.row, {{ sender.column }});
 				//var selected_category = {{ jg.data_name }}.getValue(true_selection_row, 0);
-				joogle_globals.sonar.send('{{ sender.key }}', {'selected_values': [selected_category]});
+				joogle_globals.sonar.send('{{ sender.key }}', [selected_category]);
 			}
 		});
 		{% endif %}

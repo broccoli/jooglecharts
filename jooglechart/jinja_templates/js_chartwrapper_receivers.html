@@ -29,7 +29,7 @@
 		(function(key, chart, chart_div_id) {
 			var func = function(data) {
 				if (data.sonar_key === key && document.getElementById(chart_div_id) !== null) {
-					window.joogle_globals.draw_chart_filtered_columns(chart, data.sonar_value.selected_values, data.sonar_value.series_names);
+					window.joogle_globals.draw_chart_filtered_columns(chart, data.sonar_value);
 				}
 			}
 			joogle_globals.sonar.add_handler(func);

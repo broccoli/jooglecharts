@@ -60,7 +60,7 @@ $(document).ready(function() {
 				});
 			}
 			this.call_text_receivers = function (data) {
-				var selected_values = data.sonar_value.selected_values;
+				var selected_values = data.sonar_value;
 				if (typeof selected_values === "undefined") {
 					return;
 				}
@@ -159,7 +159,7 @@ $(document).ready(function() {
 		// with the current selected values.
 		var selected_values = filter.getState().selectedValues;
 		for (var i = 0; i < sending_keys.length; i++) {
-			window.joogle_globals.sonar.message_map[sending_keys[i]] = {'selected_values': selected_values};		
+			window.joogle_globals.sonar.message_map[sending_keys[i]] = selected_values;
 		}
 		
 		
@@ -187,11 +187,11 @@ $(document).ready(function() {
 			var column = key_filter_list[i].column;
 			
 			if (typeof data !== 'undefined' && 
-			((type === "values" && data.selected_values.length > 0) || type === "range")) {
+			((type === "values" && data.length > 0) || type === "range")) {
 				// if we enter the loop, then at least one filter has a selection.
 				no_filtered_values = false;
 				if (type === "values") {
-					filtered_rows = joogle_globals.get_rows_for_column_and_values(column, data.selected_values, datatable);
+					filtered_rows = joogle_globals.get_rows_for_column_and_values(column, data, datatable);
 				}
 				
 				else if (type === "range"){
@@ -248,7 +248,7 @@ $(document).ready(function() {
 	}
 
 
-	window.joogle_globals.draw_chart_filtered_columns = function(chart, selected_columns, series_names) {
+	window.joogle_globals.draw_chart_filtered_columns = function(chart, selected_columns) {
 		/*
 			For a Table, the columns that aren't selected will be hidden altogether.  For a chart,
 			the line/column/bar will disappear but the series will remain in the legend with a 
@@ -269,8 +269,6 @@ $(document).ready(function() {
 	    var series = {};
 		var view_columns = []
 		var series_ctr = 0;
-		
-		// var series_indexes = joogle_globals.get_column_indexes_from_names(datatable, series_names);
 		
 		var series_indexes = chart.__viewable_series_indexes;
 		

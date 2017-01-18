@@ -2,7 +2,7 @@
 		(function(key, buttons, div_id) {
 			var func = function(data) {
 				if (data.sonar_key === key && document.getElementById(div_id) !== null) {
-					buttons.update_button_group(data.sonar_value.selected_values);
+					buttons.update_button_group(data.sonar_value);
 				}
 			}
 			joogle_globals.sonar.add_handler(func);

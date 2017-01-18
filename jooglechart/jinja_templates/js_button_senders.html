@@ -2,7 +2,7 @@
 		{% for sender in button._senders %}
 		{% include "js_flush_message_map.html" %}
 		senders.push(function() {
-			joogle_globals.sonar.send("{{ sender.key }}", {'selected_values': value});
+			joogle_globals.sonar.send("{{ sender.key }}", value);
 		})
 		{% endfor %}
 		

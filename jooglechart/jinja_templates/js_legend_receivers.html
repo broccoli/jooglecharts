@@ -2,7 +2,7 @@
 		(function(key, legend, div_id) {
 			var func = function(data) {
 				if (data.sonar_key === key && document.getElementById(div_id) !== null) {
-					legend.update_legend(data.sonar_value.selected_values);
+					legend.update_legend(data.sonar_value);
 				}
 			}
 			joogle_globals.sonar.add_handler(func);

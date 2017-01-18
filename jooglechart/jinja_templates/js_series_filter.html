@@ -46,7 +46,7 @@
 		function update_chart() {
 			var selected_values = {{ jg._series_filter._name }}.getState().selectedValues;
 			{% for chart in jg.charts %}
-			window.joogle_globals.draw_chart_filtered_columns({{ chart.name }}, selected_values, {{ jg._series_filter._name }}.__series_names);			
+			window.joogle_globals.draw_chart_filtered_columns({{ chart.name }}, selected_values);			
 			{% endfor %}
 {#			window.joogle_globals.draw_chart_filtered_columns({{ jg.data_name }}, series_cols, selected_values, update_chart_callback);#}
 
@@ -55,7 +55,7 @@
             // update is called on both ready and statechange.
             {% for sender in jg._series_filter._senders %}
 			{% include "js_flush_message_map.html" %}
-			joogle_globals.sonar.send("{{ sender.key }}", {'selected_values': selected_values, 'series_names': {{ filter._series_names }} });
+			joogle_globals.sonar.send("{{ sender.key }}", selected_values);
             {% endfor %}
 			/* -------------------------------------------------------- */			
 			
