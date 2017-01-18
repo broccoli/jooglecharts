@@ -8,7 +8,7 @@ from setuptools import setup
 
 setup(
     name='jooglechart',
-    version='0.1.5',
+    version='0.1.6',
     packages=['jooglechart',],
     package_data={'jooglechart': ['jinja_templates/*.html', '*.ipynb', 'jinja_templates/js/*.js', 'jinja_templates/css/*.css']},
     license='Creative Commons Attribution-Noncommercial-Share Alike license',
