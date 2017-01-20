@@ -46,7 +46,8 @@ class ChartRender(object):
 
         set_common_on_context(context, include_common)
         
-        return j2_env.get_template(self._template).render(context).encode('utf-8')
+        return j2_env.get_template(self._template).render(context)
+#         return j2_env.get_template(self._template).render(context).encode('utf-8')
 
 class ContainerRender(object):
 
@@ -95,8 +96,15 @@ class ContainerRender(object):
 #                 ContainerRender._first_toggler = False
 #                 context["include_toggler_prototype"] = True
 
-
-        return j2_env.get_template(self._template).render(context).encode('utf-8')
+#         out_string = j2_env.get_template(self._template).render(context)
+#         try:
+#             out_string = out_string.encode('utf-8')
+#         except:
+#             pass
+ 
+#         return j2_env.get_template(self._template).render(context).encode('utf-8')
+        return j2_env.get_template(self._template).render(context)
+#         return out_string
 
 
 class Show(object):
