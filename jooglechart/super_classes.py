@@ -63,6 +63,9 @@ class ContainerRender(object):
 #     _first_toggler = True
 
     def render(self, include_common=None):
+        
+        
+        print "==========", self._objects
 
         num = get_joogle_object_counter()
         self._div_id = self._div_prefix + str(num)

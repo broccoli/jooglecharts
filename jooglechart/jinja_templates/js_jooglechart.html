@@ -32,3 +32,8 @@
     {% if jg._series_filter %}
     	{% include 'js_series_filter.html' %}
     {% endif %}
+
+	{% for chart in jg.charts %}
+    {% include 'js/chart_download.js' %}
+    {% endfor %}
+    

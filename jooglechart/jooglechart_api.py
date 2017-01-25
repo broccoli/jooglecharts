@@ -168,6 +168,8 @@ from super_classes import AddDivStyles, ContainerRender
 
 
 DEFAULT_CHART_TYPE = "ColumnChart"
+DOWNLOAD_POSITION = "bottom"
+DOWNLOAD_TEXT = "Download CSV"
 
 # valid sonar messages and on events
 VALID_CHART_MESSAGE_TYPES = {
@@ -199,6 +201,8 @@ class _Chart():
         self._domain_column = None
         self._current_view_columns = None
         self._viewable_series_indexes = None
+        self._download_position = None
+        self._download_text = None
         
 
  
@@ -298,6 +302,11 @@ class _Chart():
         receiver_dict.update(kwargs)
         
         self._receivers.append(receiver_dict)
+    
+    def add_download(self, position=DOWNLOAD_POSITION, text=DOWNLOAD_TEXT):
+        
+        self._download_position = position
+        self._download_text = text
     
     def _get_viewable_series_indexes(self, exclude_filter_columns=False):
         
@@ -617,6 +626,9 @@ class JoogleChart(ChartShow, ChartRender):
         self.charts[0].add_receiver(key, **kwargs)
 #         self._senders.append({'on': on, 'key': key, 'type': type})
 
+    def add_download(self, position=DOWNLOAD_POSITION, text=DOWNLOAD_TEXT):
+        
+        self.charts[0].add_download(position, text)
 
     def _set_render_properties(self, chart_type=None):
 

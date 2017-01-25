@@ -1,3 +1,14 @@
 {% for chart in jg.charts %}
+
+{% if chart._download_position == "top" %}
+<a id="download_{{ chart.name }}" href="#">{{ chart._download_text }}</a>
+{% endif %}
+
 <div id="{{ chart.chart_div_id }}" {{ chart._div_classes|get_classes }} {{ chart.div_styles|format_styles_list }}></div>
+
+{% if chart._download_position == "bottom" %}
+<a id="download_{{ chart.name }}" href="#">{{ chart._download_text }}</a>
+{% endif %}
+
+
 {% endfor %}
