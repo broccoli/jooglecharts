@@ -176,6 +176,8 @@ VALID_CHART_MESSAGE_TYPES = {
         }
 
 
+
+
 class _Chart():
 
     def __init__(self, chart_type=None, **kwargs):
