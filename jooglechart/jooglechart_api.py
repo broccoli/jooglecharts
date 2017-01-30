@@ -377,15 +377,7 @@ class _Chart():
         for col in self._jooglechart._role_columns:
             series_indexes.remove(col)            
         
-        # remove filter column indexes, if nec:
-#         if exclude_filter_columns:            
-#             for filter in jooglechart.filters:
-#                 filter_column_index = filter._options.get("filterColumnIndex")
-#                 series_indexes.remove(filter_column_index)
-
-
         self._viewable_series_indexes = series_indexes
-#         return series_indexes
         
     def _set_render_properties(self, chart_type=None, agg_chart=False):
 
@@ -688,6 +680,18 @@ class JoogleChart(ChartShow, ChartRender):
 
 
 class AggChart(ChartShow, ChartRender):
+    
+    """
+    An AggChart is sonar widget that gets its data from another chart and aggregates it.
+    
+    The AggChart is a special chart that does not have its own data.  Its data is provided
+    by another chart via a sonar message.  It uses a sonar action to aggregate the other chart's
+    data, showing, say, average, min/max, etc.
+    
+    There wasn't a clean way to create the AggChart.  It has many functions in common with
+    a regular JoogleChart, but some functions are different, and some are not allowed.  It might
+    be better to make it a subclass in the future.
+    """
 
     def __init__(self, *args, **kwargs):
         

@@ -13,7 +13,8 @@
 				*/
 				
 				var num_columns = datatable.getNumberOfColumns();
-				
+				var num_rows = datatable.getNumberOfRows();
+								
 				var view_cols = chart.getView().columns;
 				if (view_cols === null) {
 					// if view columns is null, get list of all column indexes
@@ -57,7 +58,7 @@
 				if (view_rows !== null) {
 					// view_rows will be null if there is no native filter and no sonar filters have
 					// been applied.  If there is a native filter, the array will always have values.
-					for (var i = datatable.getNumberOfRows() - 1; i >= 0; i--) {
+					for (var i = num_rows - 1; i >= 0; i--) {
 						if (view_rows.indexOf(i) < 0) {
 							download_dt.removeRow(i);
 						}
