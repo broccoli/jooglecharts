@@ -32,7 +32,7 @@ def get_description_from_dataframe(df, datetime_cols):
 
         # gviz_api takes various formats for table description.  We're using
         # the ('id', 'type', 'label') format.  The id just needs to be an arbitrary
-        # unique string.
+        # unique string.  We'll use a string of the index.
         description.append((str(ix), t, col))
         
     return description
@@ -55,7 +55,7 @@ def get_description_from_list(list1):
     translation_dict[date] = 'date'
     translation_dict[datetime] = 'datetime'
     
-    description = []
+    types = []
 
     for item in data_row:
         try:
@@ -63,9 +63,15 @@ def get_description_from_list(list1):
         except:
             message = "Data values in the first row must be String, int, float, boolean, date, or datetime."
             raise JoogleChartsException(message)
-        description.append(description_type)
+        types.append(description_type)
 
+    headers = list1[0]
+    description = []
+    for ix, (t, col) in enumerate(zip(types, headers)):
+        description.append((str(ix), t, col))
+        
     return description
+
 
 def get_list_from_dataframe(df, allow_nulls):
     
@@ -85,6 +91,36 @@ def get_list_from_dataframe(df, allow_nulls):
 
 class _Data():
     
+    """
+    The Data class handles various data functions for the jooglechart.
+    
+    Data can be provided in several different formats:  a pandas dataframe,
+    a series of pandas Series, or a 2d list (a list or rows).
+    If the data is provided in a list, the first row is the headers.
+    
+    Data must be fed in the javascript to the google.visualization.DataTable() constructor.
+    The constructor can create a data table in several different ways, including from json.
+    We are using json.  The json can be generated using gviz_api.  The gviz_api creates a table
+    using a description of the data, and then data itself in a 2d list.  Json can then be
+    generated from the gviz table.
+    
+    Using gviz table and json has several advantages.
+    -- Using json in the constructors can be faster than calling addColumn/addRows
+       on an empty DataTable instance.
+    -- Data types are specified in json.
+    -- gviz_api handles dates automatically -- don't need to generate a string
+       for javascript Date() constructor.
+    -- The gviz method ToJSCode() method is great for debugging and testing.
+
+    Data types in DataTable
+    The Google DataTable accepts several data types, which can be found here:
+    https://developers.google.com/chart/interactive/docs/reference#dataparam
+    
+    The type timeofday is not currently supported in jooglechart.
+
+
+    """
+    
     def __init__(self, datetime_cols = None, allow_nulls=False, *args):
         
         self.dataframe = None
@@ -94,17 +130,32 @@ class _Data():
         self.datetime_cols = datetime_cols
         self.allow_nulls = allow_nulls
         self.args = args
+        
+        # for now, just using the data_table for unit testing
+        self.data_table = None
     
         self.get_type_of_data_input()
         
-        self.check_for_nulls
+        # if we have a dataframe, turn it into a 2d list
+        if self.dataframe:
+            self.list = get_list_from_dataframe()
         
-        self.get_description()
+        self.check_df_for_nulls()
         
-
+        self.create_gviz_description()
+        
+        # generate json for the Google DataTable
+        self.data_table = gviz_api.DataTable(self.description)
+        self.data_table.LoadData(self.list)
+        
+        self.json = self.data_table.ToJSon()
 
 
     def get_type_of_data_input(self):
+        
+        """
+        See what kind of format the data is in, and store data as a dataframe or list
+        """
         
         args = self.args
         if len(args) == 1:
@@ -131,11 +182,15 @@ class _Data():
                 raise JoogleChartsException(message)
             self.dataframe = df
                 
-    def check_for_nulls(self):
+    def check_df_for_nulls(self):
         
-        pass
+        if self.dataframe and self.allow_nulls == False and self.dataframe.isnull().any().any():
+            message = "The DataFrame has null values (None, NaN, or NaT);"
+            message += " replace these values, or pass allow_nulls = True to get null"
+            message += " values in the javascript DataTable."
+            raise JoogleChartsException(message)
     
-    def get_description(self):
+    def create_gviz_description(self):
         if self.dataframe:
             self.description = get_description_from_dataframe(self.dataframe, self.datetime_cols)
         elif self.list:
