@@ -11,6 +11,10 @@ from datetime import datetime, date
 
 def get_description_from_dataframe(df, datetime_cols):
     
+    """
+    The gviz_api requires a description for the data, which is 
+    a list of data types.  Introspect the dataframe for the description.
+    """
 
     # dictionary to translate pandas dtypes to js DataTable types
     translation_dict= {}
@@ -39,12 +43,25 @@ def get_description_from_dataframe(df, datetime_cols):
 
 def get_description_from_list(list1):
     
+    """
+    The gviz_api requires a description for the data, which is 
+    a list of data types.  Introspect the 2d list for the description.
+    
+    We are inferring the data types from just looking at the first row of data.
+    After some testing, I think Google's method google.visualization.arrayToDataTable()
+    only looks at the first row, as well.  If the first row has an integer, but all other rows
+    have numbers as strings -- e.g. "3", "12" -- the strings are coerced to numbers in the chart.
+    If a word string is found in any other row, the value is shown as NaN in a table and
+    ignored in a chart.  If the first row has a number string and all other rows have integers,
+    the values are displayed as strings in a table (they are left justified).
+    """
+
     # a list has to contain at least one header row and one data row
     if len(list1) < 2:
         message = "A 2d list of data must have one header row and at least one data row"
         raise JoogleChartsException(message)
         
-    # loop through the first data row and get the datatypes
+    # loop through the first data row and get the data types
     data_row = list1[1]
     
     translation_dict= {}
@@ -75,16 +92,25 @@ def get_description_from_list(list1):
 
 def get_list_from_dataframe(df, allow_nulls):
     
+    null_message = "The DataFrame has null values (None, NaN, or NaT);"
+    null_message += " replace these values, or pass allow_nulls = True to get null"
+    null_message += " values in the javascript DataTable."
+
     # get a 2d-array of the data
     data = []
     for row in df.iterrows():
-        if allow_nulls:
-
-            # isnull detects NaN, NaT, and None.  Nones are converted to js nulls
-            r = [None if pd.isnull(item) else item for item in row[1]]
-            data.append(r)
-        else:
-            data.append(row[1].tolist())
+        # isnull detects NaN, NaT, and None.  Nones are converted to js nulls
+        
+        new_row = []
+        for item in row[1].tolist():
+            if pd.isnull(item):
+                if allow_nulls:                    
+                    new_row.append(None)
+                else:
+                    raise JoogleChartsException(null_message)
+            else:
+                new_row.append(item)
+        data.append(new_row)
             
     return data
 
@@ -95,13 +121,13 @@ class _Data():
     The Data class handles various data functions for the jooglechart.
     
     Data can be provided in several different formats:  a pandas dataframe,
-    a series of pandas Series, or a 2d list (a list or rows).
+    a series of pandas Series, or a 2d list (a list of rows).
     If the data is provided in a list, the first row is the headers.
     
     Data must be fed in the javascript to the google.visualization.DataTable() constructor.
     The constructor can create a data table in several different ways, including from json.
     We are using json.  The json can be generated using gviz_api.  The gviz_api creates a table
-    using a description of the data, and then data itself in a 2d list.  Json can then be
+    using both a description of the data and the data itself in a 2d list.  Json can then be
     generated from the gviz table.
     
     Using gviz table and json has several advantages.
@@ -121,34 +147,36 @@ class _Data():
 
     """
     
-    def __init__(self, datetime_cols = None, allow_nulls=False, *args):
+    def __init__(self, *args, **kwargs):
         
         self.dataframe = None
         self.list = None
         self.description = None
         self.json = None
-        self.datetime_cols = datetime_cols
-        self.allow_nulls = allow_nulls
+        self.datetime_cols = kwargs.pop("datetime_cols", None)
+        self.allow_nulls = kwargs.pop("allow_nulls", None)
         self.args = args
+        self.num_cols = None
+        self.num_rows = None
         
-        # for now, just using the data_table for unit testing
         self.data_table = None
     
         self.get_type_of_data_input()
         
-        # if we have a dataframe, turn it into a 2d list
-        if self.dataframe:
-            self.list = get_list_from_dataframe()
-        
-        self.check_df_for_nulls()
-        
         self.create_gviz_description()
+
+        # if we have a dataframe, turn it into a 2d list
+        if self.dataframe is not None:
+            self.list = get_list_from_dataframe(self.dataframe, self.allow_nulls)
+        else:
+            # chop off header row from incoming 2d list
+            self.list = self.list[1:]
         
-        # generate json for the Google DataTable
+        self.set_num_cols_and_rows()
+
+        # generate the data table object from the gviz api        
         self.data_table = gviz_api.DataTable(self.description)
         self.data_table.LoadData(self.list)
-        
-        self.json = self.data_table.ToJSon()
 
 
     def get_type_of_data_input(self):
@@ -182,16 +210,14 @@ class _Data():
                 raise JoogleChartsException(message)
             self.dataframe = df
                 
-    def check_df_for_nulls(self):
-        
-        if self.dataframe and self.allow_nulls == False and self.dataframe.isnull().any().any():
-            message = "The DataFrame has null values (None, NaN, or NaT);"
-            message += " replace these values, or pass allow_nulls = True to get null"
-            message += " values in the javascript DataTable."
-            raise JoogleChartsException(message)
     
     def create_gviz_description(self):
-        if self.dataframe:
+        if self.dataframe is not None:
             self.description = get_description_from_dataframe(self.dataframe, self.datetime_cols)
         elif self.list:
             self.description = get_description_from_list(self.list)
+
+    def set_num_cols_and_rows(self):
+        
+        self.num_cols = len(self.description)
+        self.num_rows = len(self.list)
