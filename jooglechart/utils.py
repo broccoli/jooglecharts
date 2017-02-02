@@ -7,6 +7,7 @@ Created on Jan 9, 2016
 import random 
 import json
 import os
+import re
 
 from ishbook_495 import _get_notebook_url
 
@@ -323,3 +324,54 @@ def _validate_sender(on, message_type, valid_message_types):
             message = "{} is not a valid on event for {}.".format(on, message_type)
             raise JoogleChartsException(message)
 
+
+
+def break_string(s, limit):
+    
+    """
+    Used for wrapping long table header names.  This method breaks strings
+    at the spaces closest to the size limit and return a list of the
+    broken strings.  Words longer than the limit will not be chopped.
+    """
+
+    # get rid of any surrounding spaces and collapse multiple spaces into one.
+    s = s.strip()
+    s = re.sub(r" +", " ", s)
+    
+    pieces = []
+    
+    # loop and chop string into pieces
+    while True:
+        
+        index = s.find(" ")
+        
+        if len(s) <= limit or index < 0:
+            # The string is under the limit, or there is no space
+            # in the string; stop here.
+            pieces.append(s)
+            break
+            
+        elif index > limit:
+            # There's a space, but the first word is longer than the limit.
+            # chop it off and continue
+            pieces.append(s[:index])
+            s = s[index + 1:]
+            
+        else:
+            # Now we know there's a space in the string on or before the limit.
+            # start at the limit and go back until we find a space.
+            marker = limit
+            while True:                    
+                if marker < 0:
+                    # shouldn't happen; we missed the space
+                    raise JoogleChartsException("break string error; notify developer")
+                if s[marker] == " ":
+                    # we found the closest space; chop the string and continue
+                    pieces.append(s[:marker])
+                    s = s[marker + 1:]
+                    break
+                else:
+                    # no space yet; move the marker back and try again
+                    marker = marker - 1
+
+    return pieces
