@@ -158,10 +158,9 @@ import pandas as pd
 import json
 from IPython.display import display, HTML
 
-from utils import get_joogle_object_counter, JoogleChartsException, _add_dict_to_dict, _validate_sender, joogle_include, _render_joogle_include
-from dataframe_to_gviz import dataframe_to_gviz
+from utils import get_joogle_object_counter, JoogleChartsException, _add_dict_to_dict, _validate_sender
 from super_classes import ChartShow, ChartRender
-from chart_filters import SeriesFilter, Filter, SuperCategoryFilter
+from chart_filters import SeriesFilter
 from formatters import Formatter
 from super_classes import AddDivStyles, ContainerRender
 from data import _Data
@@ -370,12 +369,6 @@ class _Chart():
         for col in self._jooglechart._role_columns:
             series_indexes.remove(col)            
         
-        # remove filter column indexes, if nec:
-#         if exclude_filter_columns:            
-#             for filter in jooglechart.filters:
-#                 filter_column_index = filter._options.get("filterColumnIndex")
-#                 series_indexes.remove(filter_column_index)
-
 
         self._viewable_series_indexes = series_indexes
 #         return series_indexes
@@ -424,7 +417,6 @@ class JoogleChart(ChartShow, ChartRender):
         self.charts = []
 
         # Data attributes
-#         self._2d_array = None
         self.formatters = []
         self.filters = []
         self.datetime_cols = kwargs.pop('datetime_cols', None)
@@ -468,41 +460,6 @@ class JoogleChart(ChartShow, ChartRender):
         self._num_cols = self._data_obj.num_cols
         self._num_rows = self._data_obj.num_rows
         
-        # data can be passed as a 2d array, a DataFrame or 2 or more Series
-#         if len(args) == 1:
-#             # check if data is a dataframe or 2d list
-# 
-#             data = args[0]
-#             if isinstance(data, pd.DataFrame):
-#                 table = dataframe_to_gviz(data, datetime_cols=self.datetime_cols, allow_nulls=self.allow_nulls)
-#                 self.json = table.ToJSon()
-#                 self._dataframe = data
-#             elif (isinstance(data, list) and isinstance(data, list)):
-#                 self._2d_array = data
-#         else:
-#             # Data can only be Series at this point
-#             try:
-# 
-#                 df = pd.DataFrame(args[0])
-#                 for s in args[1:]:
-#                     df[s.name] = s
-# 
-#             except:
-#                 message = "Data must be passed as 2d array, a DataFrame, or 2 or more Series"
-#                 raise JoogleChartsException(message)
-#             self._dataframe = df
-#             table = dataframe_to_gviz(df, datetime_cols=self.datetime_cols, allow_nulls=self.allow_nulls)
-#             self.json = table.ToJSon()
-# 
-# 
-#         if self._2d_array:
-#             self._num_cols = len(self._2d_array[0])
-#             self._num_rows = len(self._2d_array) - 1  #minus one for header row
-#         else:
-#             self._num_cols = len(self._dataframe.columns)
-#             self._num_rows = len(self._dataframe)
-            
-        
         
 
     def add_chart_options(self, options=None, **kwargs):
@@ -523,12 +480,6 @@ class JoogleChart(ChartShow, ChartRender):
 #         return self.charts[0]._get_viewable_series_indexes_and_names()
     
     def _get_column_names(self, indexes):
-        
-#         columns = None
-#         try:
-#             columns = self._dataframe.columns.values.tolist()
-#         except:
-#             columns = self._2d_array[0]
         
         columns = self._data_obj.column_names
 
