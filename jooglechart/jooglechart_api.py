@@ -524,12 +524,14 @@ class JoogleChart(ChartShow, ChartRender):
     
     def _get_column_names(self, indexes):
         
-        columns = None
-        try:
-            columns = self._dataframe.columns.values.tolist()
-        except:
-            columns = self._2d_array[0]
+#         columns = None
+#         try:
+#             columns = self._dataframe.columns.values.tolist()
+#         except:
+#             columns = self._2d_array[0]
         
+        columns = self._data_obj.column_names
+
         # get the series names
         series_names = [columns[ix] for ix in indexes]
         
