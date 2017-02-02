@@ -332,7 +332,7 @@ class _Chart():
 
     def _set_visible_columns(self):
         # the visible columns are either the view_cols set by the user or all the column indexes.
-        self._visible_columns = self.view_cols or range(self._jooglechart._data_obj.num_cols)
+        self._visible_columns = self.view_cols or range(self._jooglechart._num_cols)
 
     def _set_domain_column(self):
         # domain column is first visible non-role columns
@@ -436,8 +436,8 @@ class JoogleChart(ChartShow, ChartRender):
         self._series_filter = None
         self._dataframe = None
         self._stylers = []
-#         self._num_cols = None
-#         self._num_rows = None
+        self._num_cols = None
+        self._num_rows = None
         self._role_columns = []
         self._global_title = None
         self._context_name = "jg"
@@ -465,6 +465,8 @@ class JoogleChart(ChartShow, ChartRender):
         
         self._data_obj = _Data(*args, allow_nulls=allow_nulls, datetime_cols=datetime_cols)
         self.json = self._data_obj.data_table.ToJSon()
+        self._num_cols = self._data_obj.num_cols
+        self._num_rows = self._data_obj.num_rows
         
         # data can be passed as a 2d array, a DataFrame or 2 or more Series
 #         if len(args) == 1:

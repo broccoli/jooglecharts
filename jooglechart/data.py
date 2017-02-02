@@ -158,10 +158,13 @@ class _Data():
         self.args = args
         self.num_cols = None
         self.num_rows = None
+        self.column_names = None
         
         self.data_table = None
     
         self.get_type_of_data_input()
+        
+        self.set_column_names()
         
         self.create_gviz_description()
 
@@ -221,3 +224,10 @@ class _Data():
         
         self.num_cols = len(self.description)
         self.num_rows = len(self.list)
+        
+    def set_column_names(self):
+        
+        if self.dataframe is not None:
+            self.column_names = self.dataframe.columns.tolist()
+        elif self.list:
+            self.column_names = self.list[0]

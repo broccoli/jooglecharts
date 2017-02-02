@@ -278,6 +278,50 @@ data.setCell(1, 2, new Date(2013,1,1));
         self.assertEqual(obj.num_cols, 2)
         self.assertEqual(obj.num_rows, 3)
         
+        
+        
+        
+        
+        
+    def test_get_column_names_1(self):
+        
+        # columns names from dataframe
+        
+        kids = ['Peter', 'Cindy', "Jan"]
+        pets = [2, 1, 4]
+#         dates = [pd.to_datetime("2016-01-01"), pd.to_datetime("2013-02-01"), pd.to_datetime("2011-10-27")]
+        data = {'kids': kids, 'pets': pets}
+        columns = ['kids', 'pets']
+        df = pd.DataFrame(data, columns=columns)
+        
+        obj = _Data(df)
+        
+        expected = ['kids', 'pets']
+        
+        self.assertEqual(obj.column_names, expected)
+        
+        pass
+        
+
+    def test_get_column_names_2(self):
+        
+        # columns names from 2d list
+        
+        kids = ['Peter', 'Cindy', "Jan"]
+        pets = [2, 1, 4]
+#         dates = [pd.to_datetime("2016-01-01"), pd.to_datetime("2013-02-01"), pd.to_datetime("2011-10-27")]
+        data = {'kids': kids, 'pets': pets}
+        columns = ['kids', 'pets']
+        df = pd.DataFrame(data, columns=columns)
+        
+        obj = _Data(df)
+        
+        expected = ['kids', 'pets']
+        
+        self.assertEqual(obj.column_names, expected)
+        
+        pass
+
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
