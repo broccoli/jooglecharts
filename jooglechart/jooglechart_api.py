@@ -308,10 +308,10 @@ class _Chart():
         self._download_position = position
         self._download_text = text
     
-    def _get_viewable_series_indexes(self, exclude_filter_columns=False):
+    def _get_viewable_series_indexes(self):
         
         # The viewable series are those charted in a line chart of bar chart, say.
-        # They include the view cols, minus the domain column and the role columns.
+        # They include the view cols, minus the domain column, the role columns, and the filter columns
 
         jooglechart = self._jooglechart
         
@@ -320,6 +320,7 @@ class _Chart():
             self._set_visible_columns()
         series_indexes = self._visible_columns[:]
         
+
         if not self._domain_column:
             self._set_domain_column()
             
@@ -327,10 +328,11 @@ class _Chart():
         for col in self._jooglechart._role_columns:
             series_indexes.remove(col)            
         
-        # remove filter column indexes, if nec:
-        if exclude_filter_columns:            
-            for filter in jooglechart.filters:
-                filter_column_index = filter._options.get("filterColumnIndex")
+        # remove filter column indexes        
+        for filter in jooglechart.filters:
+            filter_column_index = filter._options.get("filterColumnIndex")
+            # filter column index could have been domain column and already removed
+            if filter_column_index in series_indexes:
                 series_indexes.remove(filter_column_index)
 
 
@@ -510,9 +512,6 @@ class JoogleChart(ChartShow, ChartRender):
         self.charts[0].chart_type = chart_type
 
     
-#     def _get_viewable_series_indexes_and_names(self):
-# # 
-#         return self.charts[0]._get_viewable_series_indexes_and_names()
     
     def _get_column_names(self, indexes):
         
@@ -527,11 +526,11 @@ class JoogleChart(ChartShow, ChartRender):
         
         return series_names
     
-    def get_viewable_series(self, exclude_filter_columns=False):
+    def get_viewable_series(self):
         # Return the series names only.  Can be used to make a stand alone series filter
         # Return series for first chart.
         
-        series_indexes = self.charts[0]._get_viewable_series_indexes(exclude_filter_columns=exclude_filter_columns)
+        series_indexes = self.charts[0]._get_viewable_series_indexes()
         return self._get_column_names(series_indexes)
 
     def add_formatter(self, formatter, options=None, cols=None, source_cols=None, pattern=None, dest_col=None):

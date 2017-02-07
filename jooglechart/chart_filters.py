@@ -273,7 +273,7 @@ class SeriesFilter(_GoogleFilter):
         if self._series_indexes:
             series_names = jooglechart._get_column_names(self._series_indexes)
         else:
-            series_names = jooglechart.get_viewable_series(exclude_filter_columns = exclude_filter_columns)        
+            series_names = jooglechart.get_viewable_series()
         
         self._series_names = series_names
         
