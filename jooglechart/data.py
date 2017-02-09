@@ -96,6 +96,35 @@ def get_list_from_dataframe(df, allow_nulls):
     null_message += " replace these values, or pass allow_nulls = True to get null"
     null_message += " values in the javascript DataTable."
 
+
+
+    """
+    Note:  The commented code below is more efficient, but there is a problem
+    with dataframes that have one column and it's a Timestamp.  df.values
+    converts those values into a date string, and .tolist() turns that into longs.
+    
+    if allow_nulls:
+        pass
+        df = df.where((pd.notnull(df)), None)
+    else:
+        if df.isnull().any().any():
+            raise JoogleChartsException(null_message)
+    return df.values.tolist()
+    """
+
+
+#     if allow_nulls:
+#         pass
+#         df = df.where((pd.notnull(df)), None)
+#     else:
+#         if df.isnull().any().any():
+#             raise JoogleChartsException(null_message)
+#         
+# #         print df.values
+#     return df.values.tolist()
+
+
+        
     # get a 2d-array of the data
     data = []
     for row in df.iterrows():
@@ -113,6 +142,12 @@ def get_list_from_dataframe(df, allow_nulls):
         data.append(new_row)
             
     return data
+
+#     print df
+#     print "dtypes just be converting to list: "
+#     print df.dtypes
+#     print df.values.tolist()
+
 
 
 class _Data():
@@ -189,18 +224,18 @@ class _Data():
         """
         
         args = self.args
-        if len(args) == 1:
-            # check if data is a dataframe or 2d list
-
-            data = args[0]
-            if isinstance(data, pd.DataFrame):
-                self.dataframe = data
-            elif (isinstance(data, list) and isinstance(data[0], list)):
-                self.list = data
-            else:
-                message = "Data must be passed as 2d list, a DataFrame, or 2 or more Series"
-                raise JoogleChartsException(message)
-        else:
+        
+        
+        if (isinstance(args[0], list) and isinstance(args[0][0], list)):
+            
+            self.list = args[0]
+        
+        elif isinstance(args[0], pd.DataFrame):
+            
+            self.dataframe = args[0]
+        
+        elif isinstance(args[0], pd.Series):
+            
             # Data can only be Series at this point
             try:
                 # make dataframe out of series
@@ -212,6 +247,35 @@ class _Data():
                 message = "Data must be passed as 2d array, a DataFrame, or 2 or more Series"
                 raise JoogleChartsException(message)
             self.dataframe = df
+            
+        else:
+            message = "Data must be passed as 2d array, a DataFrame, or 2 or more Series"
+            raise JoogleChartsException(message)
+            
+
+#         if len(args) == 1:
+#             # check if data is a dataframe or 2d list
+# 
+#             data = args[0]
+#             if isinstance(data, pd.DataFrame):
+#                 self.dataframe = data
+#             elif (isinstance(data, list) and isinstance(data[0], list)):
+#                 self.list = data
+#             else:
+#                 message = "Data must be passed as 2d list, a DataFrame, or 2 or more Series"
+#                 raise JoogleChartsException(message)
+#         else:
+#             # Data can only be Series at this point
+#             try:
+#                 # make dataframe out of series
+#                 df = pd.DataFrame(args[0])
+#                 for s in args[1:]:
+#                     df[s.name] = s
+# 
+#             except:
+#                 message = "Data must be passed as 2d array, a DataFrame, or 2 or more Series"
+#                 raise JoogleChartsException(message)
+#             self.dataframe = df
                 
     
     def create_gviz_description(self):

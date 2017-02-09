@@ -69,6 +69,7 @@ class Test(unittest.TestCase):
         dates = [pd.to_datetime("2010-01-20"), pd.to_datetime("2016-04-12")]
          
         df = pd.DataFrame({'dates': dates})
+        
         datetime_cols = []
         description = get_description_from_dataframe(df, datetime_cols)
         
@@ -216,6 +217,42 @@ class Test(unittest.TestCase):
 
         self.assertEqual(list1, expected)
         
+        
+    def test_df_to_list6(self):
+        
+        # date_range in dataframe with two columns
+        
+        data = {}
+        data['dates'] = pd.date_range('1/1/2015', periods=2, freq='D')
+        data['sodas'] = [3, 6]
+        columns = ['dates', 'sodas']
+        df = pd.DataFrame(data, columns=columns)
+        
+        list1 = get_list_from_dataframe(df, allow_nulls=True)
+        
+        expected = [[pd.Timestamp('2015-01-01 00:00:00'), 3], [pd.Timestamp('2015-01-02 00:00:00'), 6]]
+
+#         print list1
+
+        self.assertEqual(list1, expected)
+        
+
+    def test_df_to_list7(self):
+        
+        # date_range in dataframe with one column
+        
+        data = {}
+        data['dates'] = pd.date_range('1/1/2015', periods=2, freq='D')
+        columns = ['dates']
+        df = pd.DataFrame(data, columns=columns)
+        
+        list1 = get_list_from_dataframe(df, allow_nulls=True)
+        
+        expected = [[pd.Timestamp('2015-01-01 00:00:00')], [pd.Timestamp('2015-01-02 00:00:00')]]
+
+        self.assertEqual(list1, expected)
+        
+        
     def test_df_to_datatable(self):
         
         kids = ['Peter', 'Cindy']
@@ -224,7 +261,7 @@ class Test(unittest.TestCase):
         data = {'kids': kids, 'pets': pets, 'dates': dates}
         columns = ['kids', 'pets','dates']
         df = pd.DataFrame(data, columns=columns)
-        
+                
         obj = _Data(df)
         
         expected = """var data = new google.visualization.DataTable();
@@ -242,11 +279,17 @@ data.setCell(1, 2, new Date(2013,1,1));
         
         self.assertEqual(obj.data_table.ToJSCode("data"), expected)
 
+
+    """
+    other tests
+    """    
+        
+
     def test_list_to_datatable(self):
         
         headers = ['kids', 'pets', 'dates']
         row1 = ['Peter', 2, date(2016, 1, 1)]
-        row2 = ['Cindy', 1, date(2013, 2, 1)]
+        row2 = ['Cindy', 1.0, date(2013, 2, 1)]
         data = [headers, row1, row2]
         
         obj = _Data(data)
