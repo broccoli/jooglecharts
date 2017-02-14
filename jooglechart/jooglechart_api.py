@@ -158,13 +158,12 @@ import pandas as pd
 import json
 from IPython.display import display, HTML
 
-from utils import get_joogle_object_counter, JoogleChartsException, _add_dict_to_dict, _validate_sender, joogle_include, _render_joogle_include
-from dataframe_to_gviz import dataframe_to_gviz
+from utils import get_joogle_object_counter, JoogleChartsException, _add_dict_to_dict, _validate_sender
 from super_classes import ChartShow, ChartRender
-from chart_filters import SeriesFilter, Filter, SuperCategoryFilter
+from chart_filters import SeriesFilter
 from formatters import Formatter
-
 from super_classes import AddDivStyles, ContainerRender
+from data import _Data
 
 
 DEFAULT_CHART_TYPE = "ColumnChart"
@@ -176,6 +175,8 @@ VALID_CHART_MESSAGE_TYPES = {
     'category': ('select'),
     'agg': ('ready')                     
         }
+
+
 
 
 class _Chart():
@@ -423,12 +424,12 @@ class JoogleChart(ChartShow, ChartRender):
         self.charts = []
 
         # Data attributes
-        self._2d_array = None
         self.formatters = []
         self.filters = []
         self.datetime_cols = kwargs.pop('datetime_cols', None)
         self.allow_nulls = kwargs.pop('allow_nulls', False)
         self.json = None
+        self._data_obj = None
         self.roles = []
         self.tooltip_html = False
         self._series_filter = None
@@ -456,44 +457,15 @@ class JoogleChart(ChartShow, ChartRender):
             self.charts[0].add_chart_options(**kwargs)
 
 
-        self._set_data(args)
+        self._set_data(args, allow_nulls=self.allow_nulls, datetime_cols=self.datetime_cols)
             
 
-    def _set_data(self, args):
-        # data can be passed as a 2d array, a DataFrame or 2 or more Series
-        if len(args) == 1:
-            # check if data is a dataframe or 2d list
-
-            data = args[0]
-            if isinstance(data, pd.DataFrame):
-                table = dataframe_to_gviz(data, datetime_cols=self.datetime_cols, allow_nulls=self.allow_nulls)
-                self.json = table.ToJSon()
-                self._dataframe = data
-            elif (isinstance(data, list) and isinstance(data, list)):
-                self._2d_array = data
-        else:
-            # Data can only be Series at this point
-            try:
-
-                df = pd.DataFrame(args[0])
-                for s in args[1:]:
-                    df[s.name] = s
-
-            except:
-                message = "Data must be passed as 2d array, a DataFrame, or 2 or more Series"
-                raise JoogleChartsException(message)
-            self._dataframe = df
-            table = dataframe_to_gviz(df, datetime_cols=self.datetime_cols, allow_nulls=self.allow_nulls)
-            self.json = table.ToJSon()
-
-
-        if self._2d_array:
-            self._num_cols = len(self._2d_array[0])
-            self._num_rows = len(self._2d_array) - 1  #minus one for header row
-        else:
-            self._num_cols = len(self._dataframe.columns)
-            self._num_rows = len(self._dataframe)
-            
+    def _set_data(self, args, allow_nulls, datetime_cols):
+        
+        self._data_obj = _Data(*args, allow_nulls=allow_nulls, datetime_cols=datetime_cols)
+        self.json = self._data_obj.data_table.ToJSon()
+        self._num_cols = self._data_obj.num_cols
+        self._num_rows = self._data_obj.num_rows
         
         
 
@@ -516,12 +488,8 @@ class JoogleChart(ChartShow, ChartRender):
     
     def _get_column_names(self, indexes):
         
-        columns = None
-        try:
-            columns = self._dataframe.columns.values.tolist()
-        except:
-            columns = self._2d_array[0]
-        
+        columns = self._data_obj.column_names
+
         # get the series names
         series_names = [columns[ix] for ix in indexes]
         
@@ -639,16 +607,14 @@ class JoogleChart(ChartShow, ChartRender):
         for styler in self._stylers:
             styler(self)            
 
-        if self.json:
-
-            # unicode            
-            # Need to wrap the decoding in a try block so the user will be able to reshow
-            # a chart in Jupyter.  If you reshow a chart, the code below will 
-            # try to decode an already decoded string.         
-            try:
-                self.json = self.json.decode('utf-8')
-            except UnicodeEncodeError:
-                pass
+        # unicode            
+        # Need to wrap the decoding in a try block so the user will be able to reshow
+        # a chart in Jupyter.  If you reshow a chart, the code below will 
+        # try to decode an already decoded string.         
+        try:
+            self.json = self.json.decode('utf-8')
+        except UnicodeEncodeError:
+            pass
 
         # render properties for charts
         for index, chart in enumerate(self.charts):

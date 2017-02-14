@@ -7,10 +7,19 @@ Created on Nov 5, 2016
 from utils import (get_joogle_object_counter, set_common_on_context, j2_env, JoogleChartsException, _add_dict_to_dict,
     joogle_include, _render_joogle_include, _validate_sender)
 import pandas as pd
+from data import _Data
 from IPython.display import display, HTML
-from dataframe_to_gviz import dataframe_to_gviz
+# from dataframe_to_gviz import dataframe_to_gviz
 
 FILTER_NAME_ADD_ON = "__jooglechart_user_filter_name"  # deprecated, for super filter
+
+
+def get_json_from_df(df):
+    
+    
+    data = _Data(df)    
+    return data.data_table.ToJSon()
+
 
 class _GoogleFilter(object):
     
@@ -143,8 +152,9 @@ class Filter(_GoogleFilter):
                 df = pd.DataFrame(self._data)
             else:
                 df = self._data
-            table = dataframe_to_gviz(df, allow_nulls=True)
-            self._json = table.ToJSon()
+#             table = dataframe_to_gviz(df, allow_nulls=True)
+#             self._json = table.ToJSon()
+            self._json = get_json_from_df(df)
 
     def bind_filter(self, bind_target):
         self._bind_target = bind_target
@@ -284,7 +294,8 @@ class SeriesFilter(_GoogleFilter):
         if not self._state.get('selectedValues'):
             self._state['selectedValues'] = series_names
 
-        self._filter_table_json = dataframe_to_gviz(df).ToJSon()
+#         self._filter_table_json = dataframe_to_gviz(df).ToJSon()
+        self._filter_table_json = get_json_from_df(df)
         self._num = get_joogle_object_counter()
         
         if self._label:
@@ -319,8 +330,8 @@ class SuperCategoryFilter(_GoogleFilter):
             raise JoogleChartsException(message)
         choices.name = "options"
         df = pd.DataFrame(choices, columns=['options'])
-        table = dataframe_to_gviz(df)
-        self._json = table.ToJSon()
+#         table = get_json_from_df(df)
+        self._json = get_json_from_df(df)
 
 
     

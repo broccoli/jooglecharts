@@ -7,7 +7,7 @@ import unittest
 
 import pandas as pd
 
-from jooglechart.jooglechart_api import JoogleChart, JoogleChartsException
+from jooglechart.jooglechart_api import JoogleChart
 
 class Test(unittest.TestCase):
 
