@@ -352,7 +352,9 @@ $(document).ready(function() {
 	
 	function when_google_vis_loaded (callback) {
 		// check to see if google visualization library has been loaded.
-		if (typeof window.google === 'undefined' || typeof window.google.visualization === 'undefined') {
+		if (typeof window.google === 'undefined' || typeof window.google.visualization === 'undefined' ||
+		typeof window.google.visualization.DataTable === 'undefined' || typeof window.google.visualization.ChartWrapper === 'undefined' ||
+		typeof window.google.visualization.ControlWrapper === 'undefined') {
 			setTimeout (function () {
 				when_google_vis_loaded (callback);
 			}, 100); // wait 100 ms
