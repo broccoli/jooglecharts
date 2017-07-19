@@ -5,7 +5,7 @@ Created on Dec 20, 2015
 '''
 import unittest
 
-from jooglechart.jooglechart_api import Formatter, JoogleChartsException
+from juglechart.juglechart_api import Formatter, JoogleChartsException
 
 class Test(unittest.TestCase):
 
